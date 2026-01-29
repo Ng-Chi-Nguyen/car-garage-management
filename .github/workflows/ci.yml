@@ -15,7 +15,7 @@ jobs:
         working-directory: ./server
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Use Node.js
       uses: actions/setup-node@v4
@@ -44,7 +44,7 @@ jobs:
         working-directory: ./client
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Use Node.js
       uses: actions/setup-node@v4
@@ -79,7 +79,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Verify SQL Syntax
       run: |
