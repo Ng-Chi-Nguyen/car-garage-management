@@ -1,0 +1,82 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # 1. Kiểm tra Backend (Node.js)
+  backend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Lint Code (ESLint)
+      # Chỉ chạy nếu có script lint trong package.json. Nếu chưa có, bước này sẽ skip hoặc warn.
+      # Để đảm bảo, ta nên thêm script lint vào server/package.json sau.
+      run: if npm run | grep -q "lint"; then npm run lint; else echo "No lint script found, skipping"; fi
+
+    # (Optional) Run Tests if available
+    # - name: Run Tests
+    #   run: npm test
+
+  # 2. Kiểm tra Frontend (React)
+  frontend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build Test
+      # Chạy build để đảm bảo không có lỗi cú pháp nghiêm trọng
+      run: npm run build
+
+  # 3. Kiểm tra Database SQL
+  database-check:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: garage_management
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Verify SQL Syntax
+      run: |
+        # Thử import file init.sql vào MySQL container để check lỗi cú pháp
+        mysql -h 127.0.0.1 -u root -proot garage_management < database/init.sql
