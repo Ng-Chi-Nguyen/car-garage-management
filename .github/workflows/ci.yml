@@ -54,7 +54,12 @@ jobs:
         cache-dependency-path: client/package-lock.json
 
     - name: Install Dependencies
-      run: npm ci
+      # Dùng npm install thay vì npm ci nếu không có package-lock.json hoặc package-lock.json bị sai phiên bản
+      # Để an toàn cho dự án mới, dùng npm install sẽ linh hoạt hơn, nhưng npm ci chuẩn hơn cho CI.
+      # Sửa lỗi "Error: Some specified paths were not resolved" bằng cách đảm bảo có package-lock.json trước hoặc dùng npm install.
+      # Tuy nhiên, lỗi ở đây là do `npm ci` yêu cầu `package-lock.json` phải tồn tại và đồng bộ.
+      # Ta sẽ dùng `npm install` để đảm bảo nó chạy được cho dự án mới khởi tạo.
+      run: npm install
 
     - name: Build Test
       # Chạy build để đảm bảo không có lỗi cú pháp nghiêm trọng
