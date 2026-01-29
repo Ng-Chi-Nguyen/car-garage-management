@@ -2,7 +2,7 @@
 node_modules/
 pnpm-lock.yaml
 yarn.lock
-package-lock.json
+# package-lock.json (Committed for consistent installs)
 
 # Environment
 .env
