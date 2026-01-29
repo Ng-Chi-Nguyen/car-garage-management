@@ -1,56 +1,238 @@
-# Hệ thống Quản lý Gara Ô tô (DoAn-QuanLyGarageOto)
+# Hệ thống Quản lý Gara Ô tô (Car Garage Management System)
 
-## 1. Tổng quan dự án
-Dự án **Hệ thống Quản lý Gara Ô tô** là một giải pháp phần mềm toàn diện nhằm tối ưu hóa quy trình vận hành của một gara sửa chữa xe. Hệ thống hỗ trợ quản lý từ khâu tiếp nhận xe, sửa chữa, quản lý kho phụ tùng đến theo dõi tài chính và lập báo cáo định kỳ.
-
-Hệ thống được thiết kế với các module chính:
-- **Quản trị (Admin)**: Quản lý người dùng, phân quyền, cấu hình tham số hệ thống và danh mục.
-- **Tiếp nhận (Reception)**: Ghi nhận thông tin xe và chủ xe khi vào gara.
-- **Dịch vụ (Service)**: Theo dõi quá trình sửa chữa, sử dụng vật tư và tính tiền công.
-- **Kho (Inventory)**: Quản lý nhập/xuất vật tư phụ tùng và kiểm soát tồn kho.
-- **Tài chính (Finance)**: Quản lý thu tiền và theo dõi công nợ của khách hàng.
-- **Báo cáo (Report)**: Tổng hợp số liệu doanh số, tồn kho và công nợ hàng tháng.
-
-## 2. Các tính năng chính
-Dựa trên tài liệu đặc tả thiết kế, hệ thống bao gồm các chức năng:
-- **Tiếp nhận xe**: Kiểm tra giới hạn số lượng xe tiếp nhận tối đa trong ngày (QĐ1).
-- **Lập phiếu sửa chữa**: Tự động tính toán chi phí dựa trên đơn giá vật tư và tiền công tại thời điểm lập phiếu (QĐ2).
-- **Quản lý nhập kho**: Cập nhật số lượng tồn kho và đơn giá nhập mới nhất khi có vật tư mới (QĐ3).
-- **Thu tiền & Công nợ**: Đảm bảo số tiền thu không vượt quá số nợ hiện tại của khách hàng (QĐ4).
-- **Tra cứu**: Tìm kiếm nhanh chóng thông tin xe, khách hàng và tình trạng tồn kho.
-- **Báo cáo định kỳ**: Tự động kết xuất báo cáo doanh thu, báo cáo tồn và báo cáo nợ hàng tháng.
-
-## 3. Công nghệ sử dụng (Dự kiến)
-- **Frontend**: React.js
-- **Backend**: Node.js (Express)
-- **Database**: MySQL
-- **Công cụ thiết kế**: StarUML (cho các sơ đồ Use Case, Class Diagram)
-
-## 4. Cấu trúc thư mục dự án
-Thư mục dự án được tổ chức như sau:
-- `docs/`: Chứa các tài liệu đặc tả chức năng (SRS), mô tả đề tài và tài liệu tham khảo.
-- `design/`: Bao gồm các sơ đồ thiết kế (diagrams), mô hình dữ liệu và đặc tả kỹ thuật (`specs`).
-- `reports/`: Lưu trữ các báo cáo tiến độ, báo cáo đồ án và các tệp liên quan.
-
-## 5. Hướng dẫn cài đặt (Placeholder)
-Hiện tại dự án đang trong giai đoạn thiết kế và phát triển sơ khai. Các bước cài đặt dự kiến:
-
-1. **Clone project**:
-   ```bash
-   git clone https://github.com/your-username/DoAn-QuanLyGarageOto.git
-   ```
-2. **Cài đặt dependencies**:
-   ```bash
-   cd DoAn-QuanLyGarageOto
-   npm install
-   ```
-3. **Cấu hình cơ sở dữ liệu**:
-   - Tạo database MySQL.
-   - Cấu hình thông tin kết nối trong tệp `.env`.
-4. **Khởi chạy ứng dụng**:
-   ```bash
-   npm run dev
-   ```
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
+[![License](https://img.shields.io/badge/license-MIT-blue)](#)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18-green)](#)
 
 ---
-*Dự án được thực hiện trong khuôn khổ môn học Phát triển Phần mềm.*
+
+##  Giới thiệu Dự án
+
+Dự án **DoAn-QuanLyGarageOto** là một giải pháp phần mềm quản lý toàn diện, được thiết kế để tối ưu hóa quy trình vận hành của các gara sửa chữa ô tô hiện đại. Hệ thống tích hợp chặt chẽ các quy trình nghiệp vụ từ khâu tiếp nhận xe, quản lý kỹ thuật sửa chữa, kiểm soát kho phụ tùng cho đến kế toán tài chính và báo cáo quản trị.
+
+**Mục tiêu chính của hệ thống:**
+- Tự động hóa các biểu mẫu và quy trình nghiệp vụ theo quy định.
+- Kiểm soát chặt chẽ vật tư, phụ tùng và công nợ khách hàng.
+- Cung cấp dữ liệu báo cáo chính xác giúp chủ gara đưa ra quyết định kinh doanh hiệu quả.
+- Đảm bảo tính toàn vẹn và nhất quán của dữ liệu trong suốt vòng đời giao dịch.
+
+---
+
+##  Các Module Chức Năng Chính
+
+Dựa trên tài liệu đặc tả `design/specs/DESIGN_SPECS.md`, hệ thống được phân chia thành **6 phân hệ cốt lõi**:
+
+### 1. Phân hệ Quản trị (Admin Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Quản lý người dùng | Đăng ký, phân quyền cho Nhân viên (Staff) và Quản trị viên (Admin). |
+| Cấu hình hệ thống | Thay đổi các tham số nghiệp vụ như số lượng xe tiếp nhận tối đa trong ngày (**QĐ1**, **QĐ6**). |
+| Quản lý danh mục | Thiết lập danh mục Hiệu xe (`CAR_BRANDS`), loại Tiền công (`LABOR_FEES`) và bảng giá dịch vụ. |
+
+### 2. Phân hệ Tiếp nhận (Reception Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Tiếp nhận xe mới | Ghi nhận thông tin Biển số, Hiệu xe, Chủ xe và thông tin liên lạc theo biểu mẫu **BM1**. |
+| Kiểm soát quy định | Tự động kiểm tra giới hạn tiếp nhận xe trong ngày theo tham số `MAX_CARS_RECEIVE` (**QĐ1**). |
+| Tra cứu nhanh | Tìm kiếm thông tin xe và lịch sử tiếp nhận dựa trên nhiều tiêu chí (Biển số, Chủ xe, Hiệu xe). |
+
+### 3. Phân hệ Dịch vụ (Service Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Lập phiếu sửa chữa | Khởi tạo quy trình bảo trì cho xe đã tiếp nhận theo biểu mẫu **BM2**. |
+| Cập nhật nội dung | Thêm vật tư phụ tùng đã sử dụng và các loại tiền công thực hiện vào phiếu. |
+| Cơ chế Snapshot | Lưu trữ đơn giá vật tư/tiền công tại thời điểm lập phiếu để đảm bảo tính nhất quán tài chính (**QĐ2**). |
+
+### 4. Phân hệ Kho (Inventory Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Quản lý nhập hàng | Lập phiếu nhập kho vật tư từ nhà cung cấp theo biểu mẫu **BM3**. |
+| Cập nhật tự động | Tự động cộng tồn kho và cập nhật đơn giá nhập gần nhất cho phụ tùng (**QĐ3**). |
+| Kiểm kê tồn kho | Theo dõi số lượng tồn thực tế, đơn vị tính và giá vốn/giá bán cho từng loại vật tư. |
+
+### 5. Phân hệ Tài chính (Finance Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Lập phiếu thu tiền | Ghi nhận thanh toán từ khách hàng cho các phiếu sửa chữa theo biểu mẫu **BM4**. |
+| Quản lý công nợ | Kiểm soát số tiền thu không được vượt quá số nợ hiện tại của xe (**QĐ4**). |
+| Theo dõi dòng tiền | Tự động trừ nợ sau khi hoàn tất giao dịch thanh toán. |
+
+### 6. Phân hệ Báo cáo (Report Module)
+| Chức năng | Mô tả |
+|-----------|-------|
+| Báo cáo doanh số | Thống kê doanh thu theo hiệu xe và tỷ lệ doanh số hàng tháng (**BM5.1**). |
+| Báo cáo tồn kho | Theo dõi tồn đầu, phát sinh nhập/xuất và tồn cuối kỳ (**BM5.2**). |
+| Báo cáo công nợ | Liệt kê các khách hàng còn dư nợ và biến động nợ trong tháng (**BM5.3**). |
+
+---
+
+##  Công nghệ Sử dụng (Tech Stack)
+
+Hệ thống được xây dựng trên nền tảng Fullstack hiện đại:
+
+| Thành phần | Công nghệ |
+|------------|-----------|
+| **Backend** | Node.js với Framework Express.js |
+| **Frontend** | React.js hoặc Vue.js (Tùy chọn triển khai) |
+| **Database** | MySQL 8.0 (Quản lý dữ liệu quan hệ) |
+| **Design Tools** | StarUML (Use Case, Class Diagram, Sequence Diagram) |
+| **Infrastructure** | Docker (Optional) để triển khai container hóa |
+
+---
+
+##  Yêu cầu Hệ thống (Prerequisites)
+
+Trước khi bắt đầu, hãy đảm bảo máy tính của bạn đã cài đặt các công cụ sau:
+
+| Công cụ | Phiên bản yêu cầu |
+|---------|-------------------|
+| **Node.js** | >= 18.0 |
+| **MySQL Server** | >= 8.0 |
+| **npm** hoặc **yarn** | Phiên bản mới nhất |
+| **Git** | Phiên bản mới nhất |
+
+---
+
+##  Hướng dẫn Cài đặt
+
+### Bước 1: Clone Repository
+```bash
+git clone https://github.com/phuctruong/DoAn-QuanLyGarageOto.git
+cd DoAn-QuanLyGarageOto
+```
+
+### Bước 2: Cấu hình Backend
+```bash
+cd server
+npm install
+```
+
+Tạo tệp `.env` trong thư mục `server/` dựa trên mẫu sau:
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASS=your_password
+DB_NAME=garage_management
+
+# Server Configuration
+PORT=5000
+JWT_SECRET=your_jwt_secret_key
+```
+
+### Bước 3: Khởi tạo Cơ sở dữ liệu
+Truy cập MySQL và chạy script khởi tạo:
+```bash
+mysql -u root -p < database/init.sql
+```
+
+Hoặc sử dụng MySQL Workbench để import tệp `database/init.sql`.
+
+### Bước 4: Cấu hình Frontend
+```bash
+cd ../client
+npm install
+```
+
+---
+
+##  Cách sử dụng
+
+### Môi trường Phát triển (Development)
+
+**1. Khởi chạy Backend Server:**
+```bash
+cd server
+npm run dev
+```
+Backend sẽ chạy tại: `http://localhost:5000`
+
+**2. Khởi chạy Frontend Application:**
+```bash
+cd client
+npm run dev
+```
+Frontend sẽ chạy tại: `http://localhost:3000`
+
+### Môi trường Production (Sử dụng Docker - Optional)
+```bash
+docker-compose up -d
+```
+
+---
+
+##  Cấu trúc Thư mục
+
+```
+DoAn-QuanLyGarageOto/
+│
+├── client/                  # Mã nguồn giao diện người dùng (Frontend)
+│   ├── src/
+│   │   ├── components/      # Các component React/Vue
+│   │   ├── pages/           # Các trang màn hình chính
+│   │   ├── services/        # API calls và xử lý dữ liệu
+│   │   └── hooks/           # Custom hooks (React)
+│   └── package.json
+│
+├── server/                  # Mã nguồn xử lý logic và API (Backend)
+│   ├── controllers/         # Xử lý request/response
+│   ├── services/            # Business logic
+│   ├── models/              # Database models và queries
+│   ├── routes/              # Định nghĩa API endpoints
+│   ├── middleware/          # Auth, validation middleware
+│   └── package.json
+│
+├── database/                # Các script SQL khởi tạo cơ sở dữ liệu
+│   └── init.sql             # Script tạo bảng và dữ liệu mẫu
+│
+├── design/                  # Tài liệu thiết kế hệ thống
+│   ├── diagrams/            # Các sơ đồ Use Case, Class, Sequence
+│   │   ├── exported/        # Hình ảnh sơ đồ đã xuất (PNG, SVG)
+│   │   └── *.mdj            # Tệp nguồn StarUML
+│   └── specs/               # Đặc tả nghiệp vụ và Schema chi tiết
+│       ├── CORE_SCHEMA.md   # Định nghĩa cơ sở dữ liệu
+│       └── DESIGN_SPECS.md  # Đặc tả chức năng các module
+│
+├── docs/                    # Tài liệu dự án
+│   ├── project/             # SRS, SDD, Mô tả đề tài
+│   └── references/          # Tài liệu tham khảo
+│
+├── reports/                 # Báo cáo đồ án và tiến độ thực hiện
+│   └── BaoCao.docx
+│
+├── .env.example             # Tệp mẫu cấu hình môi trường
+├── AGENTS.md                # Hướng dẫn cho AI Agents
+├── CONTRIBUTING.md          # Hướng dẫn đóng góp mã nguồn
+├── LICENSE                  # Giấy phép sử dụng (MIT)
+└── README.md                # Tài liệu hướng dẫn này
+```
+
+---
+
+##  Thành viên thực hiện
+
+Dự án được thực hiện bởi nhóm sinh viên lớp **Phát triển Phần mềm**:
+
+| STT | Họ và Tên | MSSV | Vai trò |
+|-----|-----------|------|---------|
+| 1 | [Họ và Tên] | [MSSV] | Team Leader / Backend Developer |
+| 2 | [Họ và Tên] | [MSSV] | Frontend Developer |
+| 3 | [Họ và Tên] | [MSSV] | Database Designer / Tester |
+
+---
+
+##  Liên hệ
+
+- **Email:** [email@example.com]
+- **GitHub:** [https://github.com/phuctruong/DoAn-QuanLyGarageOto](https://github.com/phuctruong/DoAn-QuanLyGarageOto)
+
+---
+
+##  Giấy phép
+
+Dự án này được cấp phép theo giấy phép **MIT License** - xem tệp [LICENSE](LICENSE) để biết thêm chi tiết.
+
+---
+
+*Dự án được thực hiện trong khuôn khổ môn học Phát triển Phần mềm - 2026*

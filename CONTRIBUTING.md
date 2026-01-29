@@ -1,58 +1,94 @@
-# Hướng dẫn đóng góp (Contributing Guide)
+# Quy định Đóng góp Mã nguồn (CONTRIBUTING)
 
-Chào mừng bạn đến với dự án! Để đảm bảo quy trình làm việc hiệu quả và thống nhất giữa 3 thành viên trong nhóm, vui lòng tuân thủ các quy định dưới đây.
-
-## 1. Quy trình Git (Git Workflow)
-
-Chúng ta sử dụng mô hình **Feature Branch Workflow**.
-
-*   Nhánh chính: `main` (luôn chứa mã nguồn ổn định).
-*   Mọi thay đổi phải được thực hiện trên một nhánh riêng biệt được tách ra từ `main`.
-*   Sau khi hoàn thành, tạo Pull Request để gộp vào `main`.
-
-Sơ đồ: `main` -> `feat/your-feature` -> `Pull Request` -> `main`.
-
-## 2. Quy tắc đặt tên nhánh (Branch Naming)
-
-Tên nhánh nên ngắn gọn, súc tích và phản ánh đúng nội dung thay đổi:
-
-*   **Tính năng mới**: `feat/ten-chuc-nang` (ví dụ: `feat/dang-nhap`)
-*   **Sửa lỗi**: `fix/ten-loi` (ví dụ: `fix/loi-hien-thi-anh`)
-*   **Tài liệu**: `docs/ten-tai-lieu`
-*   **Tối ưu mã nguồn**: `refactor/ten-phan-viec`
-
-## 3. Quy tắc Commit (Commit Rules)
-
-Chúng ta tuân theo tiêu chuẩn **Conventional Commits**. Mỗi tin nhắn commit cần có tiền tố rõ ràng:
-
-*   `feat:`: Thêm một tính năng mới.
-*   `fix:`: Sửa một lỗi.
-*   `docs:`: Thay đổi về tài liệu (README, CONTRIBUTING, ...).
-*   `refactor:`: Thay đổi mã nguồn nhưng không sửa lỗi cũng không thêm tính năng.
-*   `style:`: Thay đổi về định dạng code (khoảng trắng, dấu phẩy, ...) không ảnh hưởng đến logic.
-*   `test:`: Thêm hoặc sửa các bản kiểm thử (test cases).
-
-**Cấu trúc:** `<type>: <mô tả ngắn bằng tiếng Việt>`
-*Ví dụ: `feat: thêm chức năng lọc sản phẩm theo giá`*
-
-## 4. Quy trình Pull Request (PR Process)
-
-Để mã nguồn được gộp vào nhánh chính, hãy thực hiện các bước sau:
-
-1.  **Tạo PR**: Đẩy nhánh của bạn lên remote và tạo Pull Request hướng về nhánh `main`.
-2.  **Yêu cầu Review**: Chỉ định ít nhất 1 thành viên khác trong nhóm kiểm tra mã nguồn (Request Review).
-3.  **Xử lý phản hồi**: Nếu có góp ý, hãy cập nhật mã nguồn ngay trên nhánh đó.
-4.  **Merge**: Sau khi được chấp thuận (Approved) và vượt qua các bài kiểm thử (nếu có), người tạo PR hoặc người review sẽ tiến hành gộp nhánh.
-
-## 5. Tiêu chuẩn lập trình (Coding Standards)
-
-*   **Đặt tên biến/hàm**: Sử dụng `camelCase` (ví dụ: `userName`, `calculateTotal`).
-*   **Đặt tên lớp (Class)**: Sử dụng `PascalCase` (ví dụ: `UserServiceProvider`).
-*   **Hằng số**: Sử dụng `UPPER_SNAKE_CASE` (ví dụ: `MAX_RETRY_COUNT`).
-*   **Ghi chú (Commenting)**: 
-    *   Ghi chú rõ ràng cho các hàm phức tạp.
-    *   Sử dụng tiếng Việt hoặc tiếng Anh thống nhất trong toàn dự án.
-    *   Xóa mã nguồn thừa hoặc các dòng `console.log` không cần thiết trước khi commit.
+Chào mừng bạn đến với đội ngũ phát triển dự án **DoAn-QuanLyGarageOto**. Để duy trì chất lượng mã nguồn và tính nhất quán của hệ thống, mọi thành viên **PHẢI** tuân thủ nghiêm ngặt các quy định dưới đây. Đây là "Nguồn sự thật duy nhất" (Single Source of Truth) cho mọi hoạt động phát triển.
 
 ---
-*Chúc nhóm chúng ta làm việc hiệu quả!*
+
+## 1. Nguyên tắc cốt lõi (Core Principles)
+
+-   **Kiến trúc Chuẩn**: Mọi thay đổi phải tuân thủ kiến trúc `garage-arch`. Tách biệt hoàn toàn trách nhiệm giữa các tầng.
+-   **Mã nguồn Sạch (Clean Code)**: Code phải dễ đọc, dễ bảo trì. Ưu tiên sự rõ ràng hơn là sự ngắn gọn.
+-   **Không khoan nhượng với lỗi**: CẤM commit mã nguồn có lỗi cú pháp hoặc làm hỏng các chức năng hiện tại. Hệ thống CI/CD sẽ tự động chặn các thay đổi không đạt chuẩn.
+-   **Bảo mật là tiên quyết**: Tuân thủ giao thức `sec-ops`. Không hardcode bí mật, luôn sanitize dữ liệu đầu vào.
+
+---
+
+## 2. Quy trình Git (Git Workflow - theo `git-commander`)
+
+Chúng tôi sử dụng mô hình nhánh tính năng để quản lý mã nguồn.
+
+-   **Nhánh chính (`main`)**: Là nhánh bảo vệ (Protected). **CẤM TUYỆT ĐỐI** việc push trực tiếp vào `main`.
+-   **Quy trình làm việc**:
+    1.  Tách nhánh từ `main` với tiền tố tương ứng:
+        -   `feat/`: Tính năng mới (ví dụ: `feat/inventory-management`).
+        -   `fix/`: Sửa lỗi (ví dụ: `fix/calculation-bug`).
+        -   `docs/`: Cập nhật tài liệu.
+        -   `refactor/`: Tái cấu trúc mã nguồn nhưng không thay đổi logic.
+    2.  Làm việc trên nhánh riêng.
+    3.  Đồng bộ hóa thường xuyên với `main` bằng `rebase`.
+    4.  Tạo Pull Request (PR) để yêu cầu gộp mã nguồn.
+
+-   **Quy tắc Commit Message (Conventional Commits)**:
+    Mọi commit phải tuân theo cấu trúc: `type(scope): subject`.
+    -   `feat`: Tính năng mới.
+    -   `fix`: Sửa lỗi.
+    -   `chore`: Thay đổi nhỏ về build, thư viện.
+    -   `refactor`: Tái cấu trúc mã nguồn.
+    -   *Ví dụ: `feat(api): add vehicle reception endpoint`*
+
+---
+
+## 3. Tiêu chuẩn Backend (Node.js - theo `garage-arch` & `js-ts-godmode`)
+
+Yêu cầu thực thi nghiêm ngặt cấu trúc 4 tầng:
+
+1.  **Routes**: Định nghĩa endpoint và điều hướng request.
+2.  **Controllers**: Tiếp nhận request, validate dữ liệu đầu vào và định dạng response.
+3.  **Services**: Chứa **TOÀN BỘ** logic nghiệp vụ, tính toán và xử lý giao dịch.
+4.  **Repositories/Models**: Thực hiện các truy vấn trực tiếp vào cơ sở dữ liệu.
+
+**Quy tắc lập trình:**
+-   Sử dụng **Modern Syntax (ES6+)**: Dùng `const` và `let`, **CẤM** dùng `var`.
+-   **Bất đồng bộ**: Sử dụng `async/await`. Mọi hàm bất đồng bộ phải có khối `try/catch` để xử lý lỗi.
+-   **Hàm**: Ưu tiên Arrow Functions cho các callback và phương thức ngắn.
+-   **Cấu hình**: Sử dụng biến môi trường (`.env`) cho các thông số cấu hình.
+
+---
+
+## 4. Tiêu chuẩn Frontend (React - theo `ui-architect`)
+
+-   **Thành phần**: Chỉ sử dụng **Functional Components** và **Hooks**. Cấm sử dụng Class Components.
+-   **Tách biệt logic**: Extract logic phức tạp ra các **Custom Hooks**. Giữ cho file JSX sạch sẽ, chỉ tập trung vào hiển thị.
+-   **Styling**: Sử dụng **TailwindCSS** chuẩn. Đảm bảo giao diện nhất quán về khoảng cách, màu sắc và kiểu chữ.
+-   **Phản hồi (UX)**: Luôn cung cấp phản hồi trực quan (Loading spinners, Toasts) cho mọi hành động của người dùng.
+-   **Tối ưu**: Sử dụng `useMemo` và `useCallback` để tránh re-render không cần thiết khi xử lý dữ liệu lớn.
+
+---
+
+## 5. Tiêu chuẩn Cơ sở dữ liệu (MySQL - theo `mysql-supreme`)
+
+-   **Đặt tên bảng**: Sử dụng tiếng Anh, số nhiều (ví dụ: `cars`, `services`, `invoices`, `parts`).
+-   **Đặt tên cột**: Sử dụng `snake_case` (ví dụ: `car_id`, `owner_name`).
+-   **Tối ưu hóa truy vấn**:
+    -   **CẤM** sử dụng `SELECT *`. Chỉ chọn các cột cần thiết cho nghiệp vụ.
+    -   Sử dụng **Transactions** cho các thao tác cập nhật nhiều bảng liên quan để đảm bảo tính toàn vẹn dữ liệu.
+    -   Đánh **Index** cho các Foreign Keys và các cột thường xuyên nằm trong điều kiện `WHERE` hoặc `JOIN`.
+-   **Chuẩn hóa**: Thiết kế database đạt chuẩn 3NF.
+
+---
+
+## 6. Quy trình Review (Code Review)
+
+Mọi dòng code được gộp vào dự án đều phải được kiểm duyệt:
+
+-   **Pull Request (PR)**:
+    -   Tiêu đề PR phải rõ ràng, tóm tắt được thay đổi.
+    -   Mô tả PR phải bao gồm: *Nội dung đã làm*, *Cách kiểm thử*, và *Ảnh chụp màn hình* (nếu có thay đổi UI).
+-   **Điều kiện Merge**:
+    -   Phải vượt qua tất cả các bài kiểm tra tự động (Linting, Tests).
+    -   Phải có ít nhất **01 sự chấp thuận (Approve)** từ thành viên khác hoặc Senior Developer.
+    -   Tác giả PR phải phản hồi và giải quyết tất cả các comment từ người review.
+
+---
+
+*Việc tuân thủ các quy định trên là bắt buộc. Mọi vi phạm sẽ dẫn đến việc từ chối Pull Request mà không cần báo trước.*
