@@ -216,16 +216,18 @@ Dự án được thực hiện bởi nhóm sinh viên lớp **Phát triển Ph�
 
 | STT | Họ và Tên | MSSV | Vai trò |
 |-----|-----------|------|---------|
-| 1 | [Họ và Tên] | [MSSV] | Team Leader / Backend Developer |
-| 2 | [Họ và Tên] | [MSSV] | Frontend Developer |
-| 3 | [Họ và Tên] | [MSSV] | Database Designer / Tester |
+| 1 | [Nguyễn Chí Nguyện](https://github.com/Ng-Chi-Nguyen) | [MSSV] | Backend Developer |
+| 2 | [Quách Trường Phúc](https://github.com/PhucTruong-ctrl) | [MSSV] | Frontend Developer |
+| 3 | Huỳnh Lâm Vỹ | [MSSV] | Database Designer / Tester |
 
 ---
 
 ##  Liên hệ
 
-- **Email:** [email@example.com]
-- **GitHub:** [https://github.com/phuctruong/DoAn-QuanLyGarageOto](https://github.com/phuctruong/DoAn-QuanLyGarageOto)
+- **Email:** 
+Nguyện:
+Vỹ:
+Phúc: qtphuc-cntt17@tdu.edu.vn
 
 ---
 
