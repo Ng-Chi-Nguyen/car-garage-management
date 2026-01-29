@@ -1,0 +1,22 @@
+name: AI PR Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: AI Code Reviewer
+        uses: your-action/ai-pr-reviewer@v1 # Placeholder - Cần thay bằng Action thực tế hoặc script gọi API
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }} # Cần cấu hình Secret trên Repo
+          review_comment_lgtm: false

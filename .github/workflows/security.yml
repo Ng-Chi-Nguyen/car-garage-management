@@ -1,0 +1,68 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * 0' # Chạy hàng tuần vào Chủ Nhật
+
+jobs:
+  # 1. Kiểm tra bảo mật Dependencies (SCA)
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Backend Audit
+      - name: Audit Backend Dependencies
+        working-directory: ./server
+        run: npm audit --audit-level=high || true # Chỉ warn nếu có lỗi high, không fail build (tùy chọn)
+
+      # Frontend Audit
+      - name: Audit Frontend Dependencies
+        working-directory: ./client
+        run: npm audit --audit-level=high || true
+
+  # 2. Quét Code tĩnh (SAST) - Tìm lỗi bảo mật trong code (SQLi, XSS...)
+  codeql-analysis:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'javascript' # Node.js & React đều là JS/TS
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+  # 3. Quét Secret (Tìm API Key, Password bị lộ)
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
