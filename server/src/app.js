@@ -19,6 +19,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check endpoint for monitoring
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+  });
+});
+
+// API version endpoint
+app.get("/api/version", (req, res) => {
+  res.status(200).json({
+    success: true,
+    version: "1.0.0",
+  });
+});
+
+// Catch-all 404 handler for unknown routes
 app.use((req, res) => {
   res.status(404).json({
     success: false,
