@@ -1,23 +1,41 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const errorHandler = require('./middleware/errorHandler');
-const routes = require('./routes');
+import express from "express";
+import dotenv from 'dotenv';
+import cors from "cors";
+import { connectDB } from "./db/prisma.js";
+
+dotenv.config();
 
 const app = express();
+const port_server = process.env.APP_PORT_SEVER;
+const port_client = process.env.APP_PORT_CLIENT;
 
 // Middleware
-app.use(helmet());
-app.use(cors());
-app.use(morgan('combined'));
+app.use(cors({
+  origin: `http://localhost:${port_client}`, // Cho phép React của bạn
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true // Quan trọng để gửi token/cookie sau này
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/', routes);
+// Health check endpoint for monitoring
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+  });
+});
 
-// 404 handler
+// API version endpoint
+app.get("/api/version", (req, res) => {
+  res.status(200).json({
+    success: true,
+    version: "1.0.0",
+  });
+});
+
+// Catch-all 404 handler for unknown routes
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -28,7 +46,16 @@ app.use((req, res) => {
   });
 });
 
-// Error handler (must be last)
-app.use(errorHandler);
+async function startServer() {
+  try {
+    await connectDB();
+    app.listen(port_server, () => {
+      console.log(`Server đang chạy tại: http://localhost:${port_server}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to the database. Server not started.", error);
+    process.exit(1);
+  }
+}
 
-module.exports = app;
+startServer();
