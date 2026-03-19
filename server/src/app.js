@@ -29,8 +29,16 @@ app.use((req, res) => {
   });
 });
 
-connectDB()
+async function startServer() {
+  try {
+    await connectDB();
+    app.listen(port_server, () => {
+      console.log(`Server đang chạy tại: http://localhost:${port_server}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to the database. Server not started.", error);
+    process.exit(1);
+  }
+}
 
-app.listen(port_server, () => {
-  console.log(`Server đang chạy tại: http://localhost:${port_server}`)
-})
+startServer();
