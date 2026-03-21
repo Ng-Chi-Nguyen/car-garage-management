@@ -24,7 +24,7 @@ export const routeManifest = [
     exportKey: 'tr_ng_th_i_x_ng_gms',
     path: '/workshop',
     layout: 'app',
-    componentPath: 'src/pages/workshop/WorkshopStatus.jsx',
+    componentPath: 'src/pages/workshop/workshop-status-page.jsx',
     group: 'workshop'
   },
   {
@@ -52,7 +52,7 @@ export const routeManifest = [
     exportKey: 'qu_n_l_kho_v_t_t_gms',
     path: '/inventory',
     layout: 'app',
-    componentPath: 'src/pages/inventory/InventoryManagement.jsx',
+    componentPath: 'src/pages/inventory/inventory-page.jsx',
     group: 'inventory'
   },
   {
@@ -80,7 +80,7 @@ export const routeManifest = [
     exportKey: 'danh_s_ch_kh_ch_h_ng_gms',
     path: '/customers',
     layout: 'app',
-    componentPath: 'src/pages/customers/CustomerList.jsx',
+    componentPath: 'src/pages/customers/customers-page.jsx',
     group: 'crm'
   },
   {
@@ -101,14 +101,14 @@ export const routeManifest = [
     exportKey: 'c_i_t_h_th_ng_gms',
     path: '/settings',
     layout: 'app',
-    componentPath: 'src/pages/settings/SystemSettings.jsx',
+    componentPath: 'src/pages/settings/settings-page.jsx',
     group: 'system'
   },
   {
     exportKey: 'nh_t_k_thao_t_c_gms',
     path: '/settings/activity-log',
     layout: 'app',
-    componentPath: 'src/pages/settings/ActivityLog.jsx',
+    componentPath: 'src/pages/activity/activity-log-page.jsx',
     group: 'system'
   },
   {
