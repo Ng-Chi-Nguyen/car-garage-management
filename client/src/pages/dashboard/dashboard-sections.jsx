@@ -5,7 +5,7 @@ import { SectionCard } from '../../components/ui/section-card';
 export function WarningRow() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-100 rounded-xl">
+      <div className="flex items-center gap-4 p-4 bg-red-50 rounded-xl">
         <div className="w-10 h-10 flex items-center justify-center bg-red-600 rounded-full text-white">
           <span className="material-symbols-outlined">warning</span>
         </div>
@@ -14,7 +14,7 @@ export function WarningRow() {
           <p className="text-xs text-red-800">Hiện tại 25/20 xe. Vui lòng kiểm tra lại công suất tiếp nhận.</p>
         </div>
       </div>
-      <div className="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-xl">
+      <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-xl">
         <div className="w-10 h-10 flex items-center justify-center bg-orange-500 rounded-full text-white">
           <span className="material-symbols-outlined">inventory_2</span>
         </div>
@@ -31,7 +31,7 @@ export function MainMetricGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {/* Large Revenue Bento Card */}
-      <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600 relative overflow-hidden">
+      <div className="md:col-span-2 bg-white p-6 rounded-xl relative overflow-hidden">
         <div className="relative z-10">
           <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu hôm nay</p>
           <div className="flex items-baseline gap-2 mb-4">
@@ -54,7 +54,7 @@ export function MainMetricGrid() {
       </div>
       
       {/* Financial Metric Card */}
-      <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col justify-between border border-gray-100">
+      <div className="bg-white p-6 rounded-xl flex flex-col justify-between">
         <div>
           <p className="text-slate-500 text-sm font-medium mb-1">Công nợ hiện tại</p>
           <h3 className="text-2xl font-bold text-red-600">128.500.000 <span className="text-base font-medium">₫</span></h3>
@@ -89,7 +89,7 @@ export function MainMetricGrid() {
       />
 
       {/* KPI Card */}
-      <div className="bg-blue-700 p-6 rounded-xl shadow-sm flex flex-col justify-between text-white">
+      <div className="bg-gradient-to-br from-[#0040a1] to-[#0056d2] p-6 rounded-xl flex flex-col justify-between text-white">
         <p className="text-white/80 text-sm font-medium mb-1">KPI Tháng</p>
         <div className="flex items-center gap-2">
           <h3 className="text-2xl font-bold">92%</h3>
@@ -109,25 +109,25 @@ export function SecondaryGrid() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-left border-b border-slate-100">
-                <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Biển số</th>
-                <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hiệu xe</th>
-                <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chủ xe</th>
-                <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Thời gian</th>
+              <tr className="text-left">
+                <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-[0.05em]">Biển số</th>
+                <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-[0.05em]">Hiệu xe</th>
+                <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-[0.05em]">Chủ xe</th>
+                <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-[0.05em] text-right">Thời gian</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
-              <tr>
-                <td className="py-3 text-sm font-bold text-slate-900">51H-123.45</td>
-                <td className="py-3 text-sm text-slate-500">Toyota Camry</td>
-                <td className="py-3 text-sm text-slate-700">Nguyễn Văn A</td>
-                <td className="py-3 text-sm text-slate-500 text-right">10:30</td>
+            <tbody>
+              <tr className="hover:bg-slate-50 transition-colors group">
+                <td className="py-4 px-2 text-sm font-bold text-slate-900 rounded-l-lg">51H-123.45</td>
+                <td className="py-4 text-sm text-slate-500">Toyota Camry</td>
+                <td className="py-4 text-sm text-slate-700">Nguyễn Văn A</td>
+                <td className="py-4 px-2 text-sm text-slate-500 text-right rounded-r-lg">10:30</td>
               </tr>
-              <tr>
-                <td className="py-3 text-sm font-bold text-slate-900">29A-678.90</td>
-                <td className="py-3 text-sm text-slate-500">Honda Civic</td>
-                <td className="py-3 text-sm text-slate-700">Trần Thị B</td>
-                <td className="py-3 text-sm text-slate-500 text-right">09:15</td>
+              <tr className="hover:bg-slate-50 transition-colors group">
+                <td className="py-4 px-2 text-sm font-bold text-slate-900 rounded-l-lg">29A-678.90</td>
+                <td className="py-4 text-sm text-slate-500">Honda Civic</td>
+                <td className="py-4 text-sm text-slate-700">Trần Thị B</td>
+                <td className="py-4 px-2 text-sm text-slate-500 text-right rounded-r-lg">09:15</td>
               </tr>
             </tbody>
           </table>
