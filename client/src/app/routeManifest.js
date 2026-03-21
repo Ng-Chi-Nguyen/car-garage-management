@@ -31,21 +31,21 @@ export const routeManifest = [
     exportKey: 'ti_p_nh_n_xe_m_i_gms',
     path: '/intake',
     layout: 'app',
-    componentPath: 'src/pages/intake/intake-page.jsx',
+    componentPath: 'src/pages/intake/VehicleIntake.jsx',
     group: 'workshop'
   },
   {
     exportKey: 'modal_l_p_phi_u_ti_p_nh_n_gms',
     path: '/intake/new',
     layout: 'app',
-    componentPath: 'src/pages/intake/intake-modal-page.jsx',
+    componentPath: 'src/pages/intake/IntakeModalPage.jsx',
     group: 'workshop'
   },
   {
     exportKey: 'l_p_phi_u_s_a_ch_a_gms',
     path: '/repair-orders/new',
     layout: 'app',
-    componentPath: 'src/pages/repair/repair-order-page.jsx',
+    componentPath: 'src/pages/repair/RepairOrder.jsx',
     group: 'workshop'
   },
   {
@@ -59,21 +59,21 @@ export const routeManifest = [
     exportKey: 'th_kho_chi_ti_t_gms',
     path: '/inventory/stock-card',
     layout: 'app',
-    componentPath: 'src/pages/inventory/StockDetail.jsx',
+    componentPath: 'src/pages/inventory/stock-detail-page.jsx',
     group: 'inventory'
   },
   {
     exportKey: 'thu_ti_n_v_c_ng_n_gms',
     path: '/finance/receivables',
     layout: 'app',
-    componentPath: 'src/pages/payments/payments-page.jsx',
+    componentPath: 'src/pages/finance/Receivables.jsx',
     group: 'finance'
   },
   {
     exportKey: 'in_quy_t_to_n_gms',
     path: '/finance/settlement/print',
     layout: 'app',
-    componentPath: 'src/pages/settlement/settlement-page.jsx',
+    componentPath: 'src/pages/finance/SettlementPrint.jsx',
     group: 'finance'
   },
   {
@@ -87,14 +87,14 @@ export const routeManifest = [
     exportKey: 'h_s_kh_ch_h_ng_chi_ti_t_gms',
     path: '/customers/detail',
     layout: 'app',
-    componentPath: 'src/pages/customers/CustomerDetail.jsx',
+    componentPath: 'src/pages/customers/customer-detail-page.jsx',
     group: 'crm'
   },
   {
     exportKey: 'b_o_c_o_kh_ch_h_ng_chuy_n_s_u_gms',
     path: '/customers/analytics',
     layout: 'app',
-    componentPath: 'src/pages/customers/CustomerAnalytics.jsx',
+    componentPath: 'src/pages/customers/customer-report-page.jsx',
     group: 'crm'
   },
   {
