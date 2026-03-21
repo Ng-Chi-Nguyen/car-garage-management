@@ -1,14 +1,17 @@
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import { Sidebar } from '../components/layout/sidebar';
 import { Topbar } from '../components/layout/topbar';
+import { Outlet } from 'react-router-dom';
 
 export function AppShell({ children }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar />
-      <div className="ml-64 flex h-screen min-w-0 flex-1 flex-col">
+      <div className="flex-1 ml-64 flex flex-col min-w-0 h-screen">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-6">{children || <Outlet />}</main>
+        <main className="flex-1 p-6 overflow-y-auto">
+          {children || <Outlet />}
+        </main>
       </div>
     </div>
   );
