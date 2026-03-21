@@ -9,18 +9,18 @@ export function DataTable({ columns, data, headers, children }) {
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-gray-50 border-y border-gray-200">
+          <tr>
             {normalizedColumns.map((col, idx) => (
-              <th key={idx} className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider">
+              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-gray-600 uppercase tracking-wider">
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="[&>tr]:hover:bg-gray-100 [&>tr]:transition-colors [&>tr]:duration-200">
           {hasStructuredData
             ? data.map((row, idx) => (
-                <tr key={idx} className="hover:bg-gray-50/50">
+                <tr key={idx}>
                   {normalizedColumns.map((col, colIdx) => (
                     <td key={colIdx} className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                       {col.cell ? col.cell(row) : row[col.accessor]}
