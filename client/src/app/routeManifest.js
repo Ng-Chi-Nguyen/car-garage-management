@@ -31,21 +31,21 @@ export const routeManifest = [
     exportKey: 'ti_p_nh_n_xe_m_i_gms',
     path: '/intake',
     layout: 'app',
-    componentPath: 'src/pages/intake/VehicleIntake.jsx',
+    componentPath: 'src/pages/intake/intake-page.jsx',
     group: 'workshop'
   },
   {
     exportKey: 'modal_l_p_phi_u_ti_p_nh_n_gms',
     path: '/intake/new',
     layout: 'app',
-    componentPath: 'src/pages/intake/IntakeModalPage.jsx',
+    componentPath: 'src/pages/intake/intake-modal-page.jsx',
     group: 'workshop'
   },
   {
     exportKey: 'l_p_phi_u_s_a_ch_a_gms',
     path: '/repair-orders/new',
     layout: 'app',
-    componentPath: 'src/pages/repair/RepairOrder.jsx',
+    componentPath: 'src/pages/repair/repair-order-page.jsx',
     group: 'workshop'
   },
   {
@@ -66,14 +66,14 @@ export const routeManifest = [
     exportKey: 'thu_ti_n_v_c_ng_n_gms',
     path: '/finance/receivables',
     layout: 'app',
-    componentPath: 'src/pages/finance/Receivables.jsx',
+    componentPath: 'src/pages/payments/payments-page.jsx',
     group: 'finance'
   },
   {
     exportKey: 'in_quy_t_to_n_gms',
     path: '/finance/settlement/print',
     layout: 'app',
-    componentPath: 'src/pages/finance/SettlementPrint.jsx',
+    componentPath: 'src/pages/settlement/settlement-page.jsx',
     group: 'finance'
   },
   {
