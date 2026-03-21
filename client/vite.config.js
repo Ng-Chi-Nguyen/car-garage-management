@@ -9,7 +9,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // Giữ cái này để dùng cho các thư mục khác (ví dụ: @/services)
       "@": path.resolve(__dirname, "./src"),
     },
   },

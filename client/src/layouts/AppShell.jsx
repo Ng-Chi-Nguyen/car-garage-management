@@ -5,12 +5,12 @@ import { Outlet } from 'react-router-dom';
 
 export function AppShell({ children }) {
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(191,219,254,0.55),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(165,243,252,0.38),_transparent_22%),linear-gradient(180deg,_#f8fbff_0%,_#eef4fb_46%,_#f8fafc_100%)] text-slate-900">
       <Sidebar />
-      <div className="flex-1 ml-64 flex flex-col min-w-0 h-screen">
+      <div className="ml-72 flex h-screen min-w-0 flex-1 flex-col">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-8">
+          <div className="mx-auto max-w-7xl">
             {children || <Outlet />}
           </div>
         </main>

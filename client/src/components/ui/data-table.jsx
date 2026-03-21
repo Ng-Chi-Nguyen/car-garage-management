@@ -1,31 +1,48 @@
 import React from 'react';
 
-export function DataTable({ columns, data }) {
+function renderHeaderCell(header, idx) {
+  if (typeof header === 'string') {
+    return (
+      <th key={idx} className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 first:rounded-l-2xl last:rounded-r-2xl">
+        {header}
+      </th>
+    );
+  }
+
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+    <th key={header.key ?? idx} className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 first:rounded-l-2xl last:rounded-r-2xl">
+      {header.label ?? header.header ?? ''}
+    </th>
+  );
+}
+
+export function DataTable({ headers, children, columns = [], data = [] }) {
+  const resolvedHeaders = headers ?? columns;
+  const hasStaticRows = children !== undefined;
+
+  return (
+    <div className="overflow-x-auto rounded-[24px] border border-slate-200/80 bg-white">
+      <table className="w-full min-w-[720px] border-collapse text-left">
         <thead>
-          <tr className="bg-gray-50 border-y border-gray-200">
-            {columns.map((col, idx) => (
-              <th key={idx} className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider">
-                {col.header}
-              </th>
-            ))}
+          <tr className="border-b border-slate-200 bg-slate-50/90">
+            {resolvedHeaders.map((header, idx) => renderHeaderCell(header, idx))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
-          {data.map((row, idx) => (
-            <tr key={idx} className="hover:bg-gray-50/50">
-              {columns.map((col, colIdx) => (
-                <td key={colIdx} className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                  {col.cell ? col.cell(row) : row[col.accessor]}
-                </td>
+        <tbody className="divide-y divide-slate-200/80 bg-white">
+          {hasStaticRows
+            ? children
+            : data.map((row, idx) => (
+                <tr key={idx} className="transition-colors hover:bg-slate-50/70">
+                  {columns.map((col, colIdx) => (
+                    <td key={col.key ?? col.accessor ?? colIdx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-700">
+                      {col.cell ? col.cell(row) : row[col.accessor]}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
-          {data.length === 0 && (
+          {!hasStaticRows && data.length === 0 && (
             <tr>
-              <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500 text-sm">
+              <td colSpan={resolvedHeaders.length} className="px-6 py-10 text-center text-sm font-medium text-slate-400">
                 Không có dữ liệu
               </td>
             </tr>
