@@ -90,12 +90,12 @@ export default function WorkshopStatusPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-on-surface-variant">Kỹ thuật viên:</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-bold">LH</div>
+                  <div className="w-5 h-5 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-[10px] font-bold">LH</div>
                   <span className="font-semibold">Lê Văn Hùng</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-primary/10 text-primary">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                 Đang sửa
@@ -121,12 +121,12 @@ export default function WorkshopStatusPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-on-surface-variant">Kỹ thuật viên:</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-bold">ĐN</div>
+                  <div className="w-5 h-5 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-[10px] font-bold">ĐN</div>
                   <span className="font-semibold">Đỗ Hoàng Nam</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary">
                 <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
                 Chẩn đoán
@@ -152,12 +152,12 @@ export default function WorkshopStatusPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-on-surface-variant">Kỹ thuật viên:</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-bold">NB</div>
+                  <div className="w-5 h-5 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-[10px] font-bold">NB</div>
                   <span className="font-semibold">Nguyễn Văn Ba</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-secondary/10 text-secondary">
                 <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                 Chờ

@@ -24,14 +24,14 @@ function formatDisplay(value, fallback = '-- Chưa nhập --') {
 function IntakeInput({ label, required, icon, placeholder, value, onChange }) {
   return (
     <label className="space-y-2">
-      <div className="text-sm font-semibold text-slate-700">
+      <div className="text-sm font-semibold text-on-surface">
         {label}
-        {required ? <span className="text-amber-600"> *</span> : null}
+        {required ? <span className="text-error"> *</span> : null}
       </div>
-      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition focus-within:border-slate-400 focus-within:shadow-md">
-        <span className="text-lg text-slate-400">{icon}</span>
+      <div className="flex items-center gap-3 rounded-2xl bg-surface-container-low px-4 py-3 transition focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface-container-lowest">
+        <span className="text-lg text-outline">{icon}</span>
         <input
-          className="w-full border-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
+          className="w-full border-0 bg-transparent text-sm text-on-surface outline-none placeholder:text-outline"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -44,10 +44,10 @@ function IntakeInput({ label, required, icon, placeholder, value, onChange }) {
 function IntakeSelect({ label, options, value, onChange }) {
   return (
     <label className="space-y-2">
-      <div className="text-sm font-semibold text-slate-700">{label}</div>
-      <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition focus-within:border-slate-400 focus-within:shadow-md">
+      <div className="text-sm font-semibold text-on-surface">{label}</div>
+      <div className="rounded-2xl bg-surface-container-low px-4 py-3 transition focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface-container-lowest">
         <select
-          className="w-full bg-transparent text-sm text-slate-900 outline-none"
+          className="w-full bg-transparent text-sm text-on-surface outline-none appearance-none"
           value={value}
           onChange={onChange}
         >
@@ -64,14 +64,14 @@ function IntakeSelect({ label, options, value, onChange }) {
 
 function DetailCard({ icon, title, description, children }) {
   return (
-    <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)] lg:p-7">
+    <section className="rounded-3xl bg-surface-container-lowest p-6 shadow-sm border border-outline-variant/10 lg:p-7">
       <div className="mb-5 flex items-start gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-lg">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container-high text-xl text-on-surface">
           {icon}
         </div>
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <p className="text-sm text-slate-500">{description}</p>
+          <h2 className="text-lg font-bold text-on-surface tracking-tight">{title}</h2>
+          <p className="text-sm text-on-surface-variant font-medium">{description}</p>
         </div>
       </div>
       {children}
@@ -114,23 +114,23 @@ export default function VehicleIntake() {
   };
 
   return (
-    <div className="min-h-full bg-[linear-gradient(180deg,#f8fafc_0%,#eef2f7_100%)] px-4 py-6 text-slate-900 lg:px-8">
+    <div className="min-h-full bg-surface px-4 py-6 text-on-surface lg:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <section className="overflow-hidden rounded-[30px] border border-slate-200/80 bg-white shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)]">
-          <div className="flex flex-col gap-5 border-b border-slate-200/80 px-6 py-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
+        <section className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-sm border border-outline-variant/20">
+          <div className="flex flex-col gap-5 border-b border-outline-variant/10 px-6 py-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">Precision Engine</p>
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Tiếp nhận xe mới</h1>
+                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Precision Engine</p>
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-on-surface">Tiếp nhận xe mới</h1>
               </div>
               <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-                <div className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div className="inline-flex items-center gap-3 rounded-xl bg-surface-container-low px-4 py-2.5 text-sm font-medium text-on-surface-variant">
                   <span className="text-base">📅</span>
                   <span>{today}</span>
                 </div>
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm">
-                  <p className="font-semibold">Hạn mức tiếp nhận</p>
-                  <p className="mt-1 text-amber-700">Chỉ còn 03 lượt tiếp nhận miễn phí hôm nay.</p>
+                <div className="rounded-xl bg-error-container px-4 py-2.5 text-sm text-on-error-container flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                  <p className="font-bold">Hạn mức tiếp nhận:</p>
+                  <p className="font-medium">Chỉ còn 03 lượt miễn phí hôm nay.</p>
                 </div>
               </div>
             </div>
@@ -139,21 +139,21 @@ export default function VehicleIntake() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-container-low px-5 py-2.5 text-sm font-bold text-on-surface transition hover:bg-surface-container-high"
               >
                 <span>↻</span>
                 Làm mới
               </button>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-container-low px-5 py-2.5 text-sm font-bold text-on-surface transition hover:bg-surface-container-high"
               >
                 <span>✕</span>
                 Hủy
               </button>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition hover:bg-slate-800"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-on-primary transition hover:shadow-md"
               >
                 <span>💾</span>
                 Lưu phiếu tiếp nhận
@@ -161,7 +161,7 @@ export default function VehicleIntake() {
             </div>
           </div>
 
-          <div className="grid gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)] lg:px-8 lg:py-8">
+          <div className="grid gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)] lg:px-8 lg:py-8 bg-surface-container-lowest">
             <div className="space-y-6">
               <DetailCard
                 icon="👤"
@@ -217,10 +217,10 @@ export default function VehicleIntake() {
                       </div>
                       <button
                         type="button"
-                        className="inline-flex h-[50px] items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100"
+                        className="inline-flex h-[48px] items-center justify-center gap-2 rounded-2xl bg-surface-container-high px-6 text-sm font-bold text-on-surface transition hover:bg-surface-container-highest"
                       >
                         <span>🔎</span>
-                        Tra cứu xe
+                        Tra cứu
                       </button>
                     </div>
                   </div>
@@ -234,10 +234,10 @@ export default function VehicleIntake() {
 
                 <div className="mt-6 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700">Ghi chú tình trạng xe</h3>
-                    <p className="mt-1 text-sm text-slate-500">Chọn nhanh tình trạng</p>
+                    <h3 className="text-sm font-bold text-on-surface">Ghi chú tình trạng xe</h3>
+                    <p className="mt-1 text-sm text-on-surface-variant font-medium">Chọn nhanh tình trạng</p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {quickConditions.map((condition) => {
                       const active = selectedConditions.includes(condition);
 
@@ -246,10 +246,10 @@ export default function VehicleIntake() {
                           key={condition}
                           type="button"
                           onClick={() => toggleCondition(condition)}
-                          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
+                          className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition ${
                             active
-                              ? 'border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/10'
-                              : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'
+                              ? 'bg-primary text-on-primary shadow-sm'
+                              : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
                           }`}
                         >
                           <span>{active ? '☑' : '☐'}</span>
@@ -262,13 +262,13 @@ export default function VehicleIntake() {
 
                 <div className="mt-6">
                   <label className="space-y-2">
-                    <span className="text-sm font-semibold text-slate-700">Ghi chú thêm</span>
+                    <span className="text-sm font-bold text-on-surface">Ghi chú thêm</span>
                     <textarea
                       rows={4}
                       value={form.note}
                       onChange={updateField('note')}
                       placeholder="Mô tả thêm hiện trạng xe hoặc yêu cầu ban đầu của khách hàng"
-                      className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
+                      className="w-full rounded-2xl bg-surface-container-low px-4 py-3 text-sm text-on-surface outline-none transition placeholder:text-outline focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest"
                     />
                   </label>
                 </div>
@@ -276,15 +276,15 @@ export default function VehicleIntake() {
             </div>
 
             <div className="space-y-6">
-              <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)] text-white shadow-[0_36px_80px_-44px_rgba(15,23,42,0.9)]">
-                <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
+              <section className="overflow-hidden rounded-3xl bg-surface-container-high text-on-surface shadow-sm">
+                <div className="flex items-center justify-between border-b border-outline-variant/10 px-6 py-5">
                   <div>
-                    <h2 className="text-lg font-semibold">Tóm tắt xác nhận</h2>
-                    <p className="mt-1 text-sm text-slate-300">Phiếu tiếp nhận được cập nhật trực tiếp từ thông tin bạn nhập.</p>
+                    <h2 className="text-lg font-bold tracking-tight">Tóm tắt xác nhận</h2>
+                    <p className="mt-1 text-sm font-medium text-on-surface-variant">Phiếu tiếp nhận được cập nhật trực tiếp.</p>
                   </div>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+                    className="inline-flex items-center gap-2 rounded-xl bg-surface-container-highest px-4 py-2 text-sm font-bold transition hover:bg-outline-variant/20"
                   >
                     <span>🖨</span>
                     In phiếu
@@ -292,49 +292,49 @@ export default function VehicleIntake() {
                 </div>
 
                 <div className="space-y-6 px-6 py-6">
-                  <div className="rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Phiếu tiếp nhận xe</p>
-                    <p className="mt-2 text-lg font-semibold">ID: #PN-20240524-001</p>
+                  <div className="rounded-2xl bg-surface-container-lowest p-5">
+                    <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Phiếu tiếp nhận xe</p>
+                    <p className="mt-1 text-lg font-black text-on-surface tracking-tight">ID: #PN-20240524-001</p>
 
                     <dl className="mt-5 space-y-4 text-sm">
-                      <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
-                        <dt className="text-slate-400">Khách hàng</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.ownerName)}</dd>
+                      <div className="flex items-start justify-between gap-4 border-b border-outline-variant/10 pb-3">
+                        <dt className="text-on-surface-variant font-medium">Khách hàng</dt>
+                        <dd className="text-right font-bold text-on-surface">{formatDisplay(form.ownerName)}</dd>
                       </div>
-                      <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
-                        <dt className="text-slate-400">Điện thoại</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.phone)}</dd>
+                      <div className="flex items-start justify-between gap-4 border-b border-outline-variant/10 pb-3">
+                        <dt className="text-on-surface-variant font-medium">Điện thoại</dt>
+                        <dd className="text-right font-bold text-on-surface">{formatDisplay(form.phone)}</dd>
                       </div>
-                      <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
-                        <dt className="text-slate-400">Biển số</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.licensePlate, '-- --')}</dd>
+                      <div className="flex items-start justify-between gap-4 border-b border-outline-variant/10 pb-3">
+                        <dt className="text-on-surface-variant font-medium">Biển số</dt>
+                        <dd className="text-right font-bold text-on-surface">{formatDisplay(form.licensePlate, '-- --')}</dd>
                       </div>
-                      <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
-                        <dt className="text-slate-400">Phương tiện</dt>
-                        <dd className="text-right font-medium text-white">{summaryVehicle}</dd>
+                      <div className="flex items-start justify-between gap-4 border-b border-outline-variant/10 pb-3">
+                        <dt className="text-on-surface-variant font-medium">Phương tiện</dt>
+                        <dd className="text-right font-bold text-on-surface">{summaryVehicle}</dd>
                       </div>
-                      <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
-                        <dt className="text-slate-400">Trạng thái tiếp nhận</dt>
-                        <dd className="inline-flex rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                      <div className="flex items-start justify-between gap-4 border-b border-outline-variant/10 pb-3">
+                        <dt className="text-on-surface-variant font-medium">Trạng thái</dt>
+                        <dd className="inline-flex rounded-md bg-secondary-container px-2 py-1 text-xs font-bold text-on-secondary-container">
                           Chờ xử lý
                         </dd>
                       </div>
                       <div className="flex items-start justify-between gap-4">
-                        <dt className="text-slate-400">Cố vấn dịch vụ</dt>
-                        <dd className="text-right font-medium text-white">{form.advisor}</dd>
+                        <dt className="text-on-surface-variant font-medium">Cố vấn dịch vụ</dt>
+                        <dd className="text-right font-bold text-on-surface">{form.advisor}</dd>
                       </div>
                     </dl>
                   </div>
 
-                  <div className="rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-white">Ghi chú nhanh</p>
-                    <p className="mt-3 text-sm leading-6 text-slate-300">{summaryConditions}</p>
-                    {form.note ? <p className="mt-3 text-sm leading-6 text-slate-400">{form.note}</p> : null}
+                  <div className="rounded-2xl bg-surface-container-lowest p-5">
+                    <p className="text-sm font-bold text-on-surface">Ghi chú nhanh</p>
+                    <p className="mt-2 text-sm leading-relaxed text-on-surface-variant font-medium">{summaryConditions}</p>
+                    {form.note ? <p className="mt-2 text-sm leading-relaxed text-on-surface-variant font-medium">{form.note}</p> : null}
                   </div>
 
                   <button
                     type="button"
-                    className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-white/20 bg-white/5 px-4 py-4 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-outline-variant/50 bg-surface-container-lowest px-4 py-4 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
                   >
                     <span>📷</span>
                     Chụp ảnh hiện trạng
@@ -342,14 +342,14 @@ export default function VehicleIntake() {
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)]">
+              <section className="rounded-3xl bg-surface-container-lowest p-6 shadow-sm border border-outline-variant/10">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl text-slate-700">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container-high text-xl text-on-surface">
                     🕘
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-slate-900">Lịch sử gần nhất</h2>
-                    <p className="mt-1 text-sm text-slate-500">Không tìm thấy dữ liệu cũ</p>
+                    <h2 className="text-lg font-bold text-on-surface tracking-tight">Lịch sử gần nhất</h2>
+                    <p className="mt-1 text-sm text-on-surface-variant font-medium">Không tìm thấy dữ liệu cũ</p>
                   </div>
                 </div>
               </section>
