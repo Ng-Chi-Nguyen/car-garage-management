@@ -45,4 +45,5 @@ client/dist/
 client/build/
 
 # Agent worktrees
+.worktrees/
 .hive/.worktrees/
