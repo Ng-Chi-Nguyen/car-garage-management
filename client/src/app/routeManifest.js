@@ -110,5 +110,12 @@ export const routeManifest = [
     layout: 'app',
     componentPath: 'src/pages/settings/ActivityLog.jsx',
     group: 'system'
+  },
+  {
+    exportKey: null, // Not from Stitch export
+    path: '*',
+    layout: 'app',
+    componentPath: 'src/pages/not-found.jsx',
+    group: 'system'
   }
 ];
