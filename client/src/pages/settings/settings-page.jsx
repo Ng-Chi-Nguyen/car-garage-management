@@ -17,7 +17,7 @@ export default function SettingsPage() {
         description="Quản lý các tham số vận hành cốt lõi của Gara"
       />
 
-      <div className="bg-error-container/30 border-l-4 border-error p-4 rounded-xl flex items-start gap-3">
+      <div className="bg-error-container p-4 rounded-xl flex items-start gap-3">
         <span className="material-symbols-outlined text-error">warning</span>
         <div>
           <h4 className="text-on-error-container font-semibold text-sm">Cảnh báo vận hành</h4>
@@ -27,7 +27,7 @@ export default function SettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div className="md:col-span-4 space-y-6">
-          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:shadow-md transition-shadow">
+          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm  group hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <span className="material-symbols-outlined">directions_car</span>
@@ -44,7 +44,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:shadow-md transition-shadow">
+          <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm  group hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2 bg-tertiary/10 rounded-lg text-tertiary">
                 <span className="material-symbols-outlined">percent</span>
@@ -125,7 +125,7 @@ export default function SettingsPage() {
                 </div>
                 <p className="text-xs text-slate-500 truncate">C-Class, E-Class, GLC, S-Class...</p>
               </div>
-              <div className="border-2 border-dashed border-outline-variant/40 p-4 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary hover:border-primary/40 transition-all group cursor-pointer">
+              <div className="bg-surface-container p-4 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary hover:border-primary/40 transition-all group cursor-pointer">
                 <span className="material-symbols-outlined">add_circle</span>
                 <span className="text-xs font-semibold">Thêm hãng xe</span>
               </div>
@@ -134,7 +134,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+      <div className="flex items-center justify-between pt-6 bg-surface-container-low p-4 rounded-xl">
         <div className="text-xs text-slate-500">
           Lần cập nhật cuối: <span className="font-semibold">Hôm nay, 14:32</span> bởi <span className="font-semibold">Admin</span>
         </div>

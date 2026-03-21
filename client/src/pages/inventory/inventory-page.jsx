@@ -28,11 +28,11 @@ export default function InventoryPage() {
               <span className="material-symbols-outlined">add</span>
               Thêm vật tư
             </button>
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary border border-primary/10 rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-fixed transition-colors">
+            <button className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary  rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-fixed transition-colors">
               <span className="material-symbols-outlined">input</span>
               Nhập kho nhanh
             </button>
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-secondary border border-outline-variant/30 rounded-xl font-semibold text-sm shadow-sm hover:bg-slate-50 transition-colors">
+            <button className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-secondary  rounded-xl font-semibold text-sm shadow-sm hover:bg-slate-50 transition-colors">
               <span className="material-symbols-outlined">history_edu</span>
               Xem thẻ kho
             </button>
