@@ -10,14 +10,14 @@ export const routeManifest = [
     exportKey: 'ng_nh_p_gms_enterprise',
     path: '/login',
     layout: 'auth',
-    componentPath: 'src/pages/auth/Login.jsx',
+    componentPath: 'src/pages/auth/login-page.jsx',
     group: 'auth'
   },
   {
     exportKey: 'dashboard_t_ng_quan_gms',
     path: '/dashboard',
     layout: 'app',
-    componentPath: 'src/pages/dashboard/Dashboard.jsx',
+    componentPath: 'src/pages/dashboard/dashboard-page.jsx',
     group: 'core'
   },
   {
