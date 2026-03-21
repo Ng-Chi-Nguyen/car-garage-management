@@ -1,0 +1,17 @@
+{
+  "status": "done",
+  "origin": "plan",
+  "planTitle": "Port detail/report pages and complete route coverage",
+  "dependsOn": [
+    "02-build-routing-bootstrap-from-the-route-manifest",
+    "03-create-the-reusable-shell-and-design-primitives",
+    "05-port-list-oriented-pages-from-the-manifest",
+    "06-port-workflowform-pages-in-business-flow-order"
+  ],
+  "baseCommit": "f5aa9709d037f5c0711c7eb5444b7e80a4ace91e",
+  "schemaVersion": 1,
+  "startedAt": "2026-03-21T11:07:43.260Z",
+  "idempotencyKey": "hive-ui-ux-init-stitch-export-07-port-detailreport-pages-and-complete-route-coverage-1",
+  "summary": "Ported customer detail, report, and stock card pages using static primitives. Added route manifest verification script enforcing 15 stitch routes and excluding mechanic_flow. Integrated static structural links in parent list pages. All builds pass successfully.",
+  "completedAt": "2026-03-21T11:12:13.200Z"
+}
