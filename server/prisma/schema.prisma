@@ -9,16 +9,35 @@ datasource db {
 
 model HIEU_XE {
     MaHieuXe  Int    @id @default(autoincrement())
-    TenHieuXe String @db.VarChar(100)
+    TenHieuXe String @unique @db.VarChar(100)
     Xe        XE[]
 }
 
+enum TrangThaiKhachHang {
+    HoatDong
+    BiKhoa
+    DaXoa
+}
+
+enum ChucVu {
+    Admin
+    NhanVien
+    KhachHang
+}
+
 model KHACH_HANG {
-    MaKH      Int    @id @default(autoincrement())
-    TenChuXe  String @db.VarChar(100)
-    DienThoai String @db.VarChar(20)
-    DiaChi    String @db.VarChar(255)
-    Xe        XE[]
+    MaKH        Int                 @id @default(autoincrement())
+    Email       String?             @unique @db.VarChar(100)
+    MatKhau     String?             @db.VarChar(255)
+    TenChuXe    String              @db.VarChar(100)
+    DienThoai   String              @unique @db.VarChar(20)
+    DiaChi      String              @db.VarChar(255)
+    ChucVu      ChucVu?             @default(KhachHang)
+    TrangThai   TrangThaiKhachHang? @default(HoatDong)
+    Avatar      String?             @db.VarChar(255)
+    NgayTao     DateTime            @default(now())
+    NgayCapNhat DateTime            @updatedAt
+    Xe          XE[]
 }
 
 model XE {
@@ -36,9 +55,14 @@ model XE {
 model PHIEU_SUA_CHUA {
     MaPhieuSC      Int                 @id @default(autoincrement())
     MaXe           Int
+    MaNV           Int?
     NgaySC         DateTime            @db.Date
     TrangThai      String              @db.VarChar(50)
+    NoiDungLoi     String?             @db.VarChar(255)
+    GhiChu         String?             @db.VarChar(255)
     TongTien       Decimal             @db.Decimal(15, 2)
+    NgayTao        DateTime            @default(now())
+    NgayCapNhat    DateTime            @updatedAt
     Xe             XE                  @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
     ChiTietSuaChua CT_PHIEU_SUA_CHUA[]
 }
@@ -57,6 +81,8 @@ model VAT_TU {
     SoLuongTon       Int
     GiaVon           Decimal             @db.Decimal(15, 2)
     DonGiaBan        Decimal             @db.Decimal(15, 2)
+    MaNCC            Int?
+    NhaCungCap       NHA_CUNG_CAP?       @relation(fields: [MaNCC], references: [MaNCC], onDelete: SetNull, onUpdate: Cascade)
     ChiTietSuaChua   CT_PHIEU_SUA_CHUA[]
     ChiTietPhieuNhap CT_PHIEU_NHAP[]
 }
@@ -79,8 +105,11 @@ model NHA_CUNG_CAP {
     MaNCC        Int              @id @default(autoincrement())
     TenNCC       String           @db.VarChar(100)
     DienThoai    String           @db.VarChar(20)
+    Email        String?          @unique @db.VarChar(100)
+    NguoiLienHe  String?          @db.VarChar(100)
     DiaChi       String           @db.VarChar(255)
     PhieuNhapKho PHIEU_NHAP_KHO[]
+    VatTu        VAT_TU[]
 }
 
 model PHIEU_NHAP_KHO {
@@ -104,10 +133,15 @@ model CT_PHIEU_NHAP {
 }
 
 model PHIEU_THU_TIEN {
-    MaPhieuThu Int      @id @default(autoincrement())
-    MaXe       Int
-    NgayThu    DateTime @db.Date
-    SoTienThu  Decimal  @db.Decimal(15, 2)
-    GhiChu     String   @db.VarChar(255)
-    Xe         XE       @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
+    MaPhieuThu    Int      @id @default(autoincrement())
+    MaXe          Int
+    MaNV          Int?
+    NgayThu       DateTime @db.Date
+    SoTienThu     Decimal  @db.Decimal(15, 2)
+    PhuongThucThu String?  @db.VarChar(50)
+    TrangThai     String?  @db.VarChar(50)
+    GhiChu        String?  @db.VarChar(255)
+    NgayTao       DateTime @default(now())
+    NgayCapNhat   DateTime @updatedAt
+    Xe            XE       @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
 }

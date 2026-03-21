@@ -3,34 +3,18 @@ import prisma from '../../db/prisma.js';
 const buildServiceError = (status, message) => {
     const error = new Error(message);
     error.status = status;
-
     return error;
 };
 
 const buildSearchCondition = (search) => {
     const keyword = search?.trim();
-
-    if (!keyword) {
-        return {};
-    }
-
+    if (!keyword) return {};
     return {
         OR: [
-            {
-                TenChuXe: {
-                    contains: keyword,
-                },
-            },
-            {
-                DienThoai: {
-                    contains: keyword,
-                },
-            },
-            {
-                DiaChi: {
-                    contains: keyword,
-                },
-            },
+            { TenChuXe: { contains: keyword } },
+            { Email: { contains: keyword } },
+            { DienThoai: { contains: keyword } },
+            { DiaChi: { contains: keyword } },
         ],
     };
 };
@@ -38,9 +22,14 @@ const buildSearchCondition = (search) => {
 const buildUpdateData = (payload) => {
     return Object.fromEntries(
         Object.entries({
+            Email: payload.Email,
+            MatKhau: payload.MatKhau,
             TenChuXe: payload.TenChuXe,
             DienThoai: payload.DienThoai,
             DiaChi: payload.DiaChi,
+            ChucVu: payload.ChucVu,
+            TrangThai: payload.TrangThai,
+            Avatar: payload.Avatar,
         }).filter(([, value]) => value !== undefined),
     );
 };
@@ -49,9 +38,14 @@ const userService = {
     createUser: async (payload) => {
         const user = await prisma.kHACH_HANG.create({
             data: {
+                Email: payload.Email,
+                MatKhau: payload.MatKhau,
                 TenChuXe: payload.TenChuXe,
                 DienThoai: payload.DienThoai,
                 DiaChi: payload.DiaChi,
+                ChucVu: payload.ChucVu,
+                TrangThai: payload.TrangThai,
+                Avatar: payload.Avatar,
             },
         });
 
