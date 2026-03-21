@@ -2,11 +2,11 @@ import React from 'react';
 
 export function StatCard({ label, value, trend, icon }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div className="flex items-center justify-between">
+    <div className="bg-white rounded-2xl p-6">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="text-sm font-medium text-gray-500 mb-2">{label}</p>
+          <p className="text-[2.75rem] leading-none font-bold text-gray-900 tracking-tight">{value}</p>
         </div>
         {icon && <div className="text-gray-400">{icon}</div>}
       </div>
