@@ -1,0 +1,231 @@
+client/src/components/layout/sidebar.jsx  | 26 +++++++++++-----------
+ client/src/components/layout/topbar.jsx   | 37 ++++++++++++++++++++++++++-----
+ client/src/components/ui/data-table.jsx   | 12 +++++-----
+ client/src/components/ui/page-header.jsx  |  6 ++---
+ client/src/components/ui/search-input.jsx |  4 ++--
+ client/src/components/ui/section-card.jsx |  8 +++----
+ client/src/components/ui/stat-card.jsx    | 12 +++++-----
+ client/src/components/ui/status-badge.jsx | 17 +++++++-------
+ client/src/layouts/AppShell.jsx           |  4 ++--
+ 9 files changed, 76 insertions(+), 50 deletions(-)
+
+--- Changes ---
+
+📄 client/src/components/layout/sidebar.jsx
+  @@ -13,43 +13,43 @@
+  -    <div className="w-64 bg-white/85 backdrop-blur-[12px] text-[#191c1e] flex flex-col h-screen fixed top-0 left-0 z-20">
+  +    <div className="w-64 bg-surface-container-lowest/85 backdrop-blur-[12px] text-on-surface flex flex-col h-screen fixed top-0 left-0 border-r border-outline-variant/10 z-20">
+         <div className="p-6 flex items-center gap-3">
+  -        <div className="w-8 h-8 bg-gradient-to-br from-[#0040a1] to-[#0056d2] rounded-lg flex items-center justify-center font-bold text-white shadow-sm">G</div>
+  +        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white shadow-md shadow-primary/20">G</div>
+           <span className="font-semibold text-lg tracking-tight">GMS Enterprise</span>
+         </div>
+  -      <nav className="flex-1 py-4 flex flex-col gap-1 overflow-y-auto">
+  +      <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
+           {navItems.map((item) => (
+             <NavLink
+               key={item.path}
+               to={item.path}
+               className={({ isActive }) =>
+  -              `group flex items-center gap-3 px-6 py-2.5 transition-all relative ${
+  +              `flex items-center gap-3 px-6 py-2.5 transition-all relative ${
+                   isActive
+  -                  ? 'text-[#0040a1] font-semibold'
+  -                  : 'text-gray-600 hover:text-gray-900 font-medium'
+  +                  ? 'text-primary font-semibold'
+  +                  : 'text-on-surface-variant font-medium hover:text-primary hover:bg-primary/5'
+                 }`
+               }
+             >
+               {({ isActive }) => (
+                 <>
+                   {isActive && (
+  -                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-2/3 bg-[#0040a1] rounded-r-full" />
+  +                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
+                   )}
+  ... (truncated)
+  +13 -13
+
+📄 client/src/components/layout/topbar.jsx
+  @@ -1,15 +1,40 @@
+  +import { useLocation } from 'react-router-dom';
+   
+   export function Topbar() {
+  +  const location = useLocation();
+  +  const getPageTitle = () => {
+  +    const path = location.pathname;
+  +    if (path.includes('dashboard')) return 'Tổng quan';
+  +    if (path.includes('workshop')) return 'Trạng thái xưởng';
+  +    if (path.includes('intake')) return 'Tiếp nhận xe';
+  +    if (path.includes('inventory')) return 'Kho vật tư';
+  +    if (path.includes('finance')) return 'Tài chính';
+  +    if (path.includes('customers')) return 'Khách hàng';
+  +    if (path.includes('settings')) return 'Cài đặt';
+  +    if (path.includes('activity')) return 'Nhật ký thao tác';
+  +    return 'Dashboard';
+  +  };
+  +
+     return (
+  -    <header className="h-16 bg-white/85 backdrop-blur-[12px] flex items-center justify-between px-6 sticky top-0 z-10 transition-all">
+  +    <header className="h-[72px] bg-surface-container-lowest/85 backdrop-blur-[12px] flex items-center justify-between px-8 sticky top-0 z-10 border-b border-outline-variant/10">
+         <div className="flex items-center gap-4">
+  -        {/* Breadcrumbs placeholder */}
+  -        <h1 className="text-xl font-semibold text-[#191c1e] tracking-tight">Dashboard</h1>
+  +        <h1 className="text-[1.125rem] font-semibold text-on-surface tracking-tight">{getPageTitle()}</h1>
+         </div>
+  -      <div className="flex items-center gap-4">
+  -        <div className="w-8 h-8 rounded-full bg-[#f2f4f6] flex items-center justify-center text-[#0040a1] font-medium shadow-sm">
+  -          A
+  +      <div className="flex items-center gap-6">
+  +        <button className="relative text-on-surface-variant hover:text-primary transition-colors">
+  ... (truncated)
+  +31 -6
+
+📄 client/src/components/ui/data-table.jsx
+  @@ -11,18 +11,18 @@
+  -              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-gray-600 uppercase tracking-wider">
+  +              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-slate-500 uppercase tracking-[0.05em]">
+                   {col.header}
+                 </th>
+               ))}
+             </tr>
+           </thead>
+  -        <tbody className="[&>tr]:hover:bg-gray-100 [&>tr]:transition-colors [&>tr]:duration-200">
+  +        <tbody>
+             {hasStructuredData
+               ? data.map((row, idx) => (
+  -                <tr key={idx}>
+  +                <tr key={idx} className="hover:bg-slate-50/80 transition-colors duration-150">
+                     {normalizedColumns.map((col, colIdx) => (
+  -                    <td key={colIdx} className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+  +                    <td key={colIdx} className="px-6 py-4 text-[0.875rem] text-slate-900 whitespace-nowrap">
+                         {col.cell ? col.cell(row) : row[col.accessor]}
+                       </td>
+                     ))}
+  @@ -31,14 +31,14 @@
+  -              <td colSpan={normalizedColumns.length} className="px-6 py-8 text-center text-gray-500 text-sm">
+  +              <td colSpan={normalizedColumns.length} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
+                   Không có dữ liệu
+                 </td>
+               </tr>
+             )}
+             {!hasStructuredData && !hasLegacyRows && (
+               <tr>
+  -              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-gray-500 text-sm">
+  +              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
+                   Không có dữ liệu
+                 </td>
+               </tr>
+  +6 -6
+
+📄 client/src/components/ui/page-header.jsx
+  @@ -2,10 +2,10 @@
+  -    <div className="flex items-start justify-between mb-8">
+  +    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+         <div>
+  -        <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">{title}</h2>
+  -        {description && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{description}</p>}
+  +        <h2 className="text-[1.5rem] font-bold text-on-surface tracking-tight leading-tight">{title}</h2>
+  +        {description && <p className="text-[0.875rem] text-on-surface-variant mt-1.5">{description}</p>}
+         </div>
+         {actions && <div className="flex items-center gap-3">{actions}</div>}
+       </div>
+  +3 -3
+
+📄 client/src/components/ui/search-input.jsx
+  @@ -4,13 +4,13 @@
+  -        <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+  +        <svg className="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+           </svg>
+         </div>
+         <input
+           type="text"
+  -        className="block w-full pl-10 pr-3 py-2 bg-white border border-[#c3c6d6]/15 rounded-xl leading-5 text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-[#0040a1]/30 focus:border-[#0040a1]/30 sm:text-sm transition duration-300 ease-out"
+  +        className="block w-full pl-10 pr-3 py-2 bg-white border border-transparent rounded-xl text-[0.875rem] text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-600/30 focus:ring-4 focus:ring-blue-600/10 transition-all duration-200"
+           placeholder={placeholder}
+           value={value}
+           onChange={onChange}
+  +2 -2
+
+📄 client/src/components/ui/section-card.jsx
+  @@ -2,14 +2,14 @@
+  -    <div className={`bg-white rounded-2xl ${className}`}>
+  +    <div className={`bg-white rounded-xl overflow-hidden ${className}`}>
+         {(title || action) && (
+  -        <div className="px-6 pt-6 flex items-center justify-between">
+  -          {title && <h3 className="text-lg font-semibold text-gray-900 tracking-tight">{title}</h3>}
+  +        <div className="px-6 py-4 flex items-center justify-between">
+  +          {title && <h3 className="text-[1.125rem] font-semibold text-slate-900 tracking-tight">{title}</h3>}
+             {action && <div>{action}</div>}
+           </div>
+         )}
+  -      <div className="p-6">
+  +      <div className="p-6 pt-2">
+           {children}
+         </div>
+       </div>
+  +4 -4
+
+📄 client/src/components/ui/stat-card.jsx
+  @@ -2,16 +2,16 @@
+  -    <div className="bg-white rounded-2xl p-6">
+  -      <div className="flex items-start justify-between">
+  +    <div className="bg-white rounded-[1.5rem] p-6">
+  +      <div className="flex items-center justify-between">
+           <div>
+  -          <p className="text-sm font-medium text-gray-500 mb-2">{label}</p>
+  -          <p className="text-[2.75rem] leading-none font-bold text-gray-900 tracking-tight">{value}</p>
+  +          <p className="text-[0.875rem] font-medium text-slate-500 tracking-wide">{label}</p>
+  +          <p className="text-[2.75rem] font-bold text-slate-900 mt-2 leading-none tracking-tight">{value}</p>
+           </div>
+  -        {icon && <div className="text-gray-400">{icon}</div>}
+  +        {icon && <div className="text-slate-400">{icon}</div>}
+         </div>
+         {trend && (
+  -        <div className={`mt-4 text-sm font-medium ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+  +        <div className={`mt-4 text-[0.75rem] font-medium px-2 py-1 rounded-md inline-block ${trend > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+             {trend > 0 ? '+' : ''}{trend}%
+           </div>
+         )}
+  +6 -6
+
+📄 client/src/components/ui/status-badge.jsx
+  @@ -1,18 +1,19 @@
+  -  success: 'bg-green-500/15 text-green-700',
+  -  warning: 'bg-yellow-500/15 text-yellow-700',
+  -  danger: 'bg-red-500/15 text-red-700',
+  -  info: 'bg-blue-500/15 text-blue-700',
+  -  default: 'bg-gray-500/15 text-gray-700'
+  +  success: 'bg-green-100 text-green-800',
+  +  warning: 'bg-yellow-100 text-yellow-800',
+  +  danger: 'bg-red-100 text-red-800',
+  +  error: 'bg-red-100 text-red-800',
+  +  info: 'bg-blue-100 text-blue-800',
+  +  default: 'bg-gray-100 text-gray-800'
+   };
+   
+  -export function StatusBadge({ status = 'default', children }) {
+  +export function StatusBadge({ status = 'default', label, children }) {
+     const colorClass = STATUS_COLORS[status] || STATUS_COLORS.default;
+     return (
+  -    <span className={`px-2.5 py-0.5 rounded-full text-[0.75rem] font-medium inline-flex items-center justify-center ${colorClass}`}>
+  -      {children}
+  +    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
+  +      {label || children}
+       </span>
+     );
+   }
+  +9 -8
+
+📄 client/src/layouts/AppShell.jsx
+  @@ -5,9 +5,9 @@
+  -    <div className="flex h-screen bg-[#f7f9fb] text-[#191c1e] overflow-hidden font-sans">
+  +    <div className="flex h-screen bg-surface overflow-hidden">
+         <Sidebar />
+  -      <div className="flex-1 ml-64 flex flex-col min-w-0 h-screen relative">
+  +      <div className="flex-1 ml-64 flex flex-col min-w-0 h-screen">
+           <Topbar />
+           <main className="flex-1 overflow-y-auto p-6 md:p-8">
+             <div className="max-w-7xl mx-auto">
+  +2 -2

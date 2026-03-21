@@ -22,11 +22,11 @@ export default function ActivityLogPage() {
         description="Giám sát và kiểm tra toàn bộ hoạt động hệ thống Gara."
         actions={
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant font-medium rounded-lg hover:bg-slate-50 transition-all shadow-sm">
+            <button className="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest text-on-surface-variant font-medium rounded-lg hover:bg-slate-50 transition-all">
               <span className="material-symbols-outlined text-lg">file_download</span>
               Xuất báo cáo (Excel)
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-container transition-all shadow-md shadow-primary/20">
+            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-container transition-all">
               <span className="material-symbols-outlined text-lg">refresh</span>
               Làm mới dữ liệu
             </button>
@@ -35,7 +35,7 @@ export default function ActivityLogPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div className="col-span-12 lg:col-span-4 bg-primary text-white p-6 rounded-xl relative overflow-hidden flex flex-col justify-between h-48 shadow-xl shadow-primary/10">
+        <div className="col-span-12 lg:col-span-4 bg-primary text-white p-6 rounded-xl relative overflow-hidden flex flex-col justify-between h-48">
           <div className="relative z-10">
             <p className="text-sm font-medium opacity-80 uppercase tracking-widest">Tổng thao tác hôm nay</p>
             <h3 className="text-5xl font-bold mt-2 font-headline">1,284</h3>

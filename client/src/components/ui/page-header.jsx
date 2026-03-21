@@ -2,10 +2,10 @@ import React from 'react';
 
 export function PageHeader({ title, description, actions }) {
   return (
-    <div className="flex items-start justify-between mb-8">
+    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">{title}</h2>
-        {description && <p className="text-sm text-gray-500 mt-2 leading-relaxed">{description}</p>}
+        <h2 className="text-[1.5rem] font-bold text-on-surface tracking-tight leading-tight">{title}</h2>
+        {description && <p className="text-[0.875rem] text-on-surface-variant mt-1.5">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-3">{actions}</div>}
     </div>

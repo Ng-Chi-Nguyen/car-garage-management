@@ -57,7 +57,7 @@ export default function WorkshopStatusPage() {
           </div>
           <div className="flex items-end justify-between">
             <h3 className="text-3xl text-on-primary-container font-bold">12</h3>
-            <div className="text-xs font-medium bg-white/20 text-on-primary-container px-2 py-1 rounded">Hôm nay</div>
+            <div className="text-xs font-medium bg-surface-container-lowest/20 text-on-primary-container px-2 py-1 rounded">Hôm nay</div>
           </div>
         </div>
       </div>
