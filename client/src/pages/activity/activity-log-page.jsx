@@ -22,7 +22,7 @@ export default function ActivityLogPage() {
         description="Giám sát và kiểm tra toàn bộ hoạt động hệ thống Gara."
         actions={
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white text-on-surface-variant font-medium rounded-lg border border-outline-variant/30 hover:bg-slate-50 transition-all shadow-sm">
+            <button className="flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant font-medium rounded-lg hover:bg-slate-50 transition-all shadow-sm">
               <span className="material-symbols-outlined text-lg">file_download</span>
               Xuất báo cáo (Excel)
             </button>
@@ -70,7 +70,7 @@ export default function ActivityLogPage() {
       </div>
 
       <div className="bg-surface-container-low rounded-xl p-1 overflow-hidden">
-        <div className="bg-surface-container-lowest p-6 flex flex-wrap items-center gap-6 border-b border-surface-container">
+        <div className="bg-surface-container-lowest p-6 flex flex-wrap items-center gap-6 ">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Khoảng thời gian</label>
             <div className="relative">
