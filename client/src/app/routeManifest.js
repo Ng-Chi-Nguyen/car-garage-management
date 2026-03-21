@@ -59,7 +59,7 @@ export const routeManifest = [
     exportKey: 'th_kho_chi_ti_t_gms',
     path: '/inventory/stock-card',
     layout: 'app',
-    componentPath: 'src/pages/inventory/StockDetail.jsx',
+    componentPath: 'src/pages/inventory/stock-detail-page.jsx',
     group: 'inventory'
   },
   {
@@ -87,14 +87,14 @@ export const routeManifest = [
     exportKey: 'h_s_kh_ch_h_ng_chi_ti_t_gms',
     path: '/customers/detail',
     layout: 'app',
-    componentPath: 'src/pages/customers/CustomerDetail.jsx',
+    componentPath: 'src/pages/customers/customer-detail-page.jsx',
     group: 'crm'
   },
   {
     exportKey: 'b_o_c_o_kh_ch_h_ng_chuy_n_s_u_gms',
     path: '/customers/analytics',
     layout: 'app',
-    componentPath: 'src/pages/customers/CustomerAnalytics.jsx',
+    componentPath: 'src/pages/customers/customer-report-page.jsx',
     group: 'crm'
   },
   {
