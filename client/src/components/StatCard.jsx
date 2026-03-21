@@ -1,4 +1,4 @@
-export default function StatCard({ title, value, trend, trendDirection }) {
+export default function StatCard({ title, value }) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <h3 className="text-sm font-medium text-gray-500">{title}</h3>
