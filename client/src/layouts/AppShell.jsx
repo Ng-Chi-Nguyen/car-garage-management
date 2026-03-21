@@ -1,22 +1,17 @@
 import { Outlet } from 'react-router-dom';
+import { Sidebar } from '../components/layout/sidebar';
+import { Topbar } from '../components/layout/topbar';
 
-export default function AppShell() {
+export function AppShell({ children }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-xl font-semibold text-gray-800">GMS Enterprise</h1>
-      </header>
-      <div className="flex flex-1">
-        <aside className="w-64 bg-white border-r border-gray-200 p-4">
-          <nav className="space-y-2">
-            {/* Sidebar navigation will go here */}
-            <div className="text-sm text-gray-500">Navigation Menu Placeholder</div>
-          </nav>
-        </aside>
-        <main className="flex-1 p-6">
-          <Outlet />
-        </main>
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      <Sidebar />
+      <div className="ml-64 flex h-screen min-w-0 flex-1 flex-col">
+        <Topbar />
+        <main className="flex-1 overflow-y-auto p-6">{children || <Outlet />}</main>
       </div>
     </div>
   );
 }
+
+export default AppShell;
