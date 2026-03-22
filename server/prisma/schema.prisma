@@ -6,3 +6,159 @@ datasource db {
     url      = env("DATABASE_URL")
     provider = "mysql"
 }
+
+model HIEU_XE {
+    MaHieuXe  Int    @id @default(autoincrement())
+    TenHieuXe String @unique @db.VarChar(100)
+    Xe        XE[]
+}
+
+enum TrangThaiKhachHang {
+    HoatDong
+    BiKhoa
+    DaXoa
+}
+
+enum ChucVu {
+    Admin
+    NhanVien
+    KhachHang
+}
+
+model KHACH_HANG {
+    MaKH        Int                 @id @default(autoincrement())
+    Email       String?             @unique @db.VarChar(100)
+    MatKhau     String?             @db.VarChar(255)
+    TenChuXe    String              @db.VarChar(100)
+    DienThoai   String              @unique @db.VarChar(20)
+    DiaChi      String              @db.VarChar(255)
+    ChucVu      ChucVu?             @default(KhachHang)
+    TrangThai   TrangThaiKhachHang? @default(HoatDong)
+    Avatar      String?             @db.VarChar(255)
+    NgayTao     DateTime            @default(now())
+    NgayCapNhat DateTime            @updatedAt
+    Xe          XE[]
+}
+
+model XE {
+    MaXe          Int              @id @default(autoincrement())
+    BienSo        String           @unique @db.VarChar(20)
+    MaHieuXe      Int
+    MaKH          Int
+    TienNoHienTai Decimal          @db.Decimal(15, 2)
+    HieuXe        HIEU_XE          @relation(fields: [MaHieuXe], references: [MaHieuXe], onDelete: Restrict, onUpdate: Cascade)
+    KhachHang     KHACH_HANG       @relation(fields: [MaKH], references: [MaKH], onDelete: Restrict, onUpdate: Cascade)
+    PhieuSuaChua  PHIEU_SUA_CHUA[]
+    PhieuThuTien  PHIEU_THU_TIEN[]
+}
+
+enum TrangThaiPhieuSuaChua {
+    TiepNhan
+    DangSua
+    HoanTat
+}
+
+model PHIEU_SUA_CHUA {
+    MaPhieuSC      Int                   @id @default(autoincrement())
+    MaXe           Int
+    MaNV           Int?
+    NgaySC         DateTime              @db.Date
+    TrangThai      TrangThaiPhieuSuaChua @default(TiepNhan)
+    NoiDungLoi     String?               @db.VarChar(255)
+    GhiChu         String?               @db.VarChar(255)
+    TongTien       Decimal               @db.Decimal(15, 2)
+    NgayTao        DateTime              @default(now())
+    NgayCapNhat    DateTime              @updatedAt
+    Xe             XE                    @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
+    ChiTietSuaChua CT_PHIEU_SUA_CHUA[]
+}
+
+model TIEN_CONG {
+    MaTienCong     Int                 @id @default(autoincrement())
+    NoiDung        String              @db.VarChar(255)
+    DonGia         Decimal             @db.Decimal(15, 2)
+    ChiTietSuaChua CT_PHIEU_SUA_CHUA[]
+}
+
+model VAT_TU {
+    MaVatTu          Int                 @id @default(autoincrement())
+    TenVatTu         String              @db.VarChar(255)
+    DonViTinh        String              @db.VarChar(50)
+    SoLuongTon       Int
+    GiaVon           Decimal             @db.Decimal(15, 2)
+    DonGiaBan        Decimal             @db.Decimal(15, 2)
+    MaNCC            Int?
+    NhaCungCap       NHA_CUNG_CAP?       @relation(fields: [MaNCC], references: [MaNCC], onDelete: SetNull, onUpdate: Cascade)
+    ChiTietSuaChua   CT_PHIEU_SUA_CHUA[]
+    ChiTietPhieuNhap CT_PHIEU_NHAP[]
+}
+
+model CT_PHIEU_SUA_CHUA {
+    MaCTSC         Int            @id @default(autoincrement())
+    MaPhieuSC      Int
+    MaVatTu        Int
+    MaTienCong     Int
+    SoLuong        Int
+    DonGiaVatTu    Decimal        @db.Decimal(15, 2)
+    DonGiaTienCong Decimal        @db.Decimal(15, 2)
+    ThanhTien      Decimal        @db.Decimal(15, 2)
+    PhieuSuaChua   PHIEU_SUA_CHUA @relation(fields: [MaPhieuSC], references: [MaPhieuSC], onDelete: Restrict, onUpdate: Cascade)
+    VatTu          VAT_TU         @relation(fields: [MaVatTu], references: [MaVatTu], onDelete: Restrict, onUpdate: Cascade)
+    TienCong       TIEN_CONG      @relation(fields: [MaTienCong], references: [MaTienCong], onDelete: Restrict, onUpdate: Cascade)
+}
+
+model NHA_CUNG_CAP {
+    MaNCC        Int              @id @default(autoincrement())
+    TenNCC       String           @db.VarChar(100)
+    DienThoai    String           @db.VarChar(20)
+    Email        String?          @unique @db.VarChar(100)
+    NguoiLienHe  String?          @db.VarChar(100)
+    DiaChi       String           @db.VarChar(255)
+    PhieuNhapKho PHIEU_NHAP_KHO[]
+    VatTu        VAT_TU[]
+}
+
+model PHIEU_NHAP_KHO {
+    MaPhieuNhap      Int             @id @default(autoincrement())
+    MaNCC            Int
+    NgayNhap         DateTime        @db.Date
+    TongTien         Decimal         @db.Decimal(15, 2)
+    NhaCungCap       NHA_CUNG_CAP    @relation(fields: [MaNCC], references: [MaNCC], onDelete: Restrict, onUpdate: Cascade)
+    ChiTietPhieuNhap CT_PHIEU_NHAP[]
+}
+
+model CT_PHIEU_NHAP {
+    MaCTPN       Int            @id @default(autoincrement())
+    MaPhieuNhap  Int
+    MaVatTu      Int
+    SoLuong      Int
+    DonGiaNhap   Decimal        @db.Decimal(15, 2)
+    ThanhTien    Decimal        @db.Decimal(15, 2)
+    PhieuNhapKho PHIEU_NHAP_KHO @relation(fields: [MaPhieuNhap], references: [MaPhieuNhap], onDelete: Restrict, onUpdate: Cascade)
+    VatTu        VAT_TU         @relation(fields: [MaVatTu], references: [MaVatTu], onDelete: Restrict, onUpdate: Cascade)
+}
+
+enum TrangThaiPhieuThuTien {
+    ChoXacNhan
+    DaThu
+    Huy
+}
+
+enum PhuongThucThuTien {
+    TienMat
+    ChuyenKhoan
+}
+
+model PHIEU_THU_TIEN {
+    MaPhieuThu    Int                    @id @default(autoincrement())
+    MaXe          Int
+    MaNV          Int?
+    NgayThu       DateTime               @db.Date
+    SoTienThu     Decimal                @db.Decimal(15, 2)
+    PhuongThucThu PhuongThucThuTien?
+    TrangThai     TrangThaiPhieuThuTien? @default(ChoXacNhan)
+    GhiChu        String?                @db.VarChar(255)
+    NgayTao       DateTime               @default(now())
+    NgayCapNhat   DateTime               @updatedAt
+    Xe            XE                     @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
+}
