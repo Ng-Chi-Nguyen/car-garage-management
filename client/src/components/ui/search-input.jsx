@@ -1,6 +1,8 @@
 import React from 'react';
 
 export function SearchInput({ placeholder = 'Tìm kiếm...', value, onChange }) {
+  const isControlled = typeof value !== 'undefined';
+
   return (
     <div className="relative">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -12,7 +14,7 @@ export function SearchInput({ placeholder = 'Tìm kiếm...', value, onChange })
         type="text"
         className="block w-full pl-10 pr-3 py-2 bg-white border border-transparent rounded-xl text-[0.875rem] text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-600/30 focus:ring-4 focus:ring-blue-600/10 transition-all duration-200"
         placeholder={placeholder}
-        value={value}
+        value={isControlled ? value : undefined}
         onChange={onChange}
       />
     </div>

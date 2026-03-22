@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function SectionCard({ title, action, children, className = '' }) {
+export function SectionCard({ title, action, children, className = '', noPadding = false }) {
   return (
     <div className={`bg-white rounded-xl overflow-hidden ${className}`}>
       {(title || action) && (
@@ -9,7 +9,7 @@ export function SectionCard({ title, action, children, className = '' }) {
           {action && <div>{action}</div>}
         </div>
       )}
-      <div className="p-6 pt-2">
+      <div className={noPadding ? '' : 'p-6 pt-2'}>
         {children}
       </div>
     </div>

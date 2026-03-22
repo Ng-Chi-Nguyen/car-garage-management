@@ -31,7 +31,7 @@ export function DataTable({ columns, data, headers, children }) {
             : children}
           {hasStructuredData && data.length === 0 && (
             <tr>
-              <td colSpan={normalizedColumns.length} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
+              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
                 Không có dữ liệu
               </td>
             </tr>
