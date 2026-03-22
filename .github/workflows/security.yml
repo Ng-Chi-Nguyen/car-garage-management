@@ -40,22 +40,20 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: TruffleHog OSS
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --debug --only-verified
-        # Fix lỗi "BASE and HEAD commits are the same":
-        # Khi push lên main, base và head trỏ cùng commit.
-        # Thêm điều kiện: Chỉ chạy scan diff khi là PR.
-        # Nếu là push main, scan toàn bộ (hoặc bỏ qua base/head).
+      - name: TruffleHog OSS (Pull Request)
         if: github.event_name == 'pull_request'
-
-      - name: TruffleHog OSS (Full Scan on Push)
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@v3.94.0
         with:
           path: ./
-          extra_args: --debug --only-verified --no-verification
-        if: github.event_name == 'push'
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          extra_args: --debug --only-verified
+
+      - name: TruffleHog OSS (Push/Schedule)
+        if: github.event_name != 'pull_request'
+        uses: trufflesecurity/trufflehog@v3.94.0
+        with:
+          path: ./
+          base: ""
+          head: ${{ github.ref_name }}
+          extra_args: --debug --results=verified,unknown
