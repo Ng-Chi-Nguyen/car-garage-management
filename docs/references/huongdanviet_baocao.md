@@ -39,7 +39,7 @@ Tất cả các trang trong văn bản phải thống nhất sử dụng một �
           -   Phải (Right):                       2 cm
           -   Trên (Top):                         2 cm
           -   Dưới (Bottom):                      2 cm
-                                              2
+                                              2
          -   Đầu trang (Header):                  1 cm
          -   Chân trang (Footer):                 1 cm
 1.2.1.3. Đánh số trang
@@ -77,7 +77,7 @@ Bảng 1.1. Quy định kích thước và sắp xếp các đề mục
 3.4 có nghĩa là hình thứ 4 trong Chương 3. Tất cả đồ thị, bảng biểu lấy từ các nguồn khác
 phải được trích dẫn đầy đủ, ví dụ "Nguyễn Bin, 2024". Nguồn được trích dẫn phải được
 liệt kê chính xác trong danh mục Tài liệu tham khảo. Tên bảng biểu ghi phía trên bảng, tên
-                                             3
+                                             3
 của hình vẽ ghi phía dưới hình. Thông thường, những bảng ngắn và đồ thị nhỏ phải đi liền
 với phần nội dung đề cập tới các bảng và đồ thị này ở lần thứ nhất. Các bảng dài có thể để
 ở những trang riêng nhưng cũng phải tiếp theo ngay phần nội dung đề cập tới bảng này ở
@@ -116,7 +116,7 @@ mẫu trình bày tóm tắt trong các bảng biểu cũng cần nêu trong Ph�
 không được dày hơn phần chính của ĐỒ ÁN.
 1.3. Trích dẫn tài liệu tham khảo và lập danh mục tài liệu tham khảo
 1.3.1. Tài liệu tham khảo
-                                              4
+                                              4
       - Tài liệu tham khảo bao gồm các tài liệu được trích dẫn, sử dụng và đề cập trong ĐỒ
 ÁN.
       - Trích dẫn tham khảo có ý nghĩa quan trọng đối với ĐỒ ÁN (làm tăng giá trị ĐỒ
@@ -154,7 +154,7 @@ quan, phương pháp nghiên cứu, bàn luận. Phần giả thiết nghiên c�
 kết luận, kiến nghị không sử dụng tài liệu tham khảo.
       - Cách ghi trích dẫn phải thống nhất trong toàn bộ ĐỒ ÁN và phù hợp với cách trình
 bày trong danh mục tài liệu tham khảo.
-                                             5
+                                             5
       Trích dẫn theo thứ tự của tài liệu tham khảo ở danh mục Tài liệu tham khảo và được
 đặt trong ngoặc vuông, khi cần có cả số trang, ví dụ [15, 314-315]. Đối với phần được trích
 dẫn từ nhiều tài liệu khác nhau, số của từng tài liệu được đặt độc lập trong từng ngoặc
@@ -192,7 +192,7 @@ tạp chí.
        metal. Luận án tiến sĩ Hóa học, Viện Hóa học, Hà Nội.
 1.3.3.1. Tài liệu tham khảo là bài báo trong tạp chí, tập san
       Họ và tên tác giả được viết đầy đủ đối với tên người Việt Nam; Họ (viết đầy đủ), tên
-                                             6
+                                             6
 gọi và tên đệm (viết tắt) đối với tên người nước ngoài. Nếu bài báo có 3 tác giả trở lên, cần
 ghi tên tác giả đầu và cộng sự (et al-tiếng Anh), năm xuất bản (trong ngoặc đơn). Tên bài
 báo. Tên tạp chí, tập san (ghi nghiêng), tập (số, không có dấu ngăn cách, đặt trong ngoặc
@@ -222,7 +222,7 @@ Không khuyến khích sử dụng nguồn tài liệu này.
        Tên tác giả (nếu có), năm (nếu có). Tên tài liệu tham khảo, <đường dẫn để tiếp cận
 tài liệu>, thời gian truy cập.
      Nên hạn chế nguồn trích dẫn này.
-Trang bìa                                   7
+Trang bìa                                   7
 
 
                   TRƯỜNG ĐẠI HỌC TÂY ĐÔ (Size 14, canh giữa)
