@@ -13,9 +13,9 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-surface-container-lowest/85 backdrop-blur-[12px] text-on-surface flex flex-col h-screen fixed top-0 left-0 border-r border-outline-variant/10 z-20">
+    <div className="w-64 bg-surface-container-lowest/85 backdrop-blur-[12px] text-on-surface flex flex-col h-screen fixed top-0 left-0 z-20">
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white shadow-md shadow-primary/20">G</div>
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white">G</div>
         <span className="font-semibold text-lg tracking-tight">GMS Enterprise</span>
       </div>
       <nav className="flex-1 py-4 space-y-1 overflow-y-auto">

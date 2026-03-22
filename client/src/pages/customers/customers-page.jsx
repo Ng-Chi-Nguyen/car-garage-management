@@ -23,36 +23,30 @@ export default function CustomersPage() {
       <PageHeader 
         title="Danh sách Khách hàng" 
         description="Theo dõi và quản lý thông tin khách hàng thân thiết"
-        actions={<button className="bg-primary text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95"><span className="material-symbols-outlined text-sm">person_add</span><span>Thêm khách hàng mới</span></button>}
+        actions={<button className="bg-primary text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95"><span className="material-symbols-outlined text-sm">person_add</span><span>Thêm khách hàng mới</span></button>}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatCard 
-          title="Tổng khách hàng" 
+          label="Tổng khách hàng" 
           value="1,284" 
-          icon="group"
-          trend="+12%"
-          trendUp={true}
-          description="Khách hàng có lịch sử giao dịch"
+          icon={<span className="material-symbols-outlined">group</span>}
+          trend={12}
         />
         <StatCard 
-          title="Khách hàng VIP" 
+          label="Khách hàng VIP" 
           value="42" 
-          icon="workspace_premium"
-          description="Chiếm 3.2% tổng số"
+          icon={<span className="material-symbols-outlined">workspace_premium</span>}
         />
         <StatCard 
-          title="Tổng công nợ" 
+          label="Tổng công nợ" 
           value="152.4M" 
-          icon="account_balance_wallet"
-          description="Cần thu hồi từ 18 khách"
-          valueColor="text-error"
+          icon={<span className="material-symbols-outlined text-error">account_balance_wallet</span>}
         />
         <StatCard 
-          title="Lượt sửa chữa/Tháng" 
+          label="Lượt sửa chữa/Tháng" 
           value="312" 
-          icon="speed"
-          description="Trung bình 10.4 lượt/ngày"
+          icon={<span className="material-symbols-outlined">speed</span>}
         />
       </div>
 

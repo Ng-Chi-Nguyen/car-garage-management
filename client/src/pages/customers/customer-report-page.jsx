@@ -12,9 +12,9 @@ export default function CustomerReportPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard label="Tổng số khách hàng" value="1,250" trend={5.2} />
-        <StatCard label="Khách hàng mới (Tháng)" value="45" trend={12.5} />
-        <StatCard label="Khách hàng quay lại" value="68%" trend={-2.1} />
+        <StatCard label="Tổng số khách hàng" value="1,250" trend={5.2} icon={<span className="material-symbols-outlined">group</span>} />
+        <StatCard label="Khách hàng mới (Tháng)" value="45" trend={12.5} icon={<span className="material-symbols-outlined">person_add</span>} />
+        <StatCard label="Khách hàng quay lại" value="68%" trend={-2.1} icon={<span className="material-symbols-outlined">replay</span>} />
       </div>
 
       <SectionCard title="Phân tích doanh thu theo nhóm khách hàng">
