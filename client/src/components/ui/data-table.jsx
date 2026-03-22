@@ -11,18 +11,18 @@ export function DataTable({ columns, data, headers, children }) {
         <thead>
           <tr>
             {normalizedColumns.map((col, idx) => (
-              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-gray-600 uppercase tracking-wider">
+              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-slate-500 uppercase tracking-[0.05em]">
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="[&>tr]:hover:bg-gray-100 [&>tr]:transition-colors [&>tr]:duration-200">
+        <tbody>
           {hasStructuredData
             ? data.map((row, idx) => (
-                <tr key={idx}>
+                <tr key={idx} className="hover:bg-slate-50/80 transition-colors duration-150">
                   {normalizedColumns.map((col, colIdx) => (
-                    <td key={colIdx} className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                    <td key={colIdx} className="px-6 py-4 text-[0.875rem] text-slate-900 whitespace-nowrap">
                       {col.cell ? col.cell(row) : row[col.accessor]}
                     </td>
                   ))}
@@ -31,14 +31,14 @@ export function DataTable({ columns, data, headers, children }) {
             : children}
           {hasStructuredData && data.length === 0 && (
             <tr>
-              <td colSpan={normalizedColumns.length} className="px-6 py-8 text-center text-gray-500 text-sm">
+              <td colSpan={normalizedColumns.length} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
                 Không có dữ liệu
               </td>
             </tr>
           )}
           {!hasStructuredData && !hasLegacyRows && (
             <tr>
-              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-gray-500 text-sm">
+              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
                 Không có dữ liệu
               </td>
             </tr>

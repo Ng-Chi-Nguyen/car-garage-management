@@ -50,14 +50,14 @@ export default function WorkshopStatusPage() {
             <div className="text-xs text-error font-medium bg-error/10 px-2 py-1 rounded">Xong việc</div>
           </div>
         </div>
-        <div className="bg-primary-container p-5 rounded-xl border-none text-white shadow-lg shadow-primary-container/20">
+        <div className="bg-primary-container p-5 rounded-xl border-none text-white">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-on-primary-container uppercase tracking-wider">Đã bàn giao</span>
             <span className="material-symbols-outlined text-on-primary-container" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
           </div>
           <div className="flex items-end justify-between">
             <h3 className="text-3xl text-on-primary-container font-bold">12</h3>
-            <div className="text-xs font-medium bg-white/20 text-on-primary-container px-2 py-1 rounded">Hôm nay</div>
+            <div className="text-xs font-medium bg-surface-container-lowest/20 text-on-primary-container px-2 py-1 rounded">Hôm nay</div>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function WorkshopStatusPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+            <div className="flex items-center justify-between pt-4">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-primary/10 text-primary">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                 Đang sửa
@@ -126,7 +126,7 @@ export default function WorkshopStatusPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+            <div className="flex items-center justify-between pt-4">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary">
                 <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
                 Chẩn đoán
@@ -157,7 +157,7 @@ export default function WorkshopStatusPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+            <div className="flex items-center justify-between pt-4">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-secondary/10 text-secondary">
                 <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                 Chờ

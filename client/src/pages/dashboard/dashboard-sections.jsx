@@ -31,7 +31,7 @@ export function MainMetricGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {/* Large Revenue Bento Card */}
-      <div className="md:col-span-2 bg-white p-6 rounded-xl relative overflow-hidden">
+      <div className="md:col-span-2 bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden">
         <div className="relative z-10">
           <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu hôm nay</p>
           <div className="flex items-baseline gap-2 mb-4">
@@ -54,7 +54,7 @@ export function MainMetricGrid() {
       </div>
       
       {/* Financial Metric Card */}
-      <div className="bg-white p-6 rounded-xl flex flex-col justify-between">
+      <div className="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between">
         <div>
           <p className="text-slate-500 text-sm font-medium mb-1">Công nợ hiện tại</p>
           <h3 className="text-2xl font-bold text-red-600">128.500.000 <span className="text-base font-medium">₫</span></h3>
@@ -89,13 +89,13 @@ export function MainMetricGrid() {
       />
 
       {/* KPI Card */}
-      <div className="bg-gradient-to-br from-[#0040a1] to-[#0056d2] p-6 rounded-xl flex flex-col justify-between text-white">
+      <div className="bg-primary p-6 rounded-xl flex flex-col justify-between text-white">
         <p className="text-white/80 text-sm font-medium mb-1">KPI Tháng</p>
         <div className="flex items-center gap-2">
           <h3 className="text-2xl font-bold">92%</h3>
           <span className="material-symbols-outlined text-white/50">moving</span>
         </div>
-        <div className="mt-2 text-[10px] bg-white/20 p-1 px-2 rounded-full w-fit">Vượt mục tiêu +5%</div>
+        <div className="mt-2 text-[10px] bg-surface-container-lowest/20 p-1 px-2 rounded-full w-fit">Vượt mục tiêu +5%</div>
       </div>
     </div>
   );
