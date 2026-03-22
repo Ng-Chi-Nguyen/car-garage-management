@@ -44,6 +44,8 @@ client/.env
 client/dist/
 client/build/
 
-# Agent worktrees
-.hive/.worktrees/
+# Local worktrees
 .worktrees/
+
+
+superpowers/
