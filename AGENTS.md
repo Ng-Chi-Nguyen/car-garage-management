@@ -17,7 +17,7 @@
 
 ## Cấu trúc repo
 - `client/`: mã frontend, route, page, component, hook, loader.
-- `server/`: route, middleware, controller, service, model, validator, prisma.
+- `server/`: mã backend trong `server/src` (app entry, `config/`, `db/`, `routes/`) và schema/migration trong `server/prisma`.
 - `database/`: SQL khởi tạo dữ liệu.
 - `design/`: đặc tả nghiệp vụ và tài liệu thiết kế.
 - `docs/`: tài liệu dự án và tham chiếu.
@@ -33,7 +33,7 @@
 - Dùng URL làm nguồn sự thật cho state điều hướng (page, filter, tab, selectedId).
 
 ### Backend
-- Mọi API phải có version prefix (`api/v1/...`) và qua xác thực trước controller.
+- Ưu tiên chuẩn hóa API theo version prefix (`api/v1/...`) và áp dụng xác thực trước controller ở các route hỗ trợ; không giả định toàn bộ endpoint hiện đã đồng nhất.
 - Validate input bằng Joi ở route/validator trước khi xử lý nghiệp vụ.
 - Tên hàm controller và service phải thống nhất 1-1.
 - Truy cập DB bằng Prisma theo chuẩn repository/service hiện có.
