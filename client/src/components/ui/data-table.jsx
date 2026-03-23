@@ -19,6 +19,7 @@ function renderHeaderCell(header, idx) {
 export function DataTable({ headers, children, columns = [], data = [] }) {
   const resolvedHeaders = headers ?? columns;
   const hasStaticRows = children !== undefined;
+  const emptyStateColSpan = Math.max(resolvedHeaders.length, 1);
 
   return (
     <div className="overflow-x-auto rounded-[24px] border border-slate-200/80 bg-white">
@@ -42,7 +43,7 @@ export function DataTable({ headers, children, columns = [], data = [] }) {
               ))}
           {!hasStaticRows && data.length === 0 && (
             <tr>
-              <td colSpan={resolvedHeaders.length} className="px-6 py-10 text-center text-sm font-medium text-slate-400">
+              <td colSpan={emptyStateColSpan} className="px-6 py-10 text-center text-sm font-medium text-slate-400">
                 Không có dữ liệu
               </td>
             </tr>

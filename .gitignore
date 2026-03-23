@@ -47,3 +47,6 @@ client/build/
 # Agent worktrees
 .worktrees/
 .hive/.worktrees/
+
+# Local tooling
+superpowers/
