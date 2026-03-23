@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lập Phiếu Sửa Chữa - Precision Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#0056d2",
+              "surface-container": "#eceef0",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b9c7df",
+              "primary-fixed": "#dae2ff",
+              "primary": "#0040a1",
+              "on-error-container": "#93000a",
+              "outline-variant": "#c3c6d6",
+              "surface-container-high": "#e6e8ea",
+              "on-tertiary-fixed": "#380d00",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f2f4f6",
+              "primary-fixed-dim": "#b2c5ff",
+              "on-secondary-fixed-variant": "#3a485b",
+              "on-secondary-fixed": "#0d1c2e",
+              "on-primary-fixed-variant": "#0040a1",
+              "surface-bright": "#f7f9fb",
+              "inverse-primary": "#b2c5ff",
+              "outline": "#737785",
+              "on-secondary-container": "#57657a",
+              "surface": "#f7f9fb",
+              "surface-tint": "#0056d2",
+              "surface-dim": "#d8dadc",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d5e3fc",
+              "surface-variant": "#e0e3e5",
+              "on-surface": "#191c1e",
+              "on-background": "#191c1e",
+              "secondary": "#515f74",
+              "inverse-surface": "#2d3133",
+              "surface-container-highest": "#e0e3e5",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#ccd8ff",
+              "tertiary-fixed-dim": "#ffb59b",
+              "tertiary-fixed": "#ffdbcf",
+              "secondary-container": "#d5e3fc",
+              "inverse-on-surface": "#eff1f3",
+              "tertiary": "#822800",
+              "on-tertiary-fixed-variant": "#812800",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#001847",
+              "tertiary-container": "#a93802",
+              "on-tertiary-container": "#ffcebd",
+              "error": "#ba1a1a",
+              "on-surface-variant": "#424654",
+              "background": "#f7f9fb"
+            },
+            fontFamily: {
+              "headline": ["Be Vietnam Pro"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- SideNavBar (Execution from COMPONENTS_59) -->
+<aside class="fixed left-0 top-0 h-full z-50 flex flex-col h-screen w-64 border-r border-slate-200/15 dark:border-slate-800/15 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-xl py-6 px-4 font-['Be_Vietnam_Pro'] text-sm font-normal">
+<div class="mb-8 px-2">
+<h1 class="text-lg font-bold text-blue-900 dark:text-blue-100 tracking-tight">Precision Engine</h1>
+<p class="text-xs text-slate-500 font-medium">Quản lý Gara Ô tô</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span>Hệ thống</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="category">category</span>
+<span>Danh mục</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="home_repair_service">home_repair_service</span>
+<span>Lễ tân</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span>Kho</span>
+</a>
+<a class="relative flex items-center font-semibold text-blue-700 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/30 before:absolute before:left-0 before:w-1 before:h-6 before:bg-blue-700 before:rounded-r-full px-3 py-2.5" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="build">build</span>
+<span>Sửa chữa</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+<span>Tài chính</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span>Báo cáo</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200/15 dark:border-slate-800/15 space-y-1">
+<button class="w-full text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Hỗ trợ kỹ thuật</span>
+</button>
+<button class="w-full text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 px-3 py-2.5 rounded-lg flex items-center gap-3 text-error">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Đăng xuất</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col">
+<!-- TopAppBar (Execution from COMPONENTS_59) -->
+<header class="sticky top-0 z-40 flex items-center justify-between w-[calc(100%-16rem)] ml-64 h-16 px-6 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/15 dark:border-slate-800/15 shadow-sm dark:shadow-none font-['Be_Vietnam_Pro'] text-sm">
+<div class="flex items-center gap-6">
+<h2 class="text-base font-semibold text-on-surface">Lập phiếu sửa chữa GMS</h2>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-full pl-10 pr-4 py-1.5 text-xs w-64 focus:ring-2 focus:ring-blue-700/20 outline-none transition-all" placeholder="Tìm kiếm hồ sơ..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-xl transition-colors active:scale-95 duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+<div class="flex items-center gap-3 pl-1">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold text-on-surface leading-none">Admin</p>
+<p class="text-[10px] text-slate-500">Quản trị viên</p>
+</div>
+<div class="w-9 h-9 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+<img class="w-full h-full object-cover" data-alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr4rvu5-TzAcEZ77y6TCblvnQF_hmkLwwFctk-6PPFC_DYOrVZuyA6-9rrtIlWgP-_3Nx-WMeb94NHoEvVDoGJLrXjlZHqdlqDr0gNQ9_ofrAvbkiXfc0NcnaBeSLkCaApGMLwYXFAtA-nrU7MRp8UsPxb2dtsxznWMjtzPk1V0MLgfj_CcQcag2WwMZBL619SoRHIRfHlXtFCepSVYl8Q6Dw6CrzG0eennbROLidMwpLStrHIZcQWhw0n8fsxovufOzx6zwD2U64"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Body -->
+<main class="ml-64 p-8 bg-surface min-h-[calc(100vh-4rem)]">
+<div class="grid grid-cols-12 gap-6">
+<!-- Header Info Bento Card -->
+<section class="col-span-12 lg:col-span-8 p-6 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/15 flex flex-col gap-6">
+<div class="flex items-center justify-between mb-2">
+<span class="label-md font-semibold text-primary tracking-widest uppercase">Thông tin đầu phiếu</span>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="sync" style="font-variation-settings: 'wght' 700;">sync</span>
+                                Đang làm
+                            </span>
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                                VIP
+                            </span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="space-y-1">
+<label class="label-md text-on-surface-variant">Số phiếu</label>
+<p class="title-md text-on-surface font-bold">PSC-2024-08150</p>
+</div>
+<div class="space-y-1">
+<label class="label-md text-on-surface-variant">Ngày lập</label>
+<p class="title-md text-on-surface font-semibold">15/05/2024 08:45</p>
+</div>
+<div class="space-y-1">
+<label class="label-md text-on-surface-variant">Biển số</label>
+<p class="title-md text-primary font-black text-xl tracking-tight">30A - 999.88</p>
+</div>
+</div>
+<div class="h-px bg-outline-variant/10 w-full"></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="directions_car">directions_car</span>
+</div>
+<div>
+<p class="body-md font-bold text-on-surface">Mercedes-Benz S450</p>
+<p class="label-md text-on-surface-variant">Số khung: WDD22215...892</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+<div>
+<p class="body-md font-bold text-on-surface">Nguyễn Hoàng Nam</p>
+<p class="label-md text-on-surface-variant">SĐT: 098****789</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Total Amount Bento Card -->
+<section class="col-span-12 lg:col-span-4 p-8 bg-primary text-on-primary rounded-xl shadow-sm relative overflow-hidden flex flex-col justify-center">
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<span class="material-symbols-outlined text-[160px]" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="relative z-10">
+<p class="label-md font-medium text-primary-fixed/80 mb-2 uppercase tracking-widest">Tổng cộng phiếu</p>
+<h3 class="display-md font-black tracking-tight leading-none mb-1">5.450.000<span class="text-2xl font-medium ml-1">đ</span></h3>
+<p class="body-md text-primary-fixed/90">Năm triệu bốn trăm năm mươi ngàn đồng.</p>
+<div class="mt-8 flex flex-col gap-3">
+<button class="w-full bg-surface-container-lowest text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-black/10 hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                                Lưu phiếu
+                            </button>
+<div class="grid grid-cols-2 gap-3">
+<button class="bg-primary-container text-on-primary-container py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 border border-primary-fixed/20 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="print">print</span>
+                                    Báo giá
+                                </button>
+<button class="bg-primary-container text-on-primary-container py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 border border-primary-fixed/20 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                                    Quyết toán
+                                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Detailed Table Bento Card -->
+<section class="col-span-12 p-1 bg-surface-container-low rounded-xl overflow-hidden">
+<div class="bg-surface-container-lowest m-0.5 rounded-[1.4rem] p-6 shadow-sm">
+<div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+<h4 class="title-md font-bold text-on-surface">Chi tiết hạng mục sửa chữa</h4>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-low text-secondary rounded-lg font-semibold flex items-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+                                    Thêm vật tư
+                                </button>
+<button class="px-4 py-2 bg-surface-container-low text-secondary rounded-lg font-semibold flex items-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="engineering">engineering</span>
+                                    Thêm công
+                                </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider rounded-l-lg">Nội dung</th>
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider text-center">Loại</th>
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider text-center">Đơn vị</th>
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider text-right">Số lượng</th>
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider text-right">Đơn giá</th>
+<th class="px-4 py-3 label-md text-on-surface-variant font-bold uppercase tracking-wider text-right rounded-r-lg">Thành tiền</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="px-4 py-5">
+<p class="body-md font-semibold text-on-surface">Dầu nhớt Mobil 1 5W-30</p>
+<p class="text-[10px] text-on-surface-variant">Mã: VT-0012</p>
+</td>
+<td class="px-4 py-5 text-center">
+<span class="px-2.5 py-1 bg-secondary/10 text-secondary rounded text-[11px] font-bold">Vật tư</span>
+</td>
+<td class="px-4 py-5 text-center body-md text-on-surface-variant">Lít</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">6</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">350.000</td>
+<td class="px-4 py-5 text-right body-md font-bold text-on-surface">2.100.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="px-4 py-5">
+<p class="body-md font-semibold text-on-surface">Lọc dầu động cơ</p>
+<p class="text-[10px] text-on-surface-variant">Mã: VT-0988</p>
+</td>
+<td class="px-4 py-5 text-center">
+<span class="px-2.5 py-1 bg-secondary/10 text-secondary rounded text-[11px] font-bold">Vật tư</span>
+</td>
+<td class="px-4 py-5 text-center body-md text-on-surface-variant">Cái</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">1</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">450.000</td>
+<td class="px-4 py-5 text-right body-md font-bold text-on-surface">450.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="px-4 py-5">
+<p class="body-md font-semibold text-on-surface">Công thay dầu và kiểm tra tổng quát</p>
+<p class="text-[10px] text-on-surface-variant">Kỹ thuật viên: Trần Văn A</p>
+</td>
+<td class="px-4 py-5 text-center">
+<span class="px-2.5 py-1 bg-primary/10 text-primary rounded text-[11px] font-bold">Công</span>
+</td>
+<td class="px-4 py-5 text-center body-md text-on-surface-variant">Giờ</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">1</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">400.000</td>
+<td class="px-4 py-5 text-right body-md font-bold text-on-surface">400.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="px-4 py-5">
+<p class="body-md font-semibold text-on-surface">Bố thắng trước (Má phanh)</p>
+<p class="text-[10px] text-on-surface-variant">Mã: VT-4421</p>
+</td>
+<td class="px-4 py-5 text-center">
+<span class="px-2.5 py-1 bg-secondary/10 text-secondary rounded text-[11px] font-bold">Vật tư</span>
+</td>
+<td class="px-4 py-5 text-center body-md text-on-surface-variant">Bộ</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">1</td>
+<td class="px-4 py-5 text-right body-md font-medium text-on-surface">2.500.000</td>
+<td class="px-4 py-5 text-right body-md font-bold text-on-surface">2.500.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Bottom Floating Action Summary -->
+<section class="col-span-12 mt-4 p-6 bg-surface-container-high/50 rounded-xl flex items-center justify-between border-dashed border-2 border-outline-variant/30">
+<div class="flex gap-8">
+<div>
+<p class="label-md text-on-surface-variant uppercase font-bold tracking-wider mb-1">Cố vấn dịch vụ</p>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-slate-300"></div>
+<span class="body-md font-bold text-on-surface">Lê Minh Tuấn</span>
+</div>
+</div>
+<div>
+<p class="label-md text-on-surface-variant uppercase font-bold tracking-wider mb-1">Dự kiến hoàn thành</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="schedule">schedule</span>
+<span class="body-md font-bold text-on-surface">Hôm nay, 16:30</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+                            Hủy phiếu
+                        </button>
+<button class="bg-primary text-on-primary px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all">
+                            Hoàn tất &amp; Lưu
+                        </button>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>
