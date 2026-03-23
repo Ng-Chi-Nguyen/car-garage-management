@@ -41,19 +41,19 @@ jobs:
           fetch-depth: 0
       
       - name: TruffleHog OSS (Pull Request)
+        if: github.event_name == 'pull_request'
         uses: trufflesecurity/trufflehog@v3.94.0
         with:
           path: ./
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           extra_args: --debug --only-verified
-        if: github.event_name == 'pull_request'
 
       - name: TruffleHog OSS (Push/Schedule)
+        if: github.event_name != 'pull_request'
         uses: trufflesecurity/trufflehog@v3.94.0
         with:
           path: ./
           base: ""
           head: ${{ github.ref_name }}
           extra_args: --debug --results=verified,unknown
-        if: github.event_name != 'pull_request'
