@@ -1,0 +1,24 @@
+# Copilot Review Instructions
+
+- Dùng file này cho mọi PR/nhánh trong repo.
+- Luôn đọc `AGENTS.md` trước, sau đó ưu tiên `CONTRIBUTING.md` khi có mâu thuẫn, rồi mới đến `README.md`.
+- Mục tiêu review: tìm bug, regression, sai nghiệp vụ, thiếu test, rủi ro bảo mật, và thay đổi ngoài phạm vi.
+- Khi review frontend:
+  - kiểm tra form dùng `onSubmit`
+  - kiểm tra `Number()` cho dữ liệu số trước khi gửi
+  - kiểm tra `invalidateQueries` sau mutation
+  - không dùng `alert()`
+  - ưu tiên React Query/loader thay vì fetch thủ công nếu phù hợp
+- Khi review backend:
+  - kiểm tra route có `api/v1`
+  - kiểm tra Joi validation trước controller
+  - kiểm tra Prisma/service/repository nhất quán
+  - kiểm tra pagination cho danh sách
+- Nếu thay đổi đụng tới security, data flow, hoặc workflow git, hãy flag rõ trong review.
+- Nếu cần tìm thêm bối cảnh trong code, ưu tiên theo thứ tự: `ccc`/CocoIndex → LSP → AST grep → grep.
+- Khi kết luận, luôn nêu:
+  - file liên quan
+  - mức độ nghiêm trọng
+  - lý do
+  - đề xuất sửa
+- Giữ review ngắn gọn, rõ ràng, và bám đúng phạm vi diff.

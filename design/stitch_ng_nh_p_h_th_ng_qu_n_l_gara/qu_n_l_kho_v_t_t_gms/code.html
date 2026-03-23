@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Kho vật tư - Precision Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#0056d2",
+              "surface-container": "#eceef0",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#b9c7df",
+              "primary-fixed": "#dae2ff",
+              "primary": "#0040a1",
+              "on-error-container": "#93000a",
+              "outline-variant": "#c3c6d6",
+              "surface-container-high": "#e6e8ea",
+              "on-tertiary-fixed": "#380d00",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f2f4f6",
+              "primary-fixed-dim": "#b2c5ff",
+              "on-secondary-fixed-variant": "#3a485b",
+              "on-secondary-fixed": "#0d1c2e",
+              "on-primary-fixed-variant": "#0040a1",
+              "surface-bright": "#f7f9fb",
+              "inverse-primary": "#b2c5ff",
+              "outline": "#737785",
+              "on-secondary-container": "#57657a",
+              "surface": "#f7f9fb",
+              "surface-tint": "#0056d2",
+              "surface-dim": "#d8dadc",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d5e3fc",
+              "surface-variant": "#e0e3e5",
+              "on-surface": "#191c1e",
+              "on-background": "#191c1e",
+              "secondary": "#515f74",
+              "inverse-surface": "#2d3133",
+              "surface-container-highest": "#e0e3e5",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#ccd8ff",
+              "tertiary-fixed-dim": "#ffb59b",
+              "tertiary-fixed": "#ffdbcf",
+              "secondary-container": "#d5e3fc",
+              "inverse-on-surface": "#eff1f3",
+              "tertiary": "#822800",
+              "on-tertiary-fixed-variant": "#812800",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#001847",
+              "tertiary-container": "#a93802",
+              "on-tertiary-container": "#ffcebd",
+              "error": "#ba1a1a",
+              "on-surface-variant": "#424654",
+              "background": "#f7f9fb"
+            },
+            fontFamily: {
+              "headline": ["Be Vietnam Pro"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- SideNavBar based on COMPONENTS_59 -->
+<aside class="fixed left-0 top-0 h-full z-50 flex flex-col h-screen w-64 border-r border-slate-200/15 dark:border-slate-800/15 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-xl transition-all duration-300 py-6 px-4">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div>
+<h1 class="text-lg font-bold text-blue-900 dark:text-blue-100 tracking-tight leading-tight">Precision Engine</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Quản lý Gara Ô tô</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Hệ thống
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="category">category</span>
+                Danh mục
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="home_repair_service">home_repair_service</span>
+                Lễ tân
+            </a>
+<!-- Active Tab: Kho -->
+<a class="relative flex items-center font-semibold text-blue-700 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/30 before:absolute before:left-0 before:w-1 before:h-6 before:bg-blue-700 before:rounded-r-full p-3 font-['Be_Vietnam_Pro'] text-sm" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                Kho
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="build">build</span>
+                Sửa chữa
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+                Tài chính
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+                Báo cáo
+            </a>
+</nav>
+<div class="mt-auto space-y-1">
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help">help</span>
+                Hỗ trợ kỹ thuật
+            </a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 p-3 font-['Be_Vietnam_Pro'] text-sm font-normal" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Đăng xuất
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 min-h-screen">
+<!-- TopAppBar based on COMPONENTS_59 -->
+<header class="sticky top-0 z-40 flex items-center justify-between w-full h-16 px-6 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/15 dark:border-slate-800/15 shadow-sm dark:shadow-none">
+<div class="flex items-center gap-6">
+<h2 class="font-['Be_Vietnam_Pro'] text-sm font-semibold text-blue-700 dark:text-blue-400">Quản lý Kho vật tư</h2>
+<div class="relative group">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full w-80 text-sm focus:ring-2 focus:ring-primary/20 transition-all font-['Be_Vietnam_Pro']" placeholder="Tìm kiếm vật tư, mã phụ tùng..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<div class="flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+<span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Admin</span>
+</div>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-['Be_Vietnam_Pro'] text-sm font-bold leading-none text-on-surface">Trần Anh Tuấn</p>
+<p class="text-[10px] text-slate-500 font-medium">Quản lý Kho</p>
+</div>
+<img alt="User Avatar" class="w-9 h-9 rounded-full object-cover border-2 border-primary-fixed shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMo-iwXQoQX3mJ5L_PCico9-e1E5hYF3NPtcFN8YEtcMPAz7u06ntcM1VMDBbEPKIeyu8Ek7JaqfQHZnGm8RopKzwB5uaz5TkSuqIPOfD2gbx7Nx505h31Y9-B0JQCHMNajvsgYSwBgSf0Sxi54qIhJsjXsrdWNHdscHlydLLdqgLd2zTy0O7BygqI2yXxWvFLbj3WyEkhXvhL7bWLDybMXZ9yKPJPyG4HTzOW-Cf5LTAj624tTH8XbMsXDxYJNDb8j_E-7Fi2zIo"/>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<!-- Action Bento Row -->
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl font-semibold text-sm shadow-md hover:scale-[0.98] transition-transform duration-300">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                        Thêm vật tư
+                    </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary border border-primary/10 rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="input">input</span>
+                        Nhập kho nhanh
+                    </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-secondary border border-outline-variant/30 rounded-xl font-semibold text-sm shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+                        Xem thẻ kho
+                    </button>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl">
+<button class="px-4 py-1.5 bg-surface-container-lowest shadow-sm rounded-lg text-xs font-bold text-primary">Tất cả</button>
+<button class="px-4 py-1.5 hover:bg-surface-container-high rounded-lg text-xs font-bold text-slate-500 transition-colors">Dầu nhớt</button>
+<button class="px-4 py-1.5 hover:bg-surface-container-high rounded-lg text-xs font-bold text-slate-500 transition-colors">Bugi</button>
+<button class="px-4 py-1.5 hover:bg-surface-container-high rounded-lg text-xs font-bold text-slate-500 transition-colors">Lốp xe</button>
+<button class="px-4 py-1.5 hover:bg-surface-container-high rounded-lg text-xs font-bold text-slate-500 transition-colors">Phụ tùng máy</button>
+</div>
+</div>
+<!-- Bento Stats Grid -->
+<div class="bento-grid">
+<!-- KPI Card 1 -->
+<div class="col-span-3 bg-surface-container-lowest p-6 rounded-3xl shadow-sm relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 text-blue-700 rounded-lg">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+</div>
+<span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12% tháng này</span>
+</div>
+<p class="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-tight">Tổng mặt hàng</p>
+<h3 class="text-3xl font-bold text-on-surface">1,284</h3>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<!-- KPI Card 2 - Warning -->
+<div class="col-span-3 bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-tertiary/5 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-orange-50 text-tertiary rounded-lg">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</div>
+</div>
+<p class="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-tight">Vật tư sắp hết</p>
+<h3 class="text-3xl font-bold text-tertiary">24</h3>
+<p class="text-[10px] text-slate-400 mt-2 italic">Cần nhập thêm ngay</p>
+</div>
+<!-- KPI Card 3 -->
+<div class="col-span-6 bg-surface-container-lowest p-6 rounded-3xl shadow-sm flex items-center justify-between gap-6">
+<div class="flex-1">
+<p class="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-tight">Giá trị kho hiện tại</p>
+<h3 class="text-3xl font-bold text-on-surface">4.820.500.000 <span class="text-sm font-medium text-slate-400">VNĐ</span></h3>
+<div class="mt-4 flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-blue-600"></span>
+<span class="text-[10px] font-bold text-slate-600">Phụ tùng: 70%</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-orange-400"></span>
+<span class="text-[10px] font-bold text-slate-600">Dầu nhớt: 20%</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+<span class="text-[10px] font-bold text-slate-600">Khác: 10%</span>
+</div>
+</div>
+</div>
+<div class="w-32 h-20 bg-slate-50 rounded-xl flex items-end p-2 gap-1">
+<div class="w-1/4 bg-blue-200 h-[40%] rounded-sm"></div>
+<div class="w-1/4 bg-blue-300 h-[60%] rounded-sm"></div>
+<div class="w-1/4 bg-blue-500 h-[90%] rounded-sm"></div>
+<div class="w-1/4 bg-blue-700 h-[75%] rounded-sm"></div>
+</div>
+</div>
+</div>
+<!-- Main Data Table Section -->
+<div class="bg-surface-container-low rounded-[2rem] p-1 overflow-hidden">
+<div class="bg-surface-container-lowest rounded-[1.85rem] overflow-hidden">
+<div class="px-8 py-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="text-lg font-bold text-on-surface">Danh sách vật tư tồn kho</h4>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Mã vật tư</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Tên vật tư / Nhóm</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-center">Đơn vị</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-right">Tồn kho</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-right">Giá vốn</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-right">Giá bán</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-center">Trạng thái</th>
+<th class="px-8 py-4 text-right"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5 font-bold text-blue-700 text-sm">VT-00921</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-surface">Dầu nhớt Castrol Power1 10W-40</p>
+<p class="text-[10px] text-slate-400 font-medium">Nhóm: Dầu nhớt &amp; Phụ gia</p>
+</td>
+<td class="px-6 py-5 text-center text-sm font-medium">Chai 1L</td>
+<td class="px-6 py-5 text-right font-bold text-sm">142</td>
+<td class="px-6 py-5 text-right text-sm text-slate-500">125,000</td>
+<td class="px-6 py-5 text-right text-sm font-bold text-on-surface">185,000</td>
+<td class="px-6 py-5 text-center">
+<span class="px-3 py-1 bg-blue-100 text-primary text-[10px] font-bold rounded-full">Đủ hàng</span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 - Low Stock -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5 font-bold text-blue-700 text-sm">VT-01254</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-surface">Bugi NGK CPR7EA-9</p>
+<p class="text-[10px] text-slate-400 font-medium">Nhóm: Hệ thống đánh lửa</p>
+</td>
+<td class="px-6 py-5 text-center text-sm font-medium">Cái</td>
+<td class="px-6 py-5 text-right font-bold text-sm text-tertiary">08</td>
+<td class="px-6 py-5 text-right text-sm text-slate-500">45,000</td>
+<td class="px-6 py-5 text-right text-sm font-bold text-on-surface">85,000</td>
+<td class="px-6 py-5 text-center">
+<span class="px-3 py-1 bg-orange-100 text-tertiary text-[10px] font-bold rounded-full">Sắp hết hàng</span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5 font-bold text-blue-700 text-sm">VT-04421</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-surface">Lốp Michelin City Grip 2 (90/90-14)</p>
+<p class="text-[10px] text-slate-400 font-medium">Nhóm: Lốp xe</p>
+</td>
+<td class="px-6 py-5 text-center text-sm font-medium">Cái</td>
+<td class="px-6 py-5 text-right font-bold text-sm">26</td>
+<td class="px-6 py-5 text-right text-sm text-slate-500">650,000</td>
+<td class="px-6 py-5 text-right text-sm font-bold text-on-surface">890,000</td>
+<td class="px-6 py-5 text-center">
+<span class="px-3 py-1 bg-blue-100 text-primary text-[10px] font-bold rounded-full">Đủ hàng</span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 - Critical -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5 font-bold text-blue-700 text-sm">VT-00108</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-surface">Dây Curoa Honda SH 150i</p>
+<p class="text-[10px] text-slate-400 font-medium">Nhóm: Phụ tùng truyền động</p>
+</td>
+<td class="px-6 py-5 text-center text-sm font-medium">Sợi</td>
+<td class="px-6 py-5 text-right font-bold text-sm text-error">02</td>
+<td class="px-6 py-5 text-right text-sm text-slate-500">420,000</td>
+<td class="px-6 py-5 text-right text-sm font-bold text-on-surface">680,000</td>
+<td class="px-6 py-5 text-center">
+<span class="px-3 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded-full">Nguy cấp</span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-8 py-5 font-bold text-blue-700 text-sm">VT-08871</td>
+<td class="px-6 py-5">
+<p class="text-sm font-semibold text-on-surface">Má phanh trước Honda AirBlade</p>
+<p class="text-[10px] text-slate-400 font-medium">Nhóm: Hệ thống phanh</p>
+</td>
+<td class="px-6 py-5 text-center text-sm font-medium">Bộ</td>
+<td class="px-6 py-5 text-right font-bold text-sm">54</td>
+<td class="px-6 py-5 text-right text-sm text-slate-500">95,000</td>
+<td class="px-6 py-5 text-right text-sm font-bold text-on-surface">145,000</td>
+<td class="px-6 py-5 text-center">
+<span class="px-3 py-1 bg-blue-100 text-primary text-[10px] font-bold rounded-full">Đủ hàng</span>
+</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-8 py-6 bg-surface-container-low/20 flex justify-between items-center">
+<p class="text-xs text-slate-500 font-medium">Hiển thị 1-10 trên 1,284 vật tư</p>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 bg-primary text-white text-xs font-bold rounded-lg">1</button>
+<button class="w-8 h-8 hover:bg-slate-100 text-xs font-bold rounded-lg text-slate-500">2</button>
+<button class="w-8 h-8 hover:bg-slate-100 text-xs font-bold rounded-lg text-slate-500">3</button>
+<span class="text-slate-400 px-1">...</span>
+<button class="w-8 h-8 hover:bg-slate-100 text-xs font-bold rounded-lg text-slate-500">128</button>
+<button class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Quick Info Cards -->
+<div class="grid grid-cols-4 gap-6">
+<div class="col-span-1 bg-white p-5 rounded-2xl shadow-sm border-l-4 border-blue-600">
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Nhập kho gần nhất</p>
+<p class="text-xs font-bold text-on-surface mb-2">Đơn: #NK-9921 - 14:30 Hôm nay</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] text-slate-500 italic">24 mặt hàng</span>
+<a class="text-[10px] font-bold text-blue-700 hover:underline" href="#">Chi tiết</a>
+</div>
+</div>
+<div class="col-span-1 bg-white p-5 rounded-2xl shadow-sm border-l-4 border-orange-500">
+<p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Xuất kho bảo trì</p>
+<p class="text-xs font-bold text-on-surface mb-2">Lệnh: #XK-4410 - 10:15 Hôm nay</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] text-slate-500 italic">05 mặt hàng</span>
+<a class="text-[10px] font-bold text-blue-700 hover:underline" href="#">Chi tiết</a>
+</div>
+</div>
+<div class="col-span-2 bg-gradient-to-r from-blue-900 to-blue-800 p-5 rounded-2xl shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+<span class="material-symbols-outlined text-white">inventory_2</span>
+</div>
+<div>
+<p class="text-xs font-bold text-blue-100">Kiểm kê định kỳ tháng 10</p>
+<p class="text-[10px] text-blue-200/70">Dự kiến bắt đầu sau 03 ngày nữa</p>
+</div>
+</div>
+<button class="px-4 py-1.5 bg-white text-blue-900 text-xs font-bold rounded-lg hover:bg-blue-50 transition-colors">Lên kế hoạch</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
