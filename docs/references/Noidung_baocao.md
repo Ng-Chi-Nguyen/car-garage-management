@@ -39,7 +39,7 @@ II. Nội dung:
    a. Sơ đồ lớp
    b. Danh sách các bảng dữ liệu (table) trong sơ đồ:
       - Mô tả thuộc tính của các lớp (mẫu file excel)
-       Miền giá trị:
+       Miền giá trị:
        D1: Là các ký tự từ A đến Z, không mang các ký tự đặc biệt và
        ký số.
        D2: Là các ký tự số.
@@ -82,7 +82,7 @@ II. Nội dung:
 
 
 5. Cài đặt và thử nghiệm
-               STT      Chức năng        Mức độ hoàn thành (%)     Ghi chú
+               STT      Chức năng        Mức độ hoàn thành (%)     Ghi chú
                  1
                  2
 

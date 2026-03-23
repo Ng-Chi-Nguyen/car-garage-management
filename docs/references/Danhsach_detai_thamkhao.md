@@ -8,7 +8,7 @@ PHÁT TRIỂN PHẦN MỀM
 
 
                            i
-1.1 ĐỀ TÀI QUẢN LÝ GARA Ô TÔ ............................................................................................. 1
+1.1 ĐỀ TÀI QUẢN LÝ GARA Ô TÔ ............................................................................................. 1
 1.1.1      Danh sách các yêu cầu .......................................................................................................... 1
 1.1.2      Danh sách các biểu mẫu và qui định..................................................................................... 1
 1.2 ĐỀ TÀI QUẢN LÝ TIỆC CƯỚI............................................................................................... 2
@@ -45,7 +45,7 @@ PHÁT TRIỂN PHẦN MỀM
 1.12.1 Danh sách các yêu cầu ........................................................................................................ 21
 
                                                                                                                                                 ii
-1.12.2 Danh sách các biểu mẫu và qui định................................................................................... 21
+1.12.2 Danh sách các biểu mẫu và qui định................................................................................... 21
 1.13 ĐỀ TÀI QUẢN LÝ VIỆC ĐĂNG KÝ MÔN HỌC VÀ THU HỌC PHÍ ............................ 23
 1.13.1 Danh sách các yêu cầu ........................................................................................................ 23
 1.13.2 Danh sách các biểu mẫu và qui định................................................................................... 23
@@ -58,7 +58,7 @@ PHÁT TRIỂN PHẦN MỀM
 
 
                                                                                                                                            iii
-1.1     ĐỀ TÀI QUẢN LÝ GARA Ô TÔ
+1.1     ĐỀ TÀI QUẢN LÝ GARA Ô TÔ
 
 
 1.1.1    Danh sách các yêu cầu
@@ -107,7 +107,7 @@ giá) + Tiền công.
 
 
                                                                                                                                        1
-           1.1.2.4   Biểu mẫu 4 và qui định 4
+           1.1.2.4   Biểu mẫu 4 và qui định 4
 
                      BM4:                                                    Phiếu Thu Tiền
                      Họ tên chủ xe: ........................................... Biển số: .....................................................
@@ -159,7 +159,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
 
 
                                                                                                                                                     2
-1.2.2   Danh sách các biểu mẫu và qui định
+1.2.2   Danh sách các biểu mẫu và qui định
 
          1.2.2.1   Biểu mẫu 1 và qui định 1
 
@@ -202,7 +202,7 @@ QĐ2: Chỉ nhận đặt tiệc khi sảnh chưa có người đặt (tương �
 
 
                                                                                                               3
-           1.2.2.4   Biểu mẫu 4 và qui định 4
+           1.2.2.4   Biểu mẫu 4 và qui định 4
 
                       BM4:                                       Hóa Đơn Thanh Toán
                      Tên chú rễ:                      Tên cô dâu:                                   Ngày thanh toán:
@@ -255,7 +255,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
                            7      Lập báo cáo                           BM7.1, BM7.2
 
                                                                                                                                4
-                            8         Thay đổi qui định                                                       QĐ8
+                            8         Thay đổi qui định                                                       QĐ8
 
 1.3.2    Danh sách các biểu mẫu và qui định
 
@@ -310,7 +310,7 @@ QĐ2: Có 3 thể loại (A, B, C). Có 100 tác giả. Chỉ nhận các sách 
                         1
                         2
                                                                                                                                                 5
-QĐ4: Chỉ cho mượn với thẻ còn hạn, không có sách mượn quá hạn, và sách không có người đang mượn. Mỗi độc
+QĐ4: Chỉ cho mượn với thẻ còn hạn, không có sách mượn quá hạn, và sách không có người đang mượn. Mỗi độc
 giả mượn tối đa 5 quyển sách trong 4 ngày.
 
 
@@ -358,7 +358,7 @@ QĐ6: Số tiền thu không vượt quá số tiền độc giả đang nợ.
 
 
                                                                                                                                                  6
-◼     Biểu mẫu 7.2
+◼     Biểu mẫu 7.2
 
                      BM7.2                               Báo Cáo Thống Kê Sách Trả Trễ
                                                  Ngày: ................................
@@ -403,7 +403,7 @@ QĐ1: Số lượng nhập ít nhất là 150. Chỉ nhập các sách có lư�
 
 
                                                                                                                            7
-        1.4.2.2    Biểu mẫu 2 và qui định 2
+        1.4.2.2    Biểu mẫu 2 và qui định 2
 
                     BM2:                                                  Hóa Đơn Bán Sách
                    Họ tên khách hàng: ..............................               Ngày lập hóa đơn: ................................
@@ -451,7 +451,7 @@ QĐ4: Số tiền thu không vượt quá số tiền khách hàng đang nợ
                       1
                       2
                                                                                                                                                   8
-           1.4.2.6   Qui định 6
+           1.4.2.6   Qui định 6
 
 QĐ6: Người dùng có thể thay đổi các qui định như sau:
       + QĐ1: Thay đổi số lượng nhập tối thiểu, lượng tồn tối thiểu trước khi nhập.
@@ -500,7 +500,7 @@ QĐ2: Có 5 loại bệnh. Có 30 loại thuốc, 2 loại đơn vị (viên, ch
 
 
                                                                                                                                               9
-           1.5.2.3   Biểu mẫu 3
+           1.5.2.3   Biểu mẫu 3
 
                       BM3:                                              Danh Sách Bệnh Nhân
                       STT                 Họ Tên                   Ngày Khám                    Loại Bệnh               Triệu Chứng
@@ -548,7 +548,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
                               STT                 Tên yêu cầu                      Biểu mẫu             Qui định        Ghi chú
                                 1        Tiếp nhận đại lý                              BM1               QĐ1
                                                                                                                                                 10
-                              2         Lập phiếu xuất hàng                           BM2                 QĐ2
+                              2         Lập phiếu xuất hàng                           BM2                 QĐ2
                               3         Tra cứu đại lý                                BM3
                               4         Lập phiếu thu tiền                            BM4                 QĐ4
                                                                                      BM5.1
@@ -599,7 +599,7 @@ xuất = 102% Đơn giá nhập.
 
 
                                                                                                                                                    11
-QĐ4: Số tiền thu không vượt quá số tiền đại lý đang nợ.
+QĐ4: Số tiền thu không vượt quá số tiền đại lý đang nợ.
 
 
            1.6.2.5   Biểu mẫu 5
@@ -648,7 +648,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
                         2
 
                                                                                                                      12
-QĐ1: Có 3 loại phòng (A, B, C) với đơn giá tương ứng (150.000, 170.000, 200.000).
+QĐ1: Có 3 loại phòng (A, B, C) với đơn giá tương ứng (150.000, 170.000, 200.000).
 
 
          1.7.2.2     Biểu mẫu 2 và qui định 2
@@ -698,7 +698,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
    + QĐ1: Thay đổi số lượng và đơn giá các loại phòng.
    + QĐ2: Thay đổi số lượng loại khách, số lượng khách tối đa trong phòng.
                                                                                                                                                      13
-      + QĐ4: Thay đổi tỉ lệ phụ thu.
+      + QĐ4: Thay đổi tỉ lệ phụ thu.
 
 
 1.8     ĐỀ TÀI QUẢN LÝ CÂY GIA PHẢ
@@ -750,7 +750,7 @@ QĐ2: Có 10 loại thành tích.
 
 
                                                                                                                                                   14
-           1.8.2.4    Biểu mẫu 4 và qui định 4
+           1.8.2.4    Biểu mẫu 4 và qui định 4
 
                          BM4:                                                 Ghi Nhận Kết Thúc
                        Họ tên: ....................................................   Ngày giờ mất: .........................................
@@ -798,7 +798,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
                                                                                        BM5.2
                                    6        Thay đổi qui định                                              QĐ6
                                                                                                                                                    15
-1.9.2   Danh sách các biểu mẫu và qui định
+1.9.2   Danh sách các biểu mẫu và qui định
 
          1.9.2.1    Biểu mẫu 1 và qui định 1
 
@@ -846,7 +846,7 @@ Sổ sau khi rút hết tiền sẽ tự động đóng.
                      1
 
                                                                                                                                                       16
-                         2
+                         2
 
 
            1.9.2.5     Biểu mẫu 5
@@ -897,7 +897,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
                         BM1:                                                       Hồ Sơ Đội Bóng
 
                                                                                                                                                        17
-                   Tên đội: ....................................................       Sân nhà: ...................................................
+                   Tên đội: ....................................................       Sân nhà: ...................................................
                    STT              Cầu Thủ                    Ngày Sinh                   Loại Cầu Thủ                           Ghi Chú
                       1
                       2
@@ -947,7 +947,7 @@ QĐ3: Có 3 loại bàn thắng (A, B, C). Thời điểm ghi bàn từ 0’ đ�
                       1
                       2
                                                                                                                                                          18
-QĐ5: Thắng: 3, Hòa: 1, Thua: 0. Xếp hạng theo điểm, hiệu số, tổng số bàn thắng trên sân khách, kết quả đối kháng
+QĐ5: Thắng: 3, Hòa: 1, Thua: 0. Xếp hạng theo điểm, hiệu số, tổng số bàn thắng trên sân khách, kết quả đối kháng
 trực tiếp.
 
 
@@ -996,7 +996,7 @@ nước ngoài tối đa.
                          1
                          2
                                                                                                                                                        19
-QĐ1: Có 10 sân bay. Thời gian bay tối thiểu là 30 phút. Có tối đa 2 sân bay trung gian với thời gian dừng từ 10 đến
+QĐ1: Có 10 sân bay. Thời gian bay tối thiểu là 30 phút. Có tối đa 2 sân bay trung gian với thời gian dừng từ 10 đến
 20 phút.
 
 
@@ -1049,7 +1049,7 @@ QĐ3: Chỉ cho đặt vé chậm nhất 1 ngày trước khi khởi hành. Vào
 
 
                                                                                                                                                      20
-           1.11.2.6 Qui định 6
+           1.11.2.6 Qui định 6
 
 QĐ6: Người dùng có thể thay đổi các qui định như sau:
    + QĐ1: Thay đổi số lượng sân bay, thời gian bay tối thiểu, số sân bay trung gian tối đa, thời gian dừng tối thiểu,
@@ -1098,7 +1098,7 @@ Khối 12 có 2 lớp (12A1, 12A2). Mỗi lớp không quá 40 học sinh.
 
 
                                                                                                                                                        21
-         1.12.2.3 Biểu mẫu 3
+         1.12.2.3 Biểu mẫu 3
 
                      BM3:                                                       Danh Sách Học Sinh
                    STT                    Họ Tên                                Lớp               TB Học Kỳ I                  TB Học Kỳ II
@@ -1148,7 +1148,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
 
 
                                                                                                                                                     22
-1.13     ĐỀ TÀI QUẢN LÝ VIỆC ĐĂNG KÝ MÔN HỌC VÀ THU HỌC PHÍ CỦA SINH VIÊN
+1.13     ĐỀ TÀI QUẢN LÝ VIỆC ĐĂNG KÝ MÔN HỌC VÀ THU HỌC PHÍ CỦA SINH VIÊN
 
 
 1.13.1    Danh sách các yêu cầu
@@ -1198,7 +1198,7 @@ QĐ6: Người dùng có thể thay đổi các qui định như sau:
 
 
                                                                                                                       23
-         1
+         1
 
          2
 
@@ -1249,7 +1249,7 @@ BM5:                                     PHIẾU ĐĂNG KÝ HỌC PHẦN
 
 
                                                                                                                       24
-                  Stt                               Môn học                                      Số tín chỉ
+                  Stt                               Môn học                                      Số tín chỉ
 
 
        QĐ5: Phòng tài vụ sẽ dựa trên số tín chỉ mà sinh viên đăng ký để thu học phí: nếu đăng ký môn LT sinh viên sẽ
@@ -1302,7 +1302,7 @@ BM5:                                     PHIẾU ĐĂNG KÝ HỌC PHẦN
 1.14.2     Danh sách các biểu mẫu và qui định
 
                                                                                                                           25
-        1.14.2.1 Biểu mẫu 1 và qui định 1
+        1.14.2.1 Biểu mẫu 1 và qui định 1
 
 BM1:                                           PHIẾU BÁN HÀNG
 
@@ -1345,7 +1345,7 @@ giá là đơn giá mua vào của từng sản phẩm.
 
 
                                                                                                                26
-           1.14.2.3 Biểu mẫu 3 và qui định 3
+           1.14.2.3 Biểu mẫu 3 và qui định 3
 
  BM3:                                                   PHIẾU DỊCH VỤ
 
@@ -1401,7 +1401,7 @@ BM5:                                                   BÁO CÁO TỒN KHO
 
 
                                                                                                                              27
-         2
+         2
 
 
 1.15     ĐỀ TÀI QUẢN LÝ VIỆC RA ĐỀ VÀ CHẤM THI CỦA GIẢNG VIÊN
@@ -1448,7 +1448,7 @@ BM5:                                                   BÁO CÁO TỒN KHO
 
 
                                                                                                                  28
-1.15.2.3 Biểu mẫu 3 và qui định 3
+1.15.2.3 Biểu mẫu 3 và qui định 3
 
 BM3                                             KẾT QUẢ CHẤM THI
 
