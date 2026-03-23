@@ -13,7 +13,7 @@ export function StatusBadge({ status = 'default', label, children }) {
   const colorClass = STATUS_COLORS[status] || STATUS_COLORS.default;
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
-      {label || children}
+      {label ?? children}
     </span>
   );
 }

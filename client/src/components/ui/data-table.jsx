@@ -1,44 +1,49 @@
 import React from 'react';
 
-export function DataTable({ columns, data, headers, children }) {
-  const normalizedColumns = columns ?? headers?.map((header) => ({ header })) ?? [];
-  const hasStructuredData = Array.isArray(columns) && Array.isArray(data);
-  const hasLegacyRows = React.Children.count(children) > 0;
+function renderHeaderCell(header, idx) {
+  if (typeof header === 'string') {
+    return (
+      <th key={idx} className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 first:rounded-l-2xl last:rounded-r-2xl">
+        {header}
+      </th>
+    );
+  }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+    <th key={header.key ?? idx} className="px-6 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400 first:rounded-l-2xl last:rounded-r-2xl">
+      {header.label ?? header.header ?? ''}
+    </th>
+  );
+}
+
+export function DataTable({ headers, children, columns = [], data = [] }) {
+  const resolvedHeaders = headers ?? columns;
+  const hasStaticRows = children !== undefined;
+  const emptyStateColSpan = Math.max(resolvedHeaders.length, 1);
+
+  return (
+    <div className="overflow-x-auto rounded-[24px] border border-slate-200/80 bg-white">
+      <table className="w-full min-w-[720px] border-collapse text-left">
         <thead>
-          <tr>
-            {normalizedColumns.map((col, idx) => (
-              <th key={idx} className="px-6 py-4 text-[0.75rem] font-medium text-slate-500 uppercase tracking-[0.05em]">
-                {col.header}
-              </th>
-            ))}
+          <tr className="border-b border-slate-200 bg-slate-50/90">
+            {resolvedHeaders.map((header, idx) => renderHeaderCell(header, idx))}
           </tr>
         </thead>
-        <tbody>
-          {hasStructuredData
-            ? data.map((row, idx) => (
-                <tr key={idx} className="hover:bg-slate-50/80 transition-colors duration-150">
-                  {normalizedColumns.map((col, colIdx) => (
-                    <td key={colIdx} className="px-6 py-4 text-[0.875rem] text-slate-900 whitespace-nowrap">
+        <tbody className="divide-y divide-slate-200/80 bg-white">
+          {hasStaticRows
+            ? children
+            : data.map((row, idx) => (
+                <tr key={idx} className="transition-colors hover:bg-slate-50/70">
+                  {columns.map((col, colIdx) => (
+                    <td key={col.key ?? col.accessor ?? colIdx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-700">
                       {col.cell ? col.cell(row) : row[col.accessor]}
                     </td>
                   ))}
                 </tr>
-              ))
-            : children}
-          {hasStructuredData && data.length === 0 && (
+              ))}
+          {!hasStaticRows && data.length === 0 && (
             <tr>
-              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
-                Không có dữ liệu
-              </td>
-            </tr>
-          )}
-          {!hasStructuredData && !hasLegacyRows && (
-            <tr>
-              <td colSpan={Math.max(normalizedColumns.length, 1)} className="px-6 py-8 text-center text-slate-500 text-[0.875rem]">
+              <td colSpan={emptyStateColSpan} className="px-6 py-10 text-center text-sm font-medium text-slate-400">
                 Không có dữ liệu
               </td>
             </tr>

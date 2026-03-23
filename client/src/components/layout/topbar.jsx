@@ -1,38 +1,37 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 export function Topbar() {
-  const location = useLocation();
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path.includes('dashboard')) return 'Tổng quan';
-    if (path.includes('workshop')) return 'Trạng thái xưởng';
-    if (path.includes('intake')) return 'Tiếp nhận xe';
-    if (path.includes('inventory')) return 'Kho vật tư';
-    if (path.includes('finance')) return 'Tài chính';
-    if (path.includes('customers')) return 'Khách hàng';
-    if (path.includes('settings')) return 'Cài đặt';
-    if (path.includes('activity')) return 'Nhật ký thao tác';
-    return 'Dashboard';
-  };
-
   return (
-    <header className="h-[72px] bg-surface-container-lowest/85 backdrop-blur-[12px] flex items-center justify-between px-8 sticky top-0 z-10">
-      <div className="flex items-center gap-4">
-        <h1 className="text-[1.125rem] font-semibold text-on-surface tracking-tight">{getPageTitle()}</h1>
-      </div>
-      <div className="flex items-center gap-6">
-        <button className="relative text-on-surface-variant hover:text-primary transition-colors">
-          <span className="material-symbols-outlined">notifications</span>
-          <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
-        </button>
-        <div className="flex items-center gap-3 cursor-pointer group">
-          <div className="text-right hidden md:block">
-            <p className="text-[0.875rem] font-semibold text-on-surface group-hover:text-primary transition-colors">Admin User</p>
-            <p className="text-[0.75rem] font-medium text-on-surface-variant">Quản trị viên</p>
+    <header className="sticky top-0 z-20 border-b border-white/70 bg-white/75 px-6 py-4 backdrop-blur-xl md:px-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/90 px-4 py-3 shadow-sm lg:min-w-[360px]">
+          <span className="material-symbols-outlined text-slate-400">search</span>
+          <input
+            type="text"
+            placeholder="Tìm kiếm khách hàng, biển số, lệnh sửa..."
+            className="w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
+            readOnly
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-3 lg:justify-end">
+          <div className="flex items-center gap-3">
+            <button className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-900">
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+            </button>
+            <button className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-900">
+              <span className="material-symbols-outlined text-[20px]">forum</span>
+            </button>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-[0.875rem] group-hover:bg-primary group-hover:text-white transition-all">
-            A
+
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-3 py-2 shadow-sm">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-slate-900">Anh Minh</p>
+              <p className="text-xs font-medium text-slate-400">Quản lý vận hành</p>
+            </div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 text-sm font-bold text-white shadow-lg shadow-blue-500/25">
+              AM
+            </div>
           </div>
         </div>
       </div>
