@@ -21,7 +21,7 @@ jobs:
         # Dùng `npm audit --audit-level=high` để báo lỗi nếu có lỗ hổng nghiêm trọng
         # `|| true` giúp job không fail ngay lập tức, chỉ warning (để không chặn workflow nếu chưa fix được)
         # Bỏ `|| true` nếu muốn bắt buộc phải fix lỗi bảo mật mới được merge.
-        run: npm audit --audit-level=high || true 
+        run: npm audit --audit-level=high || true
 
       # Frontend Audit
       - name: Audit Frontend Dependencies
