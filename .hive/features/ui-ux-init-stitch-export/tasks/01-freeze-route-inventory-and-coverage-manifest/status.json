@@ -1,0 +1,12 @@
+{
+  "status": "done",
+  "origin": "plan",
+  "planTitle": "Freeze route inventory and coverage manifest",
+  "dependsOn": [],
+  "baseCommit": "9ecffdda61529a80b565384f90df0dfbf879a971",
+  "schemaVersion": 1,
+  "startedAt": "2026-03-21T10:18:06.527Z",
+  "idempotencyKey": "hive-ui-ux-init-stitch-export-01-freeze-route-inventory-and-coverage-manifest-1",
+  "summary": "Created client/src/app/routeManifest.js with 15 mapped routes (1 auth, 14 app layouts) from the Stitch export. Updated discovery-summary.md with the route inventory and noted the exclusion of the mechanic flow as non-routeable. Verified route counts and exclusions as required.",
+  "completedAt": "2026-03-21T10:19:36.469Z"
+}
