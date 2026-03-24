@@ -30,10 +30,10 @@ const messages = {
   duplicate: "Khách hàng đã tồn tại.",
 };
 
-const customerController = {
+const createCustomerController = (service = customerService) => ({
   createCustomer: async (req, res) => {
     try {
-      const customer = await customerService.createCustomer(req.body, req.file);
+      const customer = await service.createCustomer(req.body, req.file);
 
       return res.status(201).json({
         success: true,
@@ -46,7 +46,7 @@ const customerController = {
   },
   getCustomerList: async (req, res) => {
     try {
-      const result = await customerService.getCustomerList(req.query);
+      const result = await service.getCustomerList(req.validatedQuery ?? req.query);
 
       return res.json({
         success: true,
@@ -59,7 +59,7 @@ const customerController = {
   },
   getCustomerById: async (req, res) => {
     try {
-      const customer = await customerService.getCustomerById(req.params.id);
+      const customer = await service.getCustomerById(req.validatedParams?.id ?? req.params.id);
 
       return res.json({
         success: true,
@@ -72,7 +72,7 @@ const customerController = {
   },
   updateCustomer: async (req, res) => {
     try {
-      const customer = await customerService.updateCustomer(req.params.id, req.body, req.file);
+      const customer = await service.updateCustomer(req.validatedParams?.id ?? req.params.id, req.body, req.file);
 
       return res.json({
         success: true,
@@ -85,7 +85,7 @@ const customerController = {
   },
   deleteCustomer: async (req, res) => {
     try {
-      const customer = await customerService.deleteCustomer(req.params.id);
+      const customer = await service.deleteCustomer(req.validatedParams?.id ?? req.params.id);
 
       return res.json({
         success: true,
@@ -96,6 +96,9 @@ const customerController = {
       return handleError(res, error, messages);
     }
   },
-};
+});
 
+const customerController = createCustomerController();
+
+export { createCustomerController };
 export default customerController;

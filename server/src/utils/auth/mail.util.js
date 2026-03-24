@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+import { buildServiceError } from "../../shared/crud/crud.helpers.js";
+
 const createTransporter = () =>
   nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -13,15 +15,34 @@ const createTransporter = () =>
       : undefined,
   });
 
-const sendResetPasswordEmail = async ({ to, customerName, resetUrl }) => {
-  const transporter = createTransporter();
+const createMailUtils = ({
+  createTransporter: createTransporterFn = createTransporter,
+  appName = process.env.APP_NAME,
+  mailFrom = process.env.MAIL_FROM,
+} = {}) => {
+  const sendResetPasswordEmail = async ({ to, customerName, resetUrl }) => {
+    const trimmedMailFrom = mailFrom?.trim();
 
-  await transporter.sendMail({
-    from: `${process.env.APP_NAME} <${process.env.MAIL_FROM}>`,
-    to,
-    subject: "Yêu cầu đặt lại mật khẩu",
-    text: `Xin chào ${customerName}, vui lòng đặt lại mật khẩu tại đây: ${resetUrl}`,
-  });
+    if (!trimmedMailFrom) {
+      throw buildServiceError(500, "Thiếu cấu hình MAIL_FROM để gửi email.");
+    }
+
+    const transporter = createTransporterFn();
+    const trimmedAppName = appName?.trim();
+
+    await transporter.sendMail({
+      from: trimmedAppName ? `${trimmedAppName} <${trimmedMailFrom}>` : trimmedMailFrom,
+      to,
+      subject: "Yêu cầu đặt lại mật khẩu",
+      text: `Xin chào ${customerName}, vui lòng đặt lại mật khẩu tại đây: ${resetUrl}`,
+    });
+  };
+
+  return {
+    sendResetPasswordEmail,
+  };
 };
 
-export { sendResetPasswordEmail };
+const { sendResetPasswordEmail } = createMailUtils();
+
+export { createMailUtils, sendResetPasswordEmail };

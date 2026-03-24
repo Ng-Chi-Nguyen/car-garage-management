@@ -190,6 +190,30 @@ test("login trả access token và user đã sanitize", async () => {
   assert.equal(result.user.ResetPasswordToken, undefined);
 });
 
+test("login từ chối tài khoản chưa có mật khẩu thay vì throw 500", async () => {
+  const createAuthService = await loadCreateAuthService();
+  const customerDelegate = createCustomerDelegate({
+    MaKH: 6,
+    Email: "khachhang@example.com",
+    MatKhau: null,
+    TenChuXe: "Nguyen Van A",
+    DienThoai: "0901234567",
+    DiaChi: "TP HCM",
+    ChucVu: "KhachHang",
+    TrangThai: "HoatDong",
+  });
+  const authService = createAuthService(createDependencies(customerDelegate));
+
+  await assert.rejects(
+    () =>
+      authService.login({
+        Email: "khachhang@example.com",
+        MatKhau: "Password123!",
+      }),
+    (error) => error.status === 400 && /Email hoặc mật khẩu không đúng/i.test(error.message),
+  );
+});
+
 test("forgotPassword tạo reset token đã hash và gửi email", async () => {
   const createAuthService = await loadCreateAuthService();
   const customerDelegate = createCustomerDelegate({
@@ -249,6 +273,39 @@ test("forgotPassword fallback về reset URL local khi thiếu RESET_PASSWORD_UR
   process.env.APP_PORT_CLIENT = originalAppPortClient;
 });
 
+test("forgotPassword đọc RESET_PASSWORD_URL tại runtime thay vì đóng băng khi khởi tạo service", async () => {
+  const createAuthService = await loadCreateAuthService();
+  const originalResetPasswordUrl = process.env.RESET_PASSWORD_URL;
+  process.env.RESET_PASSWORD_URL = "http://localhost:3000/reset-password";
+
+  const customerDelegate = createCustomerDelegate({
+    MaKH: 18,
+    Email: "khachhang@example.com",
+    MatKhau: "hashed::Password123!",
+    TenChuXe: "Nguyen Van A",
+    DienThoai: "0901234567",
+    DiaChi: "TP HCM",
+    ChucVu: "KhachHang",
+    TrangThai: "HoatDong",
+    TokenDatLaiMatKhau: null,
+    TokenDatLaiMatKhauHetHanLuc: null,
+    TokenDatLaiMatKhauDaDungLuc: null,
+  });
+  const dependencies = createDependencies(customerDelegate, { resetPasswordUrl: undefined });
+  const authService = createAuthService(dependencies);
+
+  process.env.RESET_PASSWORD_URL = "http://localhost:9999/reset-password";
+
+  await authService.forgotPassword({ Email: "khachhang@example.com" });
+
+  assert.equal(
+    dependencies.getSentEmails()[0].resetUrl,
+    "http://localhost:9999/reset-password?token=raw-reset-token",
+  );
+
+  process.env.RESET_PASSWORD_URL = originalResetPasswordUrl;
+});
+
 test("resetPassword cập nhật mật khẩu mới và vô hiệu hóa reset token", async () => {
   const createAuthService = await loadCreateAuthService();
   const customerDelegate = createCustomerDelegate({
@@ -276,6 +333,21 @@ test("resetPassword cập nhật mật khẩu mới và vô hiệu hóa reset to
   assert.equal(savedCustomer.MatKhau, "hashed::Password456!");
   assert.equal(savedCustomer.TokenDatLaiMatKhau, null);
   assert.ok(savedCustomer.TokenDatLaiMatKhauDaDungLuc instanceof Date);
+});
+
+test("resetPassword trả lỗi token không hợp lệ khi không tìm thấy customer theo token", async () => {
+  const createAuthService = await loadCreateAuthService();
+  const customerDelegate = createCustomerDelegate(null);
+  const authService = createAuthService(createDependencies(customerDelegate));
+
+  await assert.rejects(
+    () =>
+      authService.resetPassword({
+        Token: "invalid-token",
+        MatKhauMoi: "Password456!",
+      }),
+    (error) => error.status === 400 && /Token đặt lại mật khẩu không hợp lệ/i.test(error.message),
+  );
 });
 
 test("changePassword từ chối mật khẩu hiện tại sai", async () => {

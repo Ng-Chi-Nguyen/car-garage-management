@@ -30,10 +30,10 @@ const messages = {
   duplicate: "Hiệu xe đã tồn tại.",
 };
 
-const carBrandController = {
+const createCarBrandController = (service = carBrandService) => ({
   createCarBrand: async (req, res) => {
     try {
-      const carBrand = await carBrandService.createCarBrand(req.body, req.file);
+      const carBrand = await service.createCarBrand(req.body, req.file);
 
       return res.status(201).json({
         success: true,
@@ -46,7 +46,7 @@ const carBrandController = {
   },
   getCarBrandList: async (req, res) => {
     try {
-      const result = await carBrandService.getCarBrandList(req.query);
+      const result = await service.getCarBrandList(req.validatedQuery ?? req.query);
 
       return res.json({
         success: true,
@@ -59,7 +59,7 @@ const carBrandController = {
   },
   getCarBrandById: async (req, res) => {
     try {
-      const carBrand = await carBrandService.getCarBrandById(req.params.id);
+      const carBrand = await service.getCarBrandById(req.validatedParams?.id ?? req.params.id);
 
       return res.json({
         success: true,
@@ -72,7 +72,7 @@ const carBrandController = {
   },
   updateCarBrand: async (req, res) => {
     try {
-      const carBrand = await carBrandService.updateCarBrand(req.params.id, req.body, req.file);
+      const carBrand = await service.updateCarBrand(req.validatedParams?.id ?? req.params.id, req.body, req.file);
 
       return res.json({
         success: true,
@@ -85,7 +85,7 @@ const carBrandController = {
   },
   deleteCarBrand: async (req, res) => {
     try {
-      const carBrand = await carBrandService.deleteCarBrand(req.params.id);
+      const carBrand = await service.deleteCarBrand(req.validatedParams?.id ?? req.params.id);
 
       return res.json({
         success: true,
@@ -96,6 +96,9 @@ const carBrandController = {
       return handleError(res, error, messages);
     }
   },
-};
+});
 
+const carBrandController = createCarBrandController();
+
+export { createCarBrandController };
 export default carBrandController;

@@ -40,13 +40,15 @@ const defaultCreateResetToken = () => {
 const getResetPasswordUrl = () =>
   process.env.RESET_PASSWORD_URL || `http://localhost:${process.env.APP_PORT_CLIENT || 5173}/reset-password`;
 
-const ensureActiveCustomer = (customer) => {
+const ensureCustomerExists = (customer, message) => {
   if (!customer) {
-    throw buildServiceError(400, "Email hoặc mật khẩu không đúng.");
+    throw buildServiceError(400, message);
   }
+};
 
+const ensureActiveCustomer = (customer, message = "Tài khoản hiện không thể đăng nhập.") => {
   if (customer.TrangThai === "BiKhoa" || customer.TrangThai === "DaXoa") {
-    throw buildServiceError(403, "Tài khoản hiện không thể đăng nhập.");
+    throw buildServiceError(403, message);
   }
 };
 
@@ -58,7 +60,8 @@ const createAuthService = ({
   createResetToken = defaultCreateResetToken,
   hashResetToken = defaultHashResetToken,
   sendResetPasswordEmail: sendResetPasswordEmailFn = sendResetPasswordEmail,
-  resetPasswordUrl = getResetPasswordUrl(),
+  resetPasswordUrl,
+  getResetPasswordUrl: getResetPasswordUrlFn = getResetPasswordUrl,
   now = () => new Date(),
 } = {}) => {
   const register = async ({ Email, MatKhau, TenChuXe, DienThoai, DiaChi }) => {
@@ -101,7 +104,12 @@ const createAuthService = ({
       where: { Email: normalizeEmail(Email) },
     });
 
+    ensureCustomerExists(customer, "Email hoặc mật khẩu không đúng.");
     ensureActiveCustomer(customer);
+
+    if (!customer.MatKhau) {
+      throw buildServiceError(400, "Email hoặc mật khẩu không đúng.");
+    }
 
     const isValidPassword = await comparePasswordFn(MatKhau, customer.MatKhau);
 
@@ -121,6 +129,7 @@ const createAuthService = ({
     });
 
     if (customer && customer.TrangThai === "HoatDong") {
+      const resolvedResetPasswordUrl = resetPasswordUrl ?? getResetPasswordUrlFn();
       const { rawToken, hashedToken, expiresAt } = createResetToken();
 
       await customerDelegate.update({
@@ -135,7 +144,7 @@ const createAuthService = ({
       await sendResetPasswordEmailFn({
         to: customer.Email,
         customerName: customer.TenChuXe,
-        resetUrl: `${resetPasswordUrl}?token=${encodeURIComponent(rawToken)}`,
+        resetUrl: `${resolvedResetPasswordUrl}?token=${encodeURIComponent(rawToken)}`,
       });
     }
 
@@ -152,7 +161,8 @@ const createAuthService = ({
       },
     });
 
-    ensureActiveCustomer(customer);
+    ensureCustomerExists(customer, "Token đặt lại mật khẩu không hợp lệ.");
+    ensureActiveCustomer(customer, "Tài khoản hiện không thể đặt lại mật khẩu.");
 
     if (!customer.TokenDatLaiMatKhauHetHanLuc || customer.TokenDatLaiMatKhauHetHanLuc <= now()) {
       throw buildServiceError(400, "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ.");
@@ -186,7 +196,12 @@ const createAuthService = ({
       where: { MaKH: Number(customerId) },
     });
 
+    ensureCustomerExists(customer, "Bạn chưa đăng nhập hoặc phiên đăng nhập không hợp lệ.");
     ensureActiveCustomer(customer);
+
+    if (!customer.MatKhau) {
+      throw buildServiceError(400, "Tài khoản hiện chưa có mật khẩu để đổi.");
+    }
 
     const isCurrentPasswordValid = await comparePasswordFn(MatKhauHienTai, customer.MatKhau);
 
