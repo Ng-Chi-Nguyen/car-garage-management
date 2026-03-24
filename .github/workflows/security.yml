@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Chạy hàng tuần vào Chủ Nhật
 
+permissions:
+  contents: read
+
 jobs:
   # 1. Kiểm tra bảo mật Dependencies (SCA)
   dependency-audit:
@@ -18,7 +21,10 @@ jobs:
       # Backend Audit
       - name: Audit Backend Dependencies
         working-directory: ./server
-        run: npm audit --audit-level=high || true # Chỉ warn nếu có lỗi high, không fail build (tùy chọn)
+        # Dùng `npm audit --audit-level=high` để báo lỗi nếu có lỗ hổng nghiêm trọng
+        # `|| true` giúp job không fail ngay lập tức, chỉ warning (để không chặn workflow nếu chưa fix được)
+        # Bỏ `|| true` nếu muốn bắt buộc phải fix lỗi bảo mật mới được merge.
+        run: npm audit --audit-level=high || true
 
       # Frontend Audit
       - name: Audit Frontend Dependencies
@@ -26,30 +32,8 @@ jobs:
         run: npm audit --audit-level=high || true
 
   # 2. Quét Code tĩnh (SAST) - Tìm lỗi bảo mật trong code (SQLi, XSS...)
-  codeql-analysis:
-    name: CodeQL Analysis
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: 'javascript' # Node.js & React đều là JS/TS
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v4
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:javascript"
+  # CodeQL đã được cấu hình trong .github/workflows/codeql.yml riêng biệt, có thể bỏ qua hoặc giữ lại nếu muốn gom nhóm.
+  # Để tránh trùng lặp tài nguyên, ta sẽ bỏ job này ở đây và để codeql.yml lo.
 
   # 3. Quét Secret (Tìm API Key, Password bị lộ)
   secret-scan:
@@ -59,10 +43,20 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: TruffleHog OSS
-        uses: trufflesecurity/trufflehog@main
+      - name: TruffleHog OSS (Pull Request)
+        if: github.event_name == 'pull_request'
+        uses: trufflesecurity/trufflehog@v3.94.0
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
           extra_args: --debug --only-verified
+
+      - name: TruffleHog OSS (Push/Schedule)
+        if: github.event_name != 'pull_request'
+        uses: trufflesecurity/trufflehog@v3.94.0
+        with:
+          path: ./
+          base: ""
+          head: ${{ github.ref_name }}
+          extra_args: --debug --results=verified,unknown

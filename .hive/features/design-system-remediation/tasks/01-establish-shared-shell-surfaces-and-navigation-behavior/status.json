@@ -1,0 +1,12 @@
+{
+  "status": "done",
+  "origin": "plan",
+  "planTitle": "Establish shared shell surfaces and navigation behavior",
+  "dependsOn": [],
+  "baseCommit": "d5bee0d33aa61bc788c8b9377d71f98ad287d6a6",
+  "schemaVersion": 1,
+  "startedAt": "2026-03-21T16:43:13.055Z",
+  "idempotencyKey": "hive-design-system-remediation-01-establish-shared-shell-surfaces-and-navigation-behavior-1",
+  "summary": "Refactored AppShell to use the proper surface base color (#f7f9fb). Updated Topbar and Sidebar to use glassmorphism (white/85 with 12px backdrop blur) and removed structural borders. Replaced Sidebar's filled active state with a left-edge primary indicator and 600-weight text. Fixed Tailwind PostCSS configuration to resolve Vite build error. All verification checks passed.",
+  "completedAt": "2026-03-21T16:48:52.313Z"
+}
