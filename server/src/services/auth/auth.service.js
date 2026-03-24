@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import prisma from "../../db/prisma.js";
 import { buildServiceError } from "../../shared/crud/crud.helpers.js";
 import { signAccessToken } from "../../utils/auth/jwt.util.js";
-import { sendResetPasswordEmail } from "../../utils/auth/mail.util.js";
+import { sendResetPasswordEmail, sendWelcomeEmail } from "../../utils/auth/mail.util.js";
 import { comparePassword, hashPassword } from "../../utils/auth/password.util.js";
 
 const normalizeEmail = (email) => email.trim().toLowerCase();
@@ -60,8 +60,10 @@ const createAuthService = ({
   createResetToken = defaultCreateResetToken,
   hashResetToken = defaultHashResetToken,
   sendResetPasswordEmail: sendResetPasswordEmailFn = sendResetPasswordEmail,
+  sendWelcomeEmail: sendWelcomeEmailFn = sendWelcomeEmail,
   resetPasswordUrl,
   getResetPasswordUrl: getResetPasswordUrlFn = getResetPasswordUrl,
+  reportMailFailure = console.error,
   now = () => new Date(),
 } = {}) => {
   const register = async ({ Email, MatKhau, TenChuXe, DienThoai, DiaChi }) => {
@@ -93,6 +95,15 @@ const createAuthService = ({
         TrangThai: "HoatDong",
       },
     });
+
+    try {
+      await sendWelcomeEmailFn({
+        to: createdCustomer.Email,
+        customerName: createdCustomer.TenChuXe,
+      });
+    } catch (error) {
+      reportMailFailure("WELCOME_EMAIL_FAILED", error);
+    }
 
     return {
       customer: sanitizeCustomer(createdCustomer),
