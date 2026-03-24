@@ -10,6 +10,7 @@ datasource db {
 model HIEU_XE {
     MaHieuXe  Int    @id @default(autoincrement())
     TenHieuXe String @unique @db.VarChar(100)
+    Logo      String? @db.VarChar(255)
     Xe        XE[]
 }
 

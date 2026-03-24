@@ -24,7 +24,6 @@ const customerSchema = createCrudValidator({
     DiaChi: Joi.string().trim().max(255).allow("").required(),
     ChucVu: Joi.string().valid("NhanVien", "KhachHang").allow(null, ""),
     TrangThai: Joi.string().valid("HoatDong", "BiKhoa", "DaXoa").allow(null, ""),
-    Avatar: Joi.string().trim().max(255).allow(null, ""),
   }).unknown(false),
   updateBodySchema: Joi.object({
     Email: Joi.string().trim().email().max(100).allow(null, ""),
@@ -33,7 +32,6 @@ const customerSchema = createCrudValidator({
     DiaChi: Joi.string().trim().max(255).allow(""),
     ChucVu: Joi.string().valid("NhanVien", "KhachHang").allow(null, ""),
     TrangThai: Joi.string().valid("HoatDong", "BiKhoa", "DaXoa").allow(null, ""),
-    Avatar: Joi.string().trim().max(255).allow(null, ""),
   })
     .min(1)
     .unknown(false),
