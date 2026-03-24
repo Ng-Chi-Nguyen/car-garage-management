@@ -19,7 +19,6 @@ const CUSTOMER_FILTER_FIELDS = {
 const customerSchema = createCrudValidator({
   createBodySchema: Joi.object({
     Email: Joi.string().trim().email().max(100).allow(null, ""),
-    MatKhau: Joi.string().trim().max(255).allow(null, ""),
     TenChuXe: Joi.string().trim().max(100).required(),
     DienThoai: Joi.string().trim().max(20).required(),
     DiaChi: Joi.string().trim().max(255).allow("").required(),
@@ -29,7 +28,6 @@ const customerSchema = createCrudValidator({
   }).unknown(false),
   updateBodySchema: Joi.object({
     Email: Joi.string().trim().email().max(100).allow(null, ""),
-    MatKhau: Joi.string().trim().max(255).allow(null, ""),
     TenChuXe: Joi.string().trim().max(100),
     DienThoai: Joi.string().trim().max(20),
     DiaChi: Joi.string().trim().max(255).allow(""),

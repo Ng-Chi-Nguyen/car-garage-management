@@ -1,4 +1,3 @@
-// Import hàm tạo lỗi nghiệp vụ chuẩn để ném lỗi có mã HTTP nhất quán.
 import { buildServiceError } from "./crud.helpers.js";
 
 // Chuẩn hóa mọi giá trị số đầu vào, mặc định 0 khi null/undefined để tránh NaN trong phép tính.
@@ -65,7 +64,6 @@ const adjustPartStock = async (tx, maVatTu, quantityDelta) => {
   const result = await tx.vAT_TU.updateMany({
     // Áp dụng bộ lọc đã tính phía trên (bao gồm điều kiện đủ tồn nếu cần).
     where,
-    // Dữ liệu cập nhật theo cú pháp increment của Prisma.
     data: {
       // Tăng/giảm trực tiếp tồn kho theo lượng chênh lệch.
       SoLuongTon: {
@@ -77,7 +75,6 @@ const adjustPartStock = async (tx, maVatTu, quantityDelta) => {
 
   // Nếu có ít nhất một bản ghi được cập nhật thì thao tác thành công, kết thúc sớm.
   if (result.count > 0) {
-    // Không cần xử lý thêm vì tồn kho đã được điều chỉnh.
     return;
   }
 
@@ -133,26 +130,18 @@ const syncStockReceiptTotal = async (tx, maPhieuNhap) => {
 
 // Đồng bộ tiền nợ hiện tại của xe từ tổng phiếu sửa chữa và tổng phiếu thu tiền.
 const syncVehicleDebt = async (tx, maXe) => {
-  // Chạy song song hai phép aggregate để giảm thời gian truy vấn.
   const [phieuSuaChuaAggregate, phieuThuTienAggregate] = await Promise.all([
-    // Tổng hợp tổng tiền sửa chữa của xe.
     tx.pHIEU_SUA_CHUA.aggregate({
-      // Lọc theo mã xe cần đồng bộ công nợ.
       where: {
-        // Ép kiểu mã xe sang số theo schema DB.
         MaXe: Number(maXe),
       },
-      // Yêu cầu tổng trường TongTien.
       _sum: {
-        // Cộng dồn tổng tiền của các phiếu sửa chữa.
         TongTien: true,
       },
     }),
     // Tổng hợp tổng tiền đã thu của xe.
     tx.pHIEU_THU_TIEN.aggregate({
-      // Lọc theo cùng mã xe.
       where: {
-        // Đảm bảo điều kiện tìm kiếm đúng kiểu số.
         MaXe: Number(maXe),
       },
       // Yêu cầu tổng trường SoTienThu.
@@ -165,9 +154,7 @@ const syncVehicleDebt = async (tx, maXe) => {
 
   // Cập nhật nợ hiện tại của xe bằng hàm tính nợ chuẩn hóa.
   await tx.xE.update({
-    // Trỏ tới đúng bản ghi xe cần cập nhật.
     where: {
-      // Mã xe là khóa định danh trong điều kiện update.
       MaXe: Number(maXe),
     },
     // Ghi lại trường nợ hiện tại sau khi đồng bộ.
@@ -199,11 +186,8 @@ const syncRepairOrderTotal = async (tx, maPhieuSC) => {
     },
   });
 
-  // Cập nhật tổng tiền phiếu sửa chữa và lấy MaXe để đồng bộ công nợ tiếp theo.
   const phieuSuaChua = await tx.pHIEU_SUA_CHUA.update({
-    // Xác định phiếu sửa chữa đích theo mã phiếu.
     where: {
-      // Mã phiếu sửa chữa ở dạng số theo DB.
       MaPhieuSC: Number(maPhieuSC),
     },
     // Dữ liệu cần cập nhật trên phiếu sửa chữa.
@@ -211,9 +195,7 @@ const syncRepairOrderTotal = async (tx, maPhieuSC) => {
       // Gán tổng tiền mới từ aggregate chi tiết.
       TongTien: getAggregateSum(aggregateResult, "ThanhTien"),
     },
-    // Chỉ chọn MaXe để dùng cho bước đồng bộ công nợ, tránh lấy thừa dữ liệu.
     select: {
-      // MaXe là thông tin bắt buộc để cập nhật nợ xe tương ứng.
       MaXe: true,
     },
   });
@@ -224,17 +206,13 @@ const syncRepairOrderTotal = async (tx, maPhieuSC) => {
 
 // Kiểm tra số tiền thu mới/cập nhật không vượt quá khoản nợ còn lại của xe.
 const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) => {
-  // Điều kiện lọc phiếu thu tiền theo xe.
   const paymentWhere = {
-    // Chỉ xét các phiếu thu của đúng xe cần kiểm tra.
     MaXe: Number(maXe),
   };
 
   // Khi cập nhật phiếu thu hiện có, loại trừ chính phiếu đó khỏi phép cộng tổng đã thu.
   if (excludePaymentId) {
-    // Bổ sung điều kiện not để bỏ qua phiếu thu đang sửa.
     paymentWhere.MaPhieuThu = {
-      // So sánh theo mã phiếu thu đã ép kiểu số.
       not: Number(excludePaymentId),
     };
   }
@@ -243,14 +221,10 @@ const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) =>
   const [phieuSuaChuaAggregate, phieuThuTienAggregate] = await Promise.all([
     // Aggregate tổng tiền sửa chữa của xe.
     tx.pHIEU_SUA_CHUA.aggregate({
-      // Điều kiện theo mã xe đầu vào.
       where: {
-        // Mã xe cần ép về số để truy vấn chính xác.
         MaXe: Number(maXe),
       },
-      // Chỉ lấy tổng trường TongTien.
       _sum: {
-        // Tổng giá trị tất cả phiếu sửa chữa liên quan xe.
         TongTien: true,
       },
     }),
@@ -274,35 +248,22 @@ const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) =>
     getAggregateSum(phieuThuTienAggregate, "SoTienThu"),
   );
 
-  // Nếu số tiền thu đề xuất lớn hơn nợ còn lại thì chặn nghiệp vụ.
   if (toNumberValue(soTienThu) > availableDebt) {
     // Trả lỗi 400 để báo dữ liệu đầu vào không hợp lệ theo quy tắc nghiệp vụ.
     throw buildServiceError(400, "Số tiền thu không được vượt quá số tiền nợ hiện tại.");
   }
 };
 
-// Export toàn bộ helper để các service/controller CRUD dùng lại thống nhất.
 export {
-  // Hàm điều chỉnh tồn kho vật tư trong transaction.
   adjustPartStock,
-  // Hàm tính công nợ còn lại của xe.
   calculateDebt,
-  // Hàm tính thành tiền dòng nhập kho.
   calculateImportLineTotal,
-  // Hàm tính chênh lệch tồn kho cho cập nhật phiếu nhập.
   calculateImportStockAdjustment,
-  // Hàm tính chênh lệch tồn kho cho cập nhật sửa chữa.
   calculateRepairStockAdjustment,
-  // Hàm tính thành tiền dòng sửa chữa.
   calculateRepairLineTotal,
-  // Hàm kiểm tra tiền thu không vượt nợ.
   ensurePaymentWithinDebt,
-  // Hàm đồng bộ tổng tiền phiếu nhập.
   syncStockReceiptTotal,
-  // Hàm đồng bộ tổng tiền phiếu sửa chữa.
   syncRepairOrderTotal,
-  // Hàm đồng bộ nợ hiện tại của xe.
   syncVehicleDebt,
-  // Hàm ép kiểu số dùng chung.
   toNumberValue,
 };

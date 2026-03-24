@@ -1,0 +1,4 @@
+ALTER TABLE `KHACH_HANG`
+    ADD COLUMN `TokenDatLaiMatKhau` VARCHAR(255) NULL,
+    ADD COLUMN `TokenDatLaiMatKhauHetHanLuc` DATETIME(3) NULL,
+    ADD COLUMN `TokenDatLaiMatKhauDaDungLuc` DATETIME(3) NULL;

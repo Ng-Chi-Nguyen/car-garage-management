@@ -1,5 +1,26 @@
 import createCrudService from "../../shared/crud/crud.serviceFactory.js";
 
+const sanitizeCustomer = (customer) => {
+  if (!customer) {
+    return customer;
+  }
+
+  const {
+    MatKhau,
+    TokenDatLaiMatKhau,
+    TokenDatLaiMatKhauHetHanLuc,
+    TokenDatLaiMatKhauDaDungLuc,
+    ...safeCustomer
+  } = customer;
+
+  return safeCustomer;
+};
+
+const sanitizeCustomerListResult = (result) => ({
+  ...result,
+  customers: result.customers.map(sanitizeCustomer),
+});
+
 const CUSTOMER_FILTER_FIELDS = {
   MaKH: { type: "number" },
   Email: { type: "string" },
@@ -17,7 +38,7 @@ const CUSTOMER_FILTER_FIELDS = {
 const crudService = createCrudService({
   delegateName: "kHACH_HANG",
   idField: "MaKH",
-  createFields: ["Email", "MatKhau", "TenChuXe", "DienThoai", "DiaChi", "ChucVu", "TrangThai", "Avatar"],
+  createFields: ["Email", "TenChuXe", "DienThoai", "DiaChi", "ChucVu", "TrangThai", "Avatar"],
   searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
   filterFields: CUSTOMER_FILTER_FIELDS,
   listKey: "customers",
@@ -25,11 +46,12 @@ const crudService = createCrudService({
 });
 
 const customerService = {
-  createCustomer: async (payload) => crudService.create(payload),
-  getCustomerList: async (query) => crudService.getAll(query),
-  getCustomerById: async (id) => crudService.getById(id),
-  updateCustomer: async (id, payload) => crudService.update(id, payload),
-  deleteCustomer: async (id) => crudService.remove(id),
+  createCustomer: async (payload) => sanitizeCustomer(await crudService.create(payload)),
+  getCustomerList: async (query) => sanitizeCustomerListResult(await crudService.getAll(query)),
+  getCustomerById: async (id) => sanitizeCustomer(await crudService.getById(id)),
+  updateCustomer: async (id, payload) => sanitizeCustomer(await crudService.update(id, payload)),
+  deleteCustomer: async (id) => sanitizeCustomer(await crudService.remove(id)),
 };
 
+export { sanitizeCustomer, sanitizeCustomerListResult };
 export default customerService;
