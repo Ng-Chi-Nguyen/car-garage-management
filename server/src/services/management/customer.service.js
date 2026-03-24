@@ -1,4 +1,16 @@
-import createCrudService from "../../shared/crud/crud.serviceFactory.js";
+import prisma from "../../db/prisma.js";
+import {
+  buildListWhere,
+  buildPagination,
+  buildServiceError,
+  buildWriteData,
+} from "../../shared/crud/crud.helpers.js";
+import { processAvatarImage as processAvatarImageUtil } from "../../utils/image.util.js";
+import {
+  removeObject as removeObjectUtil,
+  resolveStorageObjectFromPublicUrl,
+  uploadPublicImage as uploadPublicImageUtil,
+} from "../../utils/supabase.storage.js";
 
 const CUSTOMER_FILTER_FIELDS = {
   MaKH: { type: "number" },
@@ -14,22 +26,184 @@ const CUSTOMER_FILTER_FIELDS = {
   NgayCapNhatTo: { type: "dateTo", targetField: "NgayCapNhat" },
 };
 
-const crudService = createCrudService({
-  delegateName: "kHACH_HANG",
-  idField: "MaKH",
-  createFields: ["Email", "MatKhau", "TenChuXe", "DienThoai", "DiaChi", "ChucVu", "TrangThai", "Avatar"],
-  searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
-  filterFields: CUSTOMER_FILTER_FIELDS,
-  listKey: "customers",
-  notFoundMessage: "Không tìm thấy khách hàng.",
-});
+const CUSTOMER_WRITE_FIELDS = ["Email", "TenChuXe", "DienThoai", "DiaChi", "ChucVu", "TrangThai"];
 
-const customerService = {
-  createCustomer: async (payload) => crudService.create(payload),
-  getCustomerList: async (query) => crudService.getAll(query),
-  getCustomerById: async (id) => crudService.getById(id),
-  updateCustomer: async (id, payload) => crudService.update(id, payload),
-  deleteCustomer: async (id) => crudService.remove(id),
+const sanitizeCustomer = (customer) => {
+  if (!customer) {
+    return customer;
+  }
+
+  const { MatKhau, TokenDatLaiMatKhau, TokenDatLaiMatKhauHetHanLuc, TokenDatLaiMatKhauDaDungLuc, ...safeCustomer } = customer;
+
+  return safeCustomer;
 };
 
+const sanitizeCustomerListResult = (result) => ({
+  ...result,
+  customers: result.customers.map(sanitizeCustomer),
+});
+
+const buildCustomerAvatarPath = (customerId) => `customers/${customerId}/avatar.webp`;
+
+const createCustomerService = ({
+  prismaClient = prisma,
+  customerDelegate = prisma.kHACH_HANG,
+  vehicleDelegate = prisma.xE,
+  uploadPublicImage = uploadPublicImageUtil,
+  removeObject = removeObjectUtil,
+  processAvatarImage = processAvatarImageUtil,
+  avatarBucket = process.env.SUPABASE_AVATAR_BUCKET || "avatars",
+} = {}) => {
+  const getCustomerOrThrow = async (id) => {
+    const customer = await customerDelegate.findUnique({
+      where: { MaKH: Number(id) },
+    });
+
+    if (!customer) {
+      throw buildServiceError(404, "Không tìm thấy khách hàng.");
+    }
+
+    return customer;
+  };
+
+  const getCustomerList = async (query = {}) => {
+    const { page = 1, limit = 10, search = "", ...filters } = query;
+    const pagination = buildPagination({ page, limit });
+    const where = buildListWhere({
+      search,
+      filters,
+      searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
+      filterFields: CUSTOMER_FILTER_FIELDS,
+    });
+
+    const [totalItems, customers] = await prismaClient.$transaction([
+      customerDelegate.count({ where }),
+      customerDelegate.findMany({
+        where,
+        skip: pagination.skip,
+        take: pagination.limit,
+        orderBy: {
+          MaKH: "desc",
+        },
+      }),
+    ]);
+
+    return sanitizeCustomerListResult({
+      customers,
+      pagination: {
+        page: pagination.page,
+        limit: pagination.limit,
+        totalItems,
+        totalPages: totalItems === 0 ? 0 : Math.ceil(totalItems / pagination.limit),
+      },
+    });
+  };
+
+  const getCustomerById = async (id) => sanitizeCustomer(await getCustomerOrThrow(id));
+
+  const createCustomer = async (payload, avatarFile) => {
+    const createdCustomer = await customerDelegate.create({
+      data: buildWriteData(payload, CUSTOMER_WRITE_FIELDS),
+    });
+
+    if (!avatarFile) {
+      return sanitizeCustomer(createdCustomer);
+    }
+
+    const avatarPath = buildCustomerAvatarPath(createdCustomer.MaKH);
+
+    try {
+      const processedAvatar = await processAvatarImage(avatarFile);
+      const avatarUrl = await uploadPublicImage({
+        bucket: avatarBucket,
+        path: avatarPath,
+        buffer: processedAvatar.buffer,
+        contentType: processedAvatar.contentType,
+      });
+
+      try {
+        const updatedCustomer = await customerDelegate.update({
+          where: { MaKH: createdCustomer.MaKH },
+          data: { Avatar: avatarUrl },
+        });
+
+        return sanitizeCustomer(updatedCustomer);
+      } catch (error) {
+        await removeObject({ bucket: avatarBucket, path: avatarPath }).catch(() => {});
+        await customerDelegate.delete({ where: { MaKH: createdCustomer.MaKH } }).catch(() => {});
+        throw error;
+      }
+    } catch (error) {
+      await customerDelegate.delete({ where: { MaKH: createdCustomer.MaKH } }).catch(() => {});
+      throw error;
+    }
+  };
+
+  const updateCustomer = async (id, payload, avatarFile) => {
+    const customerId = Number(id);
+    await getCustomerOrThrow(customerId);
+
+    const writeData = buildWriteData(payload, CUSTOMER_WRITE_FIELDS);
+
+    if (avatarFile) {
+      const avatarPath = buildCustomerAvatarPath(customerId);
+      const processedAvatar = await processAvatarImage(avatarFile);
+      const avatarUrl = await uploadPublicImage({
+        bucket: avatarBucket,
+        path: avatarPath,
+        buffer: processedAvatar.buffer,
+        contentType: processedAvatar.contentType,
+      });
+
+      writeData.Avatar = avatarUrl;
+    }
+
+    const updatedCustomer = await customerDelegate.update({
+      where: { MaKH: customerId },
+      data: writeData,
+    });
+
+    return sanitizeCustomer(updatedCustomer);
+  };
+
+  const deleteCustomer = async (id) => {
+    const customerId = Number(id);
+    const customer = await getCustomerOrThrow(customerId);
+
+    const relatedVehiclesCount = await vehicleDelegate.count({
+      where: { MaKH: customerId },
+    });
+
+    if (relatedVehiclesCount > 0) {
+      throw buildServiceError(409, "Không thể xóa khách hàng vì đang có dữ liệu liên quan.");
+    }
+
+    if (customer.Avatar) {
+      const storageObject = resolveStorageObjectFromPublicUrl(customer.Avatar);
+
+      await removeObject({
+        bucket: storageObject.bucket,
+        path: storageObject.path,
+      });
+    }
+
+    const deletedCustomer = await customerDelegate.delete({
+      where: { MaKH: customerId },
+    });
+
+    return sanitizeCustomer(deletedCustomer);
+  };
+
+  return {
+    createCustomer,
+    getCustomerList,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer,
+  };
+};
+
+const customerService = createCustomerService();
+
+export { createCustomerService, sanitizeCustomer, sanitizeCustomerListResult };
 export default customerService;

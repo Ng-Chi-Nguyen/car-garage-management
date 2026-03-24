@@ -1,9 +1,6 @@
-// Import Joi để xây dựng schema validate cho query filter.
 import Joi from "joi";
-// Import hàm chuẩn hóa chuỗi để so khớp enum không phụ thuộc kiểu viết.
 import { normalizeKeyword } from "./crud.helpers.js";
 
-// Tạo schema Joi cho filter kiểu enum, có hỗ trợ alias và dạng multi-value.
 const buildEnumSchema = (descriptor = {}) => {
   // Chuẩn hóa descriptor.values thành mảng để xử lý thống nhất.
   const values = Array.isArray(descriptor.values)
@@ -140,19 +137,12 @@ const buildListQuerySchemaFromFilters = (filterFields = {}) => {
     return accumulator;
   }, {});
 
-  // Kết hợp schema phân trang, tìm kiếm và toàn bộ schema filter động.
   return Joi.object({
-    // Trang hiện tại, mặc định là 1.
     page: Joi.number().integer().positive().default(1),
-    // Số bản ghi mỗi trang, mặc định là 10.
     limit: Joi.number().integer().positive().default(10),
-    // Từ khóa tìm kiếm, cho phép chuỗi rỗng.
     search: Joi.string().trim().allow("").optional(),
-    // Trải các filter động vào object schema query.
     ...filterSchema,
-    // Không cho phép key query ngoài danh sách định nghĩa.
   }).unknown(false);
 };
 
-// Export helper để các factory validator CRUD tái sử dụng.
 export { buildListQuerySchemaFromFilters };

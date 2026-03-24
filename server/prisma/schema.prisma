@@ -10,6 +10,7 @@ datasource db {
 model HIEU_XE {
     MaHieuXe  Int    @id @default(autoincrement())
     TenHieuXe String @unique @db.VarChar(100)
+    Logo      String? @db.VarChar(255)
     Xe        XE[]
 }
 
@@ -29,6 +30,9 @@ model KHACH_HANG {
     MaKH        Int                 @id @default(autoincrement())
     Email       String?             @unique @db.VarChar(100)
     MatKhau     String?             @db.VarChar(255)
+    TokenDatLaiMatKhau String?      @db.VarChar(255)
+    TokenDatLaiMatKhauHetHanLuc DateTime?
+    TokenDatLaiMatKhauDaDungLuc DateTime?
     TenChuXe    String              @db.VarChar(100)
     DienThoai   String              @unique @db.VarChar(20)
     DiaChi      String              @db.VarChar(255)

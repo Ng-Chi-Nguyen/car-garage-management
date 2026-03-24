@@ -44,11 +44,8 @@ client/.env
 client/dist/
 client/build/
 
-# Agent worktrees
+# Local worktrees
 .worktrees/
-.hive/.worktrees/
 
-# Local tooling
+
 superpowers/
-# CocoIndex Code (ccc)
-/.cocoindex_code/

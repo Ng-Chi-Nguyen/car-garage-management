@@ -39,7 +39,6 @@ const handleError = (res, error, messages) => {
 const createCrudController = ({ service, entityKey, messages }) => {
   return {
     create: async (req, res) => {
-      console.log(req.body)
       try {
         const item = await service.create(req.body);
 
@@ -55,7 +54,7 @@ const createCrudController = ({ service, entityKey, messages }) => {
 
     getAll: async (req, res) => {
       try {
-        const result = await service.getAll(req.query);
+        const result = await service.getAll(req.validatedQuery ?? req.query);
 
         return res.json({
           success: true,
@@ -69,7 +68,7 @@ const createCrudController = ({ service, entityKey, messages }) => {
 
     getById: async (req, res) => {
       try {
-        const item = await service.getById(req.params.id);
+        const item = await service.getById(req.validatedParams?.id ?? req.params.id);
 
         return res.json({
           success: true,
@@ -83,7 +82,7 @@ const createCrudController = ({ service, entityKey, messages }) => {
 
     update: async (req, res) => {
       try {
-        const item = await service.update(req.params.id, req.body);
+        const item = await service.update(req.validatedParams?.id ?? req.params.id, req.body);
 
         return res.json({
           success: true,
@@ -97,7 +96,7 @@ const createCrudController = ({ service, entityKey, messages }) => {
 
     remove: async (req, res) => {
       try {
-        const item = await service.remove(req.params.id);
+        const item = await service.remove(req.validatedParams?.id ?? req.params.id);
 
         return res.json({
           success: true,
