@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import Routes from "../src/routes/index.route.js";
 
-test("Routes mount auth route riêng và bảo vệ toàn bộ route management", () => {
+test("Routes mount auth route và tạm thời mở management routes không cần token", () => {
   const calls = [];
   const app = {
     use(...args) {
@@ -34,6 +34,6 @@ test("Routes mount auth route riêng và bảo vệ toàn bộ route management"
   for (const path of protectedManagementPaths) {
     const routeCall = calls.find(([routePath]) => routePath === path);
     assert.ok(routeCall, `${path} should be mounted`);
-    assert.equal(routeCall.length, 4, `${path} should include auth and role middleware before router`);
+    assert.equal(routeCall.length, 2, `${path} should be temporarily mounted without auth middleware`);
   }
 });

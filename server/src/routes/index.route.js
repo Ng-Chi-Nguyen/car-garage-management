@@ -14,14 +14,14 @@ import vehicleRoute from "./management/vehicle.route.js";
 
 const Routes = (app) => {
   const apiPrefixV1 = "/api/v1";
-
-  // login true
   const requireManagementAccess = [
     authMiddleware.requireAuth,
     authMiddleware.requireRoles(["Admin", "NhanVien"]),
   ];
 
-  // app.use(`${apiPrefixV1}/auth`, authRoute);
+  app.use(`${apiPrefixV1}/auth`, authRoute);
+
+  // Tạm khóa auth middleware cho các route management để test Postman nhanh.
   // app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute); // KHACH_HANG
   // app.use(`${apiPrefixV1}/car-brands`, ...requireManagementAccess, carBrandRoute); // HIEU_XE
   // app.use(`${apiPrefixV1}/vehicles`, ...requireManagementAccess, vehicleRoute); // XE
@@ -34,10 +34,6 @@ const Routes = (app) => {
   // app.use(`${apiPrefixV1}/stock-receipt-details`, ...requireManagementAccess, stockReceiptDetailRoute); // CT_PHIEU_NHAP
   // app.use(`${apiPrefixV1}/payment-receipts`, ...requireManagementAccess, paymentReceiptRoute); // PHIEU_THU_TIEN
 
-
-  // Login false
-
-  app.use(`${apiPrefixV1}/auth`, authRoute);
   app.use(`${apiPrefixV1}/customers`, customerRoute); // KHACH_HANG
   app.use(`${apiPrefixV1}/car-brands`, carBrandRoute); // HIEU_XE
   app.use(`${apiPrefixV1}/vehicles`, vehicleRoute); // XE
