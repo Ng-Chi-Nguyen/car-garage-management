@@ -50,3 +50,5 @@ client/build/
 
 # Local tooling
 superpowers/
+# CocoIndex Code (ccc)
+/.cocoindex_code/
