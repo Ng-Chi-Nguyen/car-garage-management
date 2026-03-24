@@ -31,10 +31,12 @@ function IntakeInput({ label, required, icon, placeholder, value, onChange }) {
       <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition focus-within:border-slate-400 focus-within:shadow-md">
         <span className="text-lg text-slate-400">{icon}</span>
         <input
+          type="text"
           className="w-full border-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          required={required}
         />
       </div>
     </label>

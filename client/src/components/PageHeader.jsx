@@ -4,7 +4,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs }) {
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav className="text-sm text-gray-500 mb-2">
           {breadcrumbs.map((bc, idx) => (
-            <span key={idx}>
+            <span key={bc.path ?? bc.label ?? idx}>
               {idx > 0 && <span className="mx-2">/</span>}
               {bc.label}
             </span>
