@@ -6,6 +6,29 @@
   --color-primary-500: #3b82f6;
   --color-primary-600: #2563eb;
   --color-primary-700: #1d4ed8;
+
+  --color-primary: #2563eb;
+  --color-secondary: #475569;
+  --color-tertiary: #7c3aed;
+  --color-error: #dc2626;
+  --color-outline: #d1d5db;
+  --color-outline-variant: #e5e7eb;
+
+  --color-surface: #ffffff;
+  --color-surface-container: #f3f4f6;
+  --color-surface-container-low: #f9fafb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #e5e7eb;
+  --color-surface-container-highest: #d1d5db;
+
+  --color-on-surface: #111827;
+  --color-on-surface-variant: #4b5563;
+  --color-on-primary-container: #1e3a8a;
+  --color-on-error-container: #991b1b;
+
+  --color-primary-container: #dbeafe;
+  --color-primary-fixed: #dbeafe;
+  --color-error-container: #fee2e2;
 }
 
 @layer base {
