@@ -10,43 +10,66 @@ describe('dashboard.mappers', () => {
       repairOrders: [],
       paymentReceipts: []
     };
-    
+
     const vm = normalizeDashboardData(rawData);
-    
+
     assert.strictEqual(vm.kpis.totalCustomers, 0);
     assert.strictEqual(vm.kpis.totalVehicles, 0);
     assert.strictEqual(vm.kpis.totalRepairOrders, 0);
     assert.strictEqual(vm.kpis.totalRevenue, 0);
+    assert.strictEqual(vm.kpis.waitingCount, 0);
+    assert.strictEqual(vm.kpis.repairingCount, 0);
+    assert.strictEqual(vm.kpis.completedCount, 0);
+    
     assert.deepStrictEqual(vm.recentOrders, []);
     assert.deepStrictEqual(vm.trendSeries.dates, []);
     assert.deepStrictEqual(vm.trendSeries.revenues, []);
   });
 
-  test('normalizeDashboardData maps envelopes correctly with numbers', () => {
+  test('normalizeDashboardData maps envelopes correctly with numbers and links related data', () => {
     const rawData = {
-      customers: [{ id: 1 }, { id: 2 }],
-      vehicles: [{ id: 1 }],
+      customers: [
+        { MaKH: 1, TenChuXe: 'Nguyen Van A' },
+        { MaKH: 2, TenChuXe: 'Tran Thi B' }
+      ],
+      vehicles: [
+        { MaXe: 1, BienSo: '51H-123.45', MaKH: 1, MaHieuXe: 1 },
+        { MaXe: 2, BienSo: '29A-678.90', MaKH: 2, MaHieuXe: 2 }
+      ],
       repairOrders: [
-        { id: 1, createdAt: '2023-01-01T12:00:00.000Z', totalAmount: '1000' },
-        { id: 2, createdAt: '2023-01-02T12:00:00.000Z', totalAmount: '2000' }
+        { MaPhieuSC: 1, MaXe: 1, NgayTao: '2023-01-01T12:00:00.000Z', TrangThai: 'TiepNhan' },
+        { MaPhieuSC: 2, MaXe: 2, NgayTao: '2023-01-02T12:00:00.000Z', TrangThai: 'DangSua' },
+        { MaPhieuSC: 3, MaXe: 1, NgayTao: '2023-01-03T12:00:00.000Z', TrangThai: 'HoanTat' }
       ],
       paymentReceipts: [
         { id: 1, amount: '1000', createdAt: '2023-01-01T14:00:00.000Z' },
         { id: 2, amount: '500', createdAt: '2023-01-01T15:00:00.000Z' }
       ]
     };
-    
+
     const vm = normalizeDashboardData(rawData);
-    
+
     assert.strictEqual(vm.kpis.totalCustomers, 2);
-    assert.strictEqual(vm.kpis.totalVehicles, 1);
-    assert.strictEqual(vm.kpis.totalRepairOrders, 2);
-    assert.strictEqual(vm.kpis.totalRevenue, 1500); // from paymentReceipts
+    assert.strictEqual(vm.kpis.totalVehicles, 2);
+    assert.strictEqual(vm.kpis.totalRepairOrders, 3);
+    assert.strictEqual(vm.kpis.totalRevenue, 1500);
+
+    assert.strictEqual(vm.kpis.waitingCount, 1);
+    assert.strictEqual(vm.kpis.repairingCount, 1);
+    assert.strictEqual(vm.kpis.completedCount, 1);
+
+    assert.strictEqual(vm.recentOrders.length, 3);
     
-    assert.strictEqual(vm.recentOrders.length, 2);
+    // Check linked data
     assert.strictEqual(vm.recentOrders[0].id, 1);
+    assert.strictEqual(vm.recentOrders[0].licensePlate, '51H-123.45');
+    assert.strictEqual(vm.recentOrders[0].customerName, 'Nguyen Van A');
+    assert.strictEqual(vm.recentOrders[0].status, 'TiepNhan');
     
-    // Trend points grouped by date
+    assert.strictEqual(vm.recentOrders[1].id, 2);
+    assert.strictEqual(vm.recentOrders[1].licensePlate, '29A-678.90');
+    assert.strictEqual(vm.recentOrders[1].customerName, 'Tran Thi B');
+
     assert.deepStrictEqual(vm.trendSeries.dates, ['2023-01-01']);
     assert.deepStrictEqual(vm.trendSeries.revenues, [1500]);
   });
