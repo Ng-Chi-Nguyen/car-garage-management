@@ -5,10 +5,13 @@ import laborFeeRoute from "./management/laborFee.route.js";
 import authMiddleware from "../middleware/auth/auth.middleware.js";
 import partRoute from "./management/part.route.js";
 import paymentReceiptRoute from "./management/paymentReceipt.route.js";
+import paymentReceiptWorkflowRoute from "./workflows/paymentReceiptWorkflow.route.js";
 import repairOrderDetailRoute from "./management/repairOrderDetail.route.js";
 import repairOrderRoute from "./management/repairOrder.route.js";
+import repairOrderWorkflowRoute from "./workflows/repairOrderWorkflow.route.js";
 import stockReceiptDetailRoute from "./management/stockReceiptDetail.route.js";
 import stockReceiptRoute from "./management/stockReceipt.route.js";
+import stockReceiptWorkflowRoute from "./workflows/stockReceiptWorkflow.route.js";
 import supplierRoute from "./management/supplier.route.js";
 import vehicleRoute from "./management/vehicle.route.js";
 
@@ -20,6 +23,9 @@ const Routes = (app) => {
   ];
 
   app.use(`${apiPrefixV1}/auth`, authRoute);
+  // app.use(`${apiPrefixV1}/workflows/repair-orders`, ...requireManagementAccess, repairOrderWorkflowRoute);
+  // app.use(`${apiPrefixV1}/workflows/stock-receipts`, ...requireManagementAccess, stockReceiptWorkflowRoute);
+  // app.use(`${apiPrefixV1}/workflows/payment-receipts`, ...requireManagementAccess, paymentReceiptWorkflowRoute);
 
   // Tạm khóa auth middleware cho các route management để test Postman nhanh.
   // app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute); // KHACH_HANG
@@ -33,6 +39,10 @@ const Routes = (app) => {
   // app.use(`${apiPrefixV1}/stock-receipts`, ...requireManagementAccess, stockReceiptRoute); // PHIEU_NHAP_KHO
   // app.use(`${apiPrefixV1}/stock-receipt-details`, ...requireManagementAccess, stockReceiptDetailRoute); // CT_PHIEU_NHAP
   // app.use(`${apiPrefixV1}/payment-receipts`, ...requireManagementAccess, paymentReceiptRoute); // PHIEU_THU_TIEN
+
+  app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
+  app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
+  app.use(`${apiPrefixV1}/workflows/payment-receipts`, paymentReceiptWorkflowRoute);
 
   app.use(`${apiPrefixV1}/customers`, customerRoute); // KHACH_HANG
   app.use(`${apiPrefixV1}/car-brands`, carBrandRoute); // HIEU_XE

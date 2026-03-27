@@ -36,4 +36,16 @@ test("Routes mount auth route và tạm thời mở management routes không c�
     assert.ok(routeCall, `${path} should be mounted`);
     assert.equal(routeCall.length, 2, `${path} should be temporarily mounted without auth middleware`);
   }
+
+  const workflowPaths = [
+    "/api/v1/workflows/repair-orders",
+    "/api/v1/workflows/stock-receipts",
+    "/api/v1/workflows/payment-receipts",
+  ];
+
+  for (const path of workflowPaths) {
+    const routeCall = calls.find(([routePath]) => routePath === path);
+    assert.ok(routeCall, `${path} should be mounted`);
+    assert.equal(routeCall.length, 4, `${path} should be mounted with auth middleware`);
+  }
 });
