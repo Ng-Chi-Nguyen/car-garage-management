@@ -38,7 +38,7 @@ export default function DashboardPage() {
       />
       <WarningRow />
       <MainMetricGrid kpis={data?.kpis} isLoading={isLoading} isError={isError} />
-      <SecondaryGrid recentOrders={data?.recentOrders} isLoading={isLoading} isError={isError} />
+      <SecondaryGrid recentOrders={data?.recentOrders} trendSeries={data?.trendSeries} isLoading={isLoading} isError={isError} />
     </div>
   );
 }
