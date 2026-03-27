@@ -1,4 +1,4 @@
-import axiosClient from '../lib/axiosClient.js';
+import axiosClient from '../../lib/axiosClient.js';
 import { toDateRange } from './dashboard.dateRange.js';
 import { normalizeDashboardData } from './dashboard.mappers.js';
 
