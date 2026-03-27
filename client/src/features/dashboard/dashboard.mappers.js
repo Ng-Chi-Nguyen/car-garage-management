@@ -1,11 +1,19 @@
 export function normalizeDashboardData(rawData) {
-    const { customers = [], vehicles = [], repairOrders = [], paymentReceipts = [] } = rawData;
+    const { 
+        customers = [], 
+        vehicles = [], 
+        repairOrders = [], 
+        paymentReceipts = [],
+        customerCount,
+        vehicleCount,
+        repairOrderCount
+    } = rawData;
 
-    const totalCustomers = customers.length;
-    const totalVehicles = vehicles.length;
-    const totalRepairOrders = repairOrders.length;
+    const totalCustomers = customerCount !== undefined ? customerCount : customers.length;
+    const totalVehicles = vehicleCount !== undefined ? vehicleCount : vehicles.length;
+    const totalRepairOrders = repairOrderCount !== undefined ? repairOrderCount : repairOrders.length;
 
-    const totalRevenue = paymentReceipts.reduce((sum, pr) => sum + Number(pr.amount || 0), 0);
+    const totalRevenue = paymentReceipts.reduce((sum, pr) => sum + Number(pr.SoTienThu || 0), 0);
 
     const waitingCount = repairOrders.filter(ro => ro.TrangThai === 'TiepNhan').length;
     const repairingCount = repairOrders.filter(ro => ro.TrangThai === 'DangSua').length;
@@ -19,21 +27,21 @@ export function normalizeDashboardData(rawData) {
         const customer = vehicle ? customerMap.get(vehicle.MaKH) : null;
         
         return {
-            id: ro.MaPhieuSC || ro.id, // fallback for tests
+            id: ro.MaPhieuSC,
             licensePlate: vehicle?.BienSo || 'Không rõ',
             vehicleModel: vehicle?.HieuXe?.TenHieuXe || (vehicle?.MaHieuXe ? `Hãng xe ${vehicle.MaHieuXe}` : 'Không rõ'),
             customerName: customer?.TenChuXe || 'Không rõ',
-            createdAt: ro.NgayTao || ro.createdAt || new Date().toISOString(),
+            createdAt: ro.NgayTao || new Date().toISOString(),
             status: ro.TrangThai
         };
     });
 
     const revenueByDate = {};
     paymentReceipts.forEach(pr => {
-        const dateRaw = pr.createdAt || pr.NgayTao || pr.NgayThu;
+        const dateRaw = pr.NgayThu || pr.NgayTao;
         if (!dateRaw) return;
         const dateStr = dateRaw.split('T')[0];
-        const amt = Number(pr.amount || pr.SoTienThu || 0);
+        const amt = Number(pr.SoTienThu || 0);
         revenueByDate[dateStr] = (revenueByDate[dateStr] || 0) + amt;
     });
 
