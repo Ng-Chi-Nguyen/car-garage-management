@@ -1,5 +1,5 @@
 import React from 'react';
-import { WarningRow, MainMetricGrid, SecondaryGrid } from './dashboard-sections';
+import { MainMetricGrid, SecondaryGrid } from './dashboard-sections';
 import { PageHeader } from '../../components/ui/page-header';
 import { useDashboardQuery } from '../../features/dashboard/useDashboardQuery';
 import { DASHBOARD_RANGES } from '../../features/dashboard/dashboard.constants';
@@ -36,7 +36,6 @@ export default function DashboardPage() {
         description="Tổng quan hoạt động của Gara"
         actions={filterActions}
       />
-      <WarningRow />
       <MainMetricGrid kpis={data?.kpis} isLoading={isLoading} isError={isError} />
       <SecondaryGrid recentOrders={data?.recentOrders} trendSeries={data?.trendSeries} isLoading={isLoading} isError={isError} />
     </div>

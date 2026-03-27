@@ -7,21 +7,12 @@ export function KpiCardGrid({ kpis }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600 relative overflow-hidden">
-        <div className="relative z-10">
-          <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu</p>
-          <div className="flex items-baseline gap-2 mb-4">
-            <h3 className="text-3xl font-bold text-gray-900">
-              {kpis.totalRevenue.toLocaleString('vi-VN')} <span className="text-lg">₫</span>
+        <div className="relative z-10 flex flex-col justify-center h-full">
+          <p className="text-slate-500 text-sm font-medium mb-1">Tổng doanh thu</p>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-4xl font-bold text-gray-900">
+              {kpis.totalRevenue.toLocaleString('vi-VN')} <span className="text-2xl text-slate-500 font-medium">₫</span>
             </h3>
-          </div>
-          <div className="h-16 w-full flex items-end gap-1">
-            <div className="flex-1 bg-blue-100 h-[40%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-100 h-[60%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-100 h-[35%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-200 h-[70%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-100 h-[50%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-600 h-[90%] rounded-t-sm"></div>
-            <div className="flex-1 bg-blue-300 h-[65%] rounded-t-sm"></div>
           </div>
         </div>
       </div>

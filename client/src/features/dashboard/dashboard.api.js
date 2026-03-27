@@ -8,15 +8,15 @@ export async function fetchDashboardData(rangeType = '7days') {
     const params = {
         NgayTaoFrom: startDate,
         NgayTaoTo: endDate,
-        limit: 100 // Safe upper bound for current dashboard views
+        limit: 10000 // High limit to ensure accurate client-side aggregation
     };
 
     const results = await Promise.allSettled([
         axiosClient.get('/api/v1/customers', { params }),
-        axiosClient.get('/api/v1/vehicles', { params }),
+        axiosClient.get('/api/v1/vehicles', { params: { limit: 10000 } }), // Vehicles do not support NgayTao filter
         axiosClient.get('/api/v1/repair-orders', { params }),
         axiosClient.get('/api/v1/payment-receipts', { 
-            params: { NgayThuFrom: startDate, NgayThuTo: endDate, limit: 100 }
+            params: { NgayThuFrom: startDate, NgayThuTo: endDate, limit: 10000 }
         })
     ]);
 

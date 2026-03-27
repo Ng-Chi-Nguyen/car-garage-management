@@ -1,34 +1,8 @@
 import React from 'react';
-import { SectionCard } from '../../components/ui/section-card';
 import { KpiCardGrid } from '../../features/dashboard/components/KpiCardGrid';
 import { RecentRepairOrdersTable } from '../../features/dashboard/components/RecentRepairOrdersTable';
 import { DashboardQuickActions } from '../../features/dashboard/components/DashboardQuickActions';
 import { DashboardTrendChart } from '../../features/dashboard/components/DashboardTrendChart';
-
-export function WarningRow() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-100 rounded-xl">
-        <div className="w-10 h-10 flex items-center justify-center bg-red-600 rounded-full text-white">
-          <span className="material-symbols-outlined">warning</span>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-red-900">Vượt số xe tối đa trong ngày</p>
-          <p className="text-xs text-red-800">Hiện tại 25/20 xe. Vui lòng kiểm tra lại công suất tiếp nhận.</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-xl">
-        <div className="w-10 h-10 flex items-center justify-center bg-orange-500 rounded-full text-white">
-          <span className="material-symbols-outlined">inventory_2</span>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-orange-900">Vật tư tồn kho thấp</p>
-          <p className="text-xs text-orange-800">Có 12 mặt hàng dầu nhớt và phụ tùng dưới mức an toàn.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function MainMetricGrid({ kpis, isLoading, isError }) {
   if (isLoading) {
