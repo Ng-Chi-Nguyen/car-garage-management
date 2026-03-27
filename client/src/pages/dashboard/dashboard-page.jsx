@@ -5,7 +5,7 @@ import { useDashboardQuery } from '../../features/dashboard/useDashboardQuery';
 import { DASHBOARD_RANGES } from '../../features/dashboard/dashboard.constants';
 
 export default function DashboardPage() {
-  const { range, setRange, isLoading, isError } = useDashboardQuery();
+  const { data, range, setRange, isLoading, isError } = useDashboardQuery();
 
   const getButtonClass = (isActive) => 
     isActive 
@@ -29,14 +29,6 @@ export default function DashboardPage() {
     </div>
   );
 
-  if (isLoading) {
-    return <div className="p-8 text-center text-slate-500">Đang tải dữ liệu dashboard...</div>;
-  }
-
-  if (isError) {
-    return <div className="p-8 text-center text-red-500">Có lỗi xảy ra khi tải dữ liệu dashboard.</div>;
-  }
-
   return (
     <div className="space-y-6">
       <PageHeader 
@@ -44,10 +36,9 @@ export default function DashboardPage() {
         description="Tổng quan hoạt động của Gara"
         actions={filterActions}
       />
-      {/* We pass data down to sections when we implement them, for now just render them as they are */}
       <WarningRow />
-      <MainMetricGrid />
-      <SecondaryGrid />
+      <MainMetricGrid kpis={data?.kpis} isLoading={isLoading} isError={isError} />
+      <SecondaryGrid recentOrders={data?.recentOrders} isLoading={isLoading} isError={isError} />
     </div>
   );
 }
