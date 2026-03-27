@@ -42,16 +42,19 @@ describe('dashboard.mappers', () => {
         { MaPhieuSC: 3, MaXe: 1, NgayTao: '2023-01-03T12:00:00.000Z', TrangThai: 'HoanTat' }
       ],
       paymentReceipts: [
-        { id: 1, amount: '1000', createdAt: '2023-01-01T14:00:00.000Z' },
-        { id: 2, amount: '500', createdAt: '2023-01-01T15:00:00.000Z' }
-      ]
+        { MaPhieuThu: 1, SoTienThu: '1000', NgayThu: '2023-01-01T14:00:00.000Z' },
+        { MaPhieuThu: 2, SoTienThu: '500', NgayThu: '2023-01-01T15:00:00.000Z' }
+      ],
+      customerCount: 10,
+      vehicleCount: 15,
+      repairOrderCount: 5
     };
 
     const vm = normalizeDashboardData(rawData);
 
-    assert.strictEqual(vm.kpis.totalCustomers, 2);
-    assert.strictEqual(vm.kpis.totalVehicles, 2);
-    assert.strictEqual(vm.kpis.totalRepairOrders, 3);
+    assert.strictEqual(vm.kpis.totalCustomers, 10);
+    assert.strictEqual(vm.kpis.totalVehicles, 15);
+    assert.strictEqual(vm.kpis.totalRepairOrders, 5);
     assert.strictEqual(vm.kpis.totalRevenue, 1500);
 
     assert.strictEqual(vm.kpis.waitingCount, 1);
