@@ -2,6 +2,8 @@ import React from 'react';
 import { SectionCard } from '../../components/ui/section-card';
 import { KpiCardGrid } from '../../features/dashboard/components/KpiCardGrid';
 import { RecentRepairOrdersTable } from '../../features/dashboard/components/RecentRepairOrdersTable';
+import { DashboardQuickActions } from '../../features/dashboard/components/DashboardQuickActions';
+import { DashboardTrendChart } from '../../features/dashboard/components/DashboardTrendChart';
 
 export function WarningRow() {
   return (
@@ -40,29 +42,15 @@ export function MainMetricGrid({ kpis, isLoading, isError }) {
   return <KpiCardGrid kpis={kpis} />;
 }
 
-export function SecondaryGrid({ recentOrders, isLoading, isError }) {
+export function SecondaryGrid({ recentOrders, trendSeries, isLoading, isError }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <RecentRepairOrdersTable orders={recentOrders} isLoading={isLoading} isError={isError} />
 
-      <SectionCard title="Hoạt động gần đây">
-        <div className="space-y-4">
-          <div className="flex gap-3">
-            <div className="w-2 h-2 mt-1.5 rounded-full bg-blue-500"></div>
-            <div>
-              <p className="text-sm font-medium text-slate-900">Tiếp nhận xe 51H-123.45</p>
-              <p className="text-xs text-slate-500">10:30 - Lễ tân</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="w-2 h-2 mt-1.5 rounded-full bg-emerald-500"></div>
-            <div>
-              <p className="text-sm font-medium text-slate-900">Hoàn thành sửa chữa 30E-444.55</p>
-              <p className="text-xs text-slate-500">09:45 - KTV Hùng</p>
-            </div>
-          </div>
-        </div>
-      </SectionCard>
+      <div className="space-y-8">
+        <DashboardTrendChart trendSeries={trendSeries} />
+        <DashboardQuickActions />
+      </div>
     </div>
   );
 }
