@@ -47,4 +47,32 @@ test("sendResetPasswordEmail fallback from về MAIL_FROM khi thiếu APP_NAME",
   });
 
   assert.equal(sentMessages[0].from, "noreply@example.com");
+  assert.match(sentMessages[0].html, /Đặt lại mật khẩu/i);
+  assert.match(sentMessages[0].html, /http:\/\/localhost\/reset-password\?token=abc/i);
+});
+
+test("sendWelcomeEmail gửi đúng subject và người nhận", async () => {
+  const createMailUtils = await loadCreateMailUtils();
+  const sentMessages = [];
+  const mailUtils = createMailUtils({
+    createTransporter: () => ({
+      sendMail: async (payload) => {
+        sentMessages.push(payload);
+      },
+    }),
+    appName: "Car Fix",
+    mailFrom: "noreply@example.com",
+  });
+
+  await mailUtils.sendWelcomeEmail({
+    to: "user@example.com",
+    customerName: "Nguyen Van A",
+  });
+
+  assert.equal(sentMessages[0].to, "user@example.com");
+  assert.equal(sentMessages[0].subject, "Chào mừng bạn đến với Car Fix");
+  assert.match(sentMessages[0].text, /Xin chào Nguyen Van A/i);
+  assert.match(sentMessages[0].html, /Chào mừng bạn đến với Car Fix/i);
+  assert.match(sentMessages[0].html, /Nguyen Van A/i);
+  assert.match(sentMessages[0].html, /Quản lý Gara Ô Tô/i);
 });

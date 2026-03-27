@@ -66,6 +66,7 @@ const createCustomerDelegate = (initialCustomer = null) => {
 
 const createDependencies = (customerDelegate, overrides = {}) => {
   const sentEmails = [];
+  const sentWelcomeEmails = [];
 
   return {
     customerDelegate,
@@ -81,7 +82,12 @@ const createDependencies = (customerDelegate, overrides = {}) => {
     sendResetPasswordEmail: async (payload) => {
       sentEmails.push(payload);
     },
+    sendWelcomeEmail: async (payload) => {
+      sentWelcomeEmails.push(payload);
+    },
+    reportMailFailure: () => {},
     getSentEmails: () => sentEmails,
+    getSentWelcomeEmails: () => sentWelcomeEmails,
     resetPasswordUrl: "http://localhost:5173/reset-password",
     now: () => new Date("2026-03-23T00:00:00.000Z"),
     ...overrides,
@@ -108,6 +114,31 @@ test("register tạo khách hàng mới với mật khẩu đã hash và không 
   assert.equal(savedCustomer.MatKhau, "hashed::Password123!");
   assert.equal(result.customer.MatKhau, undefined);
   assert.equal(result.customer.TokenDatLaiMatKhau, undefined);
+  assert.equal(dependencies.getSentWelcomeEmails().length, 1);
+  assert.equal(dependencies.getSentWelcomeEmails()[0].to, "khachhang@example.com");
+  assert.equal(dependencies.getSentWelcomeEmails()[0].customerName, "Nguyen Van A");
+});
+
+test("register vẫn thành công khi gửi welcome email thất bại", async () => {
+  const createAuthService = await loadCreateAuthService();
+  const customerDelegate = createCustomerDelegate();
+  const authService = createAuthService(
+    createDependencies(customerDelegate, {
+      sendWelcomeEmail: async () => {
+        throw new Error("MAIL_SEND_FAILED");
+      },
+    }),
+  );
+
+  const result = await authService.register({
+    Email: "newcustomer@example.com",
+    MatKhau: "Password123!",
+    TenChuXe: "Tran Van B",
+    DienThoai: "0908888888",
+    DiaChi: "Ha Noi",
+  });
+
+  assert.equal(result.customer.Email, "newcustomer@example.com");
 });
 
 test("register từ chối email đã tồn tại", async () => {

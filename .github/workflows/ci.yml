@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -18,22 +18,22 @@ jobs:
         working-directory: ./server
 
     steps:
-    - uses: actions/checkout@v6
-    
-    - name: Use Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '22.x'
-        cache: 'npm'
-        cache-dependency-path: server/package-lock.json
+      - uses: actions/checkout@v6
 
-    - name: Install Dependencies
-      run: npm ci
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
 
-    - name: Lint Code (ESLint)
-      # Chỉ chạy nếu có script lint trong package.json. Nếu chưa có, bước này sẽ skip hoặc warn.
-      # Để đảm bảo, ta nên thêm script lint vào server/package.json sau.
-      run: if npm run | grep -q "lint"; then npm run lint; else echo "No lint script found, skipping"; fi
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Code (ESLint)
+        # Chỉ chạy nếu có script lint trong package.json. Nếu chưa có, bước này sẽ skip hoặc warn.
+        # Để đảm bảo, ta nên thêm script lint vào server/package.json sau.
+        run: if npm run | grep -q "lint"; then npm run lint; else echo "No lint script found, skipping"; fi
 
     # (Optional) Run Tests if available
     # - name: Run Tests
@@ -47,30 +47,33 @@ jobs:
         working-directory: ./client
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Use Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '22.x'
-        cache: 'npm'
-        cache-dependency-path: client/package-lock.json
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
 
-    - name: Install Dependencies
-      # Dùng npm install thay vì npm ci nếu không có package-lock.json hoặc package-lock.json bị sai phiên bản
-      # Để an toàn cho dự án mới, dùng npm install sẽ linh hoạt hơn, nhưng npm ci chuẩn hơn cho CI.
-      # Sửa lỗi "Error: Some specified paths were not resolved" bằng cách đảm bảo có package-lock.json trước hoặc dùng npm install.
-      # Tuy nhiên, lỗi ở đây là do `npm ci` yêu cầu `package-lock.json` phải tồn tại và đồng bộ.
-      # Ta sẽ dùng `npm install` để đảm bảo nó chạy được cho dự án mới khởi tạo.
-      run: npm install
+      - name: Install Dependencies
+        # Dùng npm install thay vì npm ci nếu không có package-lock.json hoặc package-lock.json bị sai phiên bản
+        # Để an toàn cho dự án mới, dùng npm install sẽ linh hoạt hơn, nhưng npm ci chuẩn hơn cho CI.
+        # Sửa lỗi "Error: Some specified paths were not resolved" bằng cách đảm bảo có package-lock.json trước hoặc dùng npm install.
+        # Tuy nhiên, lỗi ở đây là do `npm ci` yêu cầu `package-lock.json` phải tồn tại và đồng bộ.
+        # Ta sẽ dùng `npm install` để đảm bảo nó chạy được cho dự án mới khởi tạo.
+        run: npm install
 
-    - name: Build Test
-      # Chạy build để đảm bảo không có lỗi cú pháp nghiêm trọng
-      run: npm run build
+      - name: Build Test
+        # Chạy build để đảm bảo không có lỗi cú pháp nghiêm trọng
+        run: npm run build
 
   # 3. Kiểm tra Database SQL
   database-check:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     services:
       mysql:
         image: mysql:8.0
@@ -82,9 +85,23 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Verify SQL Syntax
-      run: |
-        # Thử import file init.sql vào MySQL container để check lỗi cú pháp
-        mysql -h 127.0.0.1 -u root -proot garage_management < database/init.sql
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Verify Prisma Schema
+        run: npm exec prisma validate
+
+      - name: Apply Prisma Migrations
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/garage_management
+        run: |
+          npm exec prisma migrate deploy

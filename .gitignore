@@ -19,7 +19,9 @@ logs/
 *.log
 
 # Editor
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!server/prisma/.vscode/settings.json
 .idea/
 *.swp
 *.swo
