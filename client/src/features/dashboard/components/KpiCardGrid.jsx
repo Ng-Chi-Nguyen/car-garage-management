@@ -6,7 +6,7 @@ export function KpiCardGrid({ kpis }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div className="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600 relative overflow-hidden">
+      <div className="md:col-span-2 bg-white p-6 rounded-3xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-center h-full">
           <p className="text-slate-500 text-sm font-medium mb-1">Tổng doanh thu</p>
           <div className="flex items-baseline gap-2">
@@ -17,7 +17,7 @@ export function KpiCardGrid({ kpis }) {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col justify-between border border-gray-100">
+      <div className="bg-white p-6 rounded-3xl flex flex-col justify-between bg-slate-50/80">
         <div>
           <p className="text-slate-500 text-sm font-medium mb-1">Tổng xe & khách</p>
           <div className="mt-2 space-y-2">
@@ -55,7 +55,7 @@ export function KpiCardGrid({ kpis }) {
         icon={<span className="p-2 bg-emerald-50 text-emerald-600 rounded-lg material-symbols-outlined">check_circle</span>} 
       />
 
-      <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col justify-between border border-gray-100">
+      <div className="bg-white p-6 rounded-3xl flex flex-col justify-between bg-slate-50/80">
         <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu TB/phiếu</p>
         <div className="flex items-center gap-2">
           <h3 className="text-2xl font-bold text-gray-900">
@@ -65,7 +65,7 @@ export function KpiCardGrid({ kpis }) {
         </div>
       </div>
 
-      <div className="bg-blue-700 p-6 rounded-xl shadow-sm flex flex-col justify-between text-white">
+      <div className="bg-blue-700 p-6 rounded-3xl flex flex-col justify-between text-white">
         <p className="text-white/80 text-sm font-medium mb-1">Tỷ lệ hoàn thành</p>
         <div className="flex items-center gap-2">
           <h3 className="text-2xl font-bold">
