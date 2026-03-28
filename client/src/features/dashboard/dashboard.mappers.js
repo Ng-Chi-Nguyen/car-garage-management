@@ -18,6 +18,7 @@ export function normalizeDashboardData(rawData) {
     const waitingCount = repairOrders.filter(ro => ro.TrangThai === 'TiepNhan').length;
     const repairingCount = repairOrders.filter(ro => ro.TrangThai === 'DangSua').length;
     const completedCount = repairOrders.filter(ro => ro.TrangThai === 'HoanTat').length;
+    const avgRevenuePerRepairOrder = totalRepairOrders > 0 ? totalRevenue / totalRepairOrders : 0;
 
     const vehicleMap = new Map(vehicles.map(v => [v.MaXe, v]));
     const customerMap = new Map(customers.map(c => [c.MaKH, c]));
@@ -57,6 +58,7 @@ export function normalizeDashboardData(rawData) {
             totalVehicles,
             totalRepairOrders,
             totalRevenue,
+            avgRevenuePerRepairOrder,
             waitingCount,
             repairingCount,
             completedCount

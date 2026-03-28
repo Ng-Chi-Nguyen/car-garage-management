@@ -55,6 +55,16 @@ export function KpiCardGrid({ kpis }) {
         icon={<span className="p-2 bg-emerald-50 text-emerald-600 rounded-lg material-symbols-outlined">check_circle</span>} 
       />
 
+      <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col justify-between border border-gray-100">
+        <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu TB/phiếu</p>
+        <div className="flex items-center gap-2">
+          <h3 className="text-2xl font-bold text-gray-900">
+            {Math.round(kpis.avgRevenuePerRepairOrder || 0).toLocaleString('vi-VN')} <span className="text-base text-slate-500 font-medium">₫</span>
+          </h3>
+          <span className="material-symbols-outlined text-slate-400 ml-auto">payments</span>
+        </div>
+      </div>
+
       <div className="bg-blue-700 p-6 rounded-xl shadow-sm flex flex-col justify-between text-white">
         <p className="text-white/80 text-sm font-medium mb-1">Tỷ lệ hoàn thành</p>
         <div className="flex items-center gap-2">
