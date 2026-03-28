@@ -20,6 +20,7 @@ describe('dashboard.mappers', () => {
     assert.strictEqual(vm.kpis.waitingCount, 0);
     assert.strictEqual(vm.kpis.repairingCount, 0);
     assert.strictEqual(vm.kpis.completedCount, 0);
+    assert.strictEqual(vm.kpis.avgRevenuePerRepairOrder, 0);
     
     assert.deepStrictEqual(vm.recentOrders, []);
     assert.deepStrictEqual(vm.trendSeries.dates, []);
@@ -56,6 +57,7 @@ describe('dashboard.mappers', () => {
     assert.strictEqual(vm.kpis.totalVehicles, 15);
     assert.strictEqual(vm.kpis.totalRepairOrders, 5);
     assert.strictEqual(vm.kpis.totalRevenue, 1500);
+    assert.strictEqual(vm.kpis.avgRevenuePerRepairOrder, 300);
 
     assert.strictEqual(vm.kpis.waitingCount, 1);
     assert.strictEqual(vm.kpis.repairingCount, 1);
