@@ -24,7 +24,19 @@ export default function DashboardPage() {
         className={getButtonClass(range === DASHBOARD_RANGES.LAST_7_DAYS)}
         onClick={() => setRange(DASHBOARD_RANGES.LAST_7_DAYS)}
       >
-        7 ngày qua
+        7 ngày
+      </button>
+      <button 
+        className={getButtonClass(range === DASHBOARD_RANGES.LAST_30_DAYS)}
+        onClick={() => setRange(DASHBOARD_RANGES.LAST_30_DAYS)}
+      >
+        30 ngày
+      </button>
+      <button 
+        className={getButtonClass(range === DASHBOARD_RANGES.LAST_90_DAYS)}
+        onClick={() => setRange(DASHBOARD_RANGES.LAST_90_DAYS)}
+      >
+        90 ngày
       </button>
     </div>
   );

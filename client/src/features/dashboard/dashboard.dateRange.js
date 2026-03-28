@@ -24,6 +24,10 @@ export function toDateRange(rangeType) {
         start.setHours(0, 0, 0, 0);
     } else if (validRange === DASHBOARD_RANGES.LAST_7_DAYS) {
         start.setDate(end.getDate() - 7);
+    } else if (validRange === DASHBOARD_RANGES.LAST_30_DAYS) {
+        start.setDate(end.getDate() - 30);
+    } else if (validRange === DASHBOARD_RANGES.LAST_90_DAYS) {
+        start.setDate(end.getDate() - 90);
     } else if (validRange === DASHBOARD_RANGES.THIS_MONTH) {
         start.setDate(1);
         start.setHours(0, 0, 0, 0);
