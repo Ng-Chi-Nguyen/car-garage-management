@@ -133,13 +133,17 @@ JWT_SECRET=your_jwt_secret_key
 
 ### Bước 3: Khởi tạo Cơ sở dữ liệu
 
-Truy cập MySQL và chạy script khởi tạo:
+Trước tiên hãy tạo schema/bảng bằng Prisma migration hoặc quy trình khởi tạo schema tương đương. Sau đó truy cập MySQL và chạy script reseed dữ liệu mẫu:
 
 ```bash
-mysql -u root -p < database/init.sql
+mysql --default-character-set=utf8mb4 -u root -p < database/init.sql
 ```
 
-Hoặc sử dụng MySQL Workbench để import tệp `database/init.sql`.
+Lưu ý:
+
+- `database/init.sql` **không tạo bảng**, mà chỉ reseed dữ liệu mẫu cho **schema hiện có**.
+- Tệp `database/init.sql` phải được lưu bằng **UTF-8** để dữ liệu tiếng Việt không bị lỗi.
+- Nếu dùng MySQL Workbench để import `database/init.sql`, hãy bảo đảm client/session đang dùng `utf8mb4`.
 
 ### Bước 4: Cấu hình Frontend
 
@@ -220,8 +224,8 @@ Project-Car-Garage-Management/
 │   ├── prisma/                    # Cấu hình Prisma (schema.prisma, migrations)
 │   └── package.json
 │
-├── database/                # Các script SQL khởi tạo cơ sở dữ liệu
-│   └── init.sql             # Script tạo bảng và dữ liệu mẫu
+├── database/                # Các script SQL cho cơ sở dữ liệu
+│   └── init.sql             # Script reseed dữ liệu mẫu cho schema hiện có
 │
 ├── design/                  # Tài liệu thiết kế hệ thống
 │   ├── diagrams/            # Các sơ đồ Use Case, Class, Sequence
