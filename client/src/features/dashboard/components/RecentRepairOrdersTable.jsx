@@ -55,20 +55,20 @@ export function RecentRepairOrdersTable({ orders, isLoading, isError }) {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="text-left border-b border-slate-100">
-              <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Biển số</th>
-              <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hiệu xe</th>
-              <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chủ xe</th>
-              <th className="pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Thời gian</th>
+            <tr className="text-left bg-slate-50/80 rounded-lg">
+              <th className="pb-3 pt-3 pl-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest rounded-l-lg">Biển số</th>
+              <th className="pb-3 pt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hiệu xe</th>
+              <th className="pb-3 pt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Chủ xe</th>
+              <th className="pb-3 pt-3 pr-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right rounded-r-lg">Thời gian</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody className="divide-y-0 space-y-1">
             {orders.map((order) => (
-              <tr key={order.id}>
-                <td className="py-3 text-sm font-bold text-slate-900">{order.licensePlate}</td>
+              <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
+                <td className="py-3 pl-3 text-sm font-bold text-slate-900 rounded-l-lg">{order.licensePlate}</td>
                 <td className="py-3 text-sm text-slate-500">{order.vehicleModel}</td>
                 <td className="py-3 text-sm text-slate-700">{order.customerName}</td>
-                <td className="py-3 text-sm text-slate-500 text-right">
+                <td className="py-3 pr-3 text-sm text-slate-500 text-right rounded-r-lg">
                   {order.createdAt ? formatTime(order.createdAt) : ''}
                 </td>
               </tr>
