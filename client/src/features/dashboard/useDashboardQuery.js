@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { fetchDashboardData } from './dashboard.api.js';
 import { dashboardKeys } from './dashboard.queryKeys.js';
 import { getValidRange } from './dashboard.dateRange.js';
@@ -10,6 +11,16 @@ export function useDashboardQuery() {
     // Read and validate range from URL
     const urlRange = searchParams.get('range');
     const range = getValidRange(urlRange);
+
+    // Guard: sync URL if it contains an invalid or missing range
+    useEffect(() => {
+        if (urlRange !== range) {
+            setSearchParams(prev => {
+                prev.set('range', range);
+                return prev;
+            }, { replace: true });
+        }
+    }, [urlRange, range, setSearchParams]);
 
     const setRange = (newRange) => {
         setSearchParams(prev => {
