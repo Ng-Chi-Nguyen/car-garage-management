@@ -28,6 +28,8 @@ jobs:
           cache-dependency-path: server/package-lock.json
 
       - name: Install Dependencies
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/garage_management
         run: npm ci
 
       - name: Lint Code (ESLint)
@@ -95,9 +97,13 @@ jobs:
           cache-dependency-path: server/package-lock.json
 
       - name: Install Dependencies
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/garage_management
         run: npm ci
 
       - name: Verify Prisma Schema
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/garage_management
         run: npm exec prisma validate
 
       - name: Apply Prisma Migrations
