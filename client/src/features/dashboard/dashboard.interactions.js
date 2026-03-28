@@ -2,6 +2,10 @@ export const handleQuickActionClick = (navigate, path) => {
   navigate(path);
 };
 
+export const handleViewAllRecentOrders = (navigate) => {
+  navigate('/repair-orders');
+};
+
 export const computeTrendChartHeights = (revenues) => {
   if (!revenues || revenues.length === 0) return [];
   const maxRevenue = Math.max(...revenues, 1);

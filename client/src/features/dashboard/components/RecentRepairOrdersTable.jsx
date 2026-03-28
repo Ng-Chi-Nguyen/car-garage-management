@@ -1,7 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SectionCard } from '../../../components/ui/section-card';
+import { handleViewAllRecentOrders } from '../dashboard.interactions';
 
 export function RecentRepairOrdersTable({ orders, isLoading, isError }) {
+  const navigate = useNavigate();
+
   if (isLoading) {
     return (
       <SectionCard title="Danh sách xe mới tiếp nhận" className="lg:col-span-2">
@@ -39,7 +43,14 @@ export function RecentRepairOrdersTable({ orders, isLoading, isError }) {
     <SectionCard 
       title="Danh sách xe mới tiếp nhận" 
       className="lg:col-span-2" 
-      action={<button className="text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-full transition-colors">Xem tất cả</button>}
+      action={
+        <button 
+          className="text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-full transition-colors"
+          onClick={() => handleViewAllRecentOrders(navigate)}
+        >
+          Xem tất cả
+        </button>
+      }
     >
       <div className="overflow-x-auto">
         <table className="w-full">
