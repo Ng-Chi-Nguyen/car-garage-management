@@ -1,4 +1,5 @@
 import authRoute from "./auth/auth.route.js";
+import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import dashboardRoute from "./report/dashboard.route.js";
 import customerReportRoute from "./report/customerReport.route.js";
 import revenueReportRoute from "./report/revenueReport.route.js";
@@ -29,10 +30,14 @@ const Routes = (app) => {
   ];
 
   // =========================
+  // API dashboard nội bộ cần đăng nhập + rate limit
+  // =========================
+  app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
+
+  // =========================
   // API KHÔNG cần đăng nhập
   // =========================
   app.use(`${apiPrefixV1}/auth`, authRoute);
-  app.use(`${apiPrefixV1}/dashboard`, dashboardRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   // app.use(`${apiPrefixV1}/reports/customer-report`, ...requireManagementAccess, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);

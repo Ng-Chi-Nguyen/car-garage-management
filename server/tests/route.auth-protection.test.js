@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 import authMiddleware from "../src/middleware/auth/auth.middleware.js";
+import { dashboardAccessMiddlewares } from "../src/routes/report/dashboard.access.js";
 
 const TEST_DATABASE_URL = "mysql://tester:secret@127.0.0.1:3306/garage_test";
 
@@ -60,4 +61,20 @@ test("Routes active hiện tại là public và vẫn giữ comment protected ch
     /app\.use\(`\$\{apiPrefixV1\}\/reports\/customer-report`,\s*customerReportRoute\);\s*\r?\n\s*\/\/\s*app\.use\([^\n]*reports\/customer-report[^\n]*requireManagementAccess[^\n]*customerReportRoute/u,
     "index.route.js should keep protected customer-report mount as commented source line",
   );
+});
+
+test("dashboard route duoc mount voi rate limit va auth guard o index-level", async () => {
+  const calls = await loadRouteMounts();
+  const mountByPath = new Map(calls.map((routeCall) => [routeCall[0], routeCall]));
+  const dashboardMount = mountByPath.get("/api/v1/dashboard");
+
+  assert.ok(dashboardMount, "dashboard route should be mounted");
+  assert.equal(
+    dashboardMount.length,
+    dashboardAccessMiddlewares.length + 2,
+    "dashboard route should include path, security middlewares, and router",
+  );
+  assert.equal(dashboardMount[1], dashboardAccessMiddlewares[0]);
+  assert.equal(dashboardMount[2], authMiddleware.requireAuth);
+  assert.equal(dashboardMount[3], dashboardAccessMiddlewares[2]);
 });

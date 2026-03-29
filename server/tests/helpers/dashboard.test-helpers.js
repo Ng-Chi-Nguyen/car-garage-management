@@ -10,6 +10,16 @@ const loadCreateDashboardRoute = async () => {
   return module.createDashboardRoute;
 };
 
+const loadDashboardAccessSecurity = async () => {
+  ensureTestDatabaseUrl();
+  const module = await import("../../src/routes/report/dashboard.access.js");
+
+  return {
+    dashboardAccessMiddlewares: module.dashboardAccessMiddlewares,
+    createDashboardAccessMiddlewares: module.createDashboardAccessMiddlewares,
+  };
+};
+
 const startTestServer = async (router) => {
   const app = express();
   app.use(express.json());
@@ -33,6 +43,7 @@ const stopTestServer = async (server) =>
 
 export {
   ensureTestDatabaseUrl,
+  loadDashboardAccessSecurity,
   loadCreateDashboardRoute,
   startTestServer,
   stopTestServer,
