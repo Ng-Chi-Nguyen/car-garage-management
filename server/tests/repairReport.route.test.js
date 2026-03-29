@@ -13,6 +13,12 @@ const loadCreateRepairReportController = async () => {
   return module.createRepairReportController;
 };
 
+const loadRoutes = async () => {
+  ensureTestDatabaseUrl();
+  const module = await import("../src/routes/index.route.js");
+  return module.default;
+};
+
 test("route GET /summary tra payload dung contract", async () => {
   const createRepairReportRoute = await loadCreateRepairReportRoute();
   const router = createRepairReportRoute({
@@ -51,7 +57,7 @@ test("route GET /summary tra payload dung contract", async () => {
   const { server, baseUrl } = await startTestServer(router);
   try {
     const response = await fetch(
-      `${baseUrl}/api/v1/reports/repair/summary?granularity=day&from=2026-03-01&to=2026-03-31`,
+      `${baseUrl}/api/v1/reports/repair-report/summary?granularity=day&from=2026-03-01&to=2026-03-31`,
     );
     const payload = await response.json();
 
@@ -91,7 +97,7 @@ test("route summary chay middleware theo thu tu validate controller", async () =
   const { server, baseUrl } = await startTestServer(router);
   try {
     const response = await fetch(
-      `${baseUrl}/api/v1/reports/repair/summary?granularity=day&from=2026-03-01&to=2026-03-31`,
+      `${baseUrl}/api/v1/reports/repair-report/summary?granularity=day&from=2026-03-01&to=2026-03-31`,
     );
 
     assert.equal(response.status, 200);
@@ -116,7 +122,7 @@ test("route summary tra 400 khi query khong hop le", async () => {
   const { server, baseUrl } = await startTestServer(router);
   try {
     const response = await fetch(
-      `${baseUrl}/api/v1/reports/repair/summary?granularity=week&from=2026-03-01&to=2026-03-31`,
+      `${baseUrl}/api/v1/reports/repair-report/summary?granularity=week&from=2026-03-01&to=2026-03-31`,
     );
     const payload = await response.json();
 
@@ -176,11 +182,42 @@ test("route-controller integration truyen req.validatedQuery den service", async
   const { server, baseUrl } = await startTestServer(router);
   try {
     const response = await fetch(
-      `${baseUrl}/api/v1/reports/repair/summary?granularity=month&from=2026-01-01&to=2026-03-31`,
+      `${baseUrl}/api/v1/reports/repair-report/summary?granularity=month&from=2026-01-01&to=2026-03-31`,
     );
 
     assert.equal(response.status, 200);
     assert.equal(serviceReceivedQuery, validatedQuery);
+  } finally {
+    await stopTestServer(server);
+  }
+});
+
+test("index route mount repair-report summary tren duong dan that khong bi 404", async () => {
+  const Routes = await loadRoutes();
+  const express = (await import("express")).default;
+  const app = express();
+  app.use(express.json());
+  Routes(app);
+
+  const { server, baseUrl } = await new Promise((resolve) => {
+    const testServer = app.listen(0, () => {
+      const { port } = testServer.address();
+      resolve({
+        server: testServer,
+        baseUrl: `http://127.0.0.1:${port}`,
+      });
+    });
+  });
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/api/v1/reports/repair-report/summary?granularity=week&from=2026-03-01&to=2026-03-31`,
+    );
+    const payload = await response.json();
+
+    assert.notEqual(response.status, 404);
+    assert.equal(response.status, 400);
+    assert.equal(payload.success, false);
   } finally {
     await stopTestServer(server);
   }

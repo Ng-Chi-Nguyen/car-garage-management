@@ -134,13 +134,83 @@ const buildTopDebtCustomer = (cars) => {
   return selectTopCustomer(grouped, "totalDebt");
 };
 
+const buildTopDebtCustomerFromAggregate = async (db) => {
+  if (typeof db?.xE?.groupBy !== "function") {
+    const cars = await db.xE.findMany({
+      select: {
+        TienNoHienTai: true,
+        KhachHang: {
+          select: {
+            MaKH: true,
+            TenChuXe: true,
+          },
+        },
+      },
+    });
+
+    return buildTopDebtCustomer(cars);
+  }
+
+  const topDebtGroups = await db.xE.groupBy({
+    by: ["MaKH"],
+    where: {
+      TienNoHienTai: {
+        gt: 0,
+      },
+    },
+    _sum: {
+      TienNoHienTai: true,
+    },
+    orderBy: [
+      {
+        _sum: {
+          TienNoHienTai: "desc",
+        },
+      },
+      {
+        MaKH: "asc",
+      },
+    ],
+  });
+
+  for (const topDebtGroup of topDebtGroups) {
+    const customerId = normalizeCustomerId(topDebtGroup?.MaKH);
+    const totalDebt = normalizeNumber(topDebtGroup?._sum?.TienNoHienTai);
+
+    if (customerId === null || totalDebt === null || totalDebt <= 0) {
+      continue;
+    }
+
+    const customer = await db.kHACH_HANG.findUnique({
+      where: {
+        MaKH: customerId,
+      },
+      select: {
+        TenChuXe: true,
+      },
+    });
+
+    if (!customer?.TenChuXe) {
+      continue;
+    }
+
+    return {
+      customerId,
+      customerName: customer.TenChuXe,
+      totalDebt,
+    };
+  }
+
+  return null;
+};
+
 const createCustomerReportService = ({
   db = prisma,
 } = {}) => {
   return {
     getCustomerSummary: async ({ from, to, granularity }) => {
       const range = buildRangeFromQuery({ from, to });
-      const [customers, receipts, cars] = await Promise.all([
+      const [customers, receipts, topDebtCustomer] = await Promise.all([
         db.kHACH_HANG.findMany({
           where: {
             NgayTao: {
@@ -177,23 +247,13 @@ const createCustomerReportService = ({
             },
           },
         }),
-        db.xE.findMany({
-          select: {
-            TienNoHienTai: true,
-            KhachHang: {
-              select: {
-                MaKH: true,
-                TenChuXe: true,
-              },
-            },
-          },
-        }),
+        buildTopDebtCustomerFromAggregate(db),
       ]);
 
       return {
         newCustomersTimeseries: buildNewCustomersTimeseries(customers, granularity),
         topRevenueCustomer: buildTopRevenueCustomer(receipts),
-        topDebtCustomer: buildTopDebtCustomer(cars),
+        topDebtCustomer,
       };
     },
   };

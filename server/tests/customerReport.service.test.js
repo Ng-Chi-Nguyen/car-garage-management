@@ -13,19 +13,33 @@ const loadCreateCustomerReportService = async () => {
 
 const createDbStub = ({
   customerFindManyImpl = async () => [],
+  customerFindUniqueImpl,
   receiptFindManyImpl = async () => [],
   carFindManyImpl = async () => [],
-} = {}) => ({
-  kHACH_HANG: {
-    findMany: customerFindManyImpl,
-  },
-  pHIEU_THU_TIEN: {
-    findMany: receiptFindManyImpl,
-  },
-  xE: {
-    findMany: carFindManyImpl,
-  },
-});
+  carGroupByImpl,
+} = {}) => {
+  const db = {
+    kHACH_HANG: {
+      findMany: customerFindManyImpl,
+    },
+    pHIEU_THU_TIEN: {
+      findMany: receiptFindManyImpl,
+    },
+    xE: {
+      findMany: carFindManyImpl,
+    },
+  };
+
+  if (typeof customerFindUniqueImpl === "function") {
+    db.kHACH_HANG.findUnique = customerFindUniqueImpl;
+  }
+
+  if (typeof carGroupByImpl === "function") {
+    db.xE.groupBy = carGroupByImpl;
+  }
+
+  return db;
+};
 
 const createDecimalLike = (value) => ({
   toString: () => String(value),
@@ -436,4 +450,124 @@ test("service getCustomerSummary dung range gte/lt theo ngay Viet Nam cho NgayTa
   assert.deepEqual(result.newCustomersTimeseries.items, [
     { label: "2026-03-01", newCustomers: 2 },
   ]);
+});
+
+test("service getCustomerSummary truy van topDebtCustomer bang aggregate tai DB", async () => {
+  const createCustomerReportService = await loadCreateCustomerReportService();
+  const groupByCalls = [];
+  const customerLookupCalls = [];
+  const db = createDbStub({
+    carFindManyImpl: async () => {
+      throw new Error("xE.findMany should not be used for topDebtCustomer");
+    },
+    carGroupByImpl: async (args) => {
+      groupByCalls.push(args);
+      return [
+        {
+          MaKH: 8,
+          _sum: {
+            TienNoHienTai: createDecimalLike("1250000.50"),
+          },
+        },
+      ];
+    },
+    customerFindUniqueImpl: async (args) => {
+      customerLookupCalls.push(args);
+      return { TenChuXe: "Khach No Lon" };
+    },
+  });
+
+  const service = createCustomerReportService({ db });
+  const result = await service.getCustomerSummary({
+    from: "2026-03-01",
+    to: "2026-03-31",
+    granularity: "day",
+  });
+
+  assert.equal(groupByCalls.length, 1);
+  assert.deepEqual(groupByCalls[0], {
+    by: ["MaKH"],
+    where: {
+      TienNoHienTai: {
+        gt: 0,
+      },
+    },
+    _sum: {
+      TienNoHienTai: true,
+    },
+    orderBy: [
+      {
+        _sum: {
+          TienNoHienTai: "desc",
+        },
+      },
+      {
+        MaKH: "asc",
+      },
+    ],
+  });
+  assert.deepEqual(customerLookupCalls, [
+    {
+      where: { MaKH: 8 },
+      select: { TenChuXe: true },
+    },
+  ]);
+  assert.deepEqual(result.topDebtCustomer, {
+    customerId: 8,
+    customerName: "Khach No Lon",
+    totalDebt: 1250000.5,
+  });
+});
+
+test("service getCustomerSummary bo qua nhom no dau tien neu lookup khach hang khong hop le", async () => {
+  const createCustomerReportService = await loadCreateCustomerReportService();
+  const customerLookupCalls = [];
+  const db = createDbStub({
+    carGroupByImpl: async () => [
+      {
+        MaKH: 5,
+        _sum: {
+          TienNoHienTai: 2000000,
+        },
+      },
+      {
+        MaKH: 8,
+        _sum: {
+          TienNoHienTai: 1250000,
+        },
+      },
+    ],
+    customerFindUniqueImpl: async (args) => {
+      customerLookupCalls.push(args);
+
+      if (args.where.MaKH === 5) {
+        return null;
+      }
+
+      return { TenChuXe: "Khach Hop Le" };
+    },
+  });
+
+  const service = createCustomerReportService({ db });
+  const result = await service.getCustomerSummary({
+    from: "2026-03-01",
+    to: "2026-03-31",
+    granularity: "day",
+  });
+
+  assert.deepEqual(customerLookupCalls, [
+    {
+      where: { MaKH: 5 },
+      select: { TenChuXe: true },
+    },
+    {
+      where: { MaKH: 8 },
+      select: { TenChuXe: true },
+    },
+  ]);
+  assert.deepEqual(result.topDebtCustomer, {
+    customerId: 8,
+    customerName: "Khach Hop Le",
+    totalDebt: 1250000,
+  });
 });

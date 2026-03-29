@@ -13,7 +13,7 @@ const loadCreateRepairReportRoute = async () => {
 const startTestServer = async (router) => {
   const app = express();
   app.use(express.json());
-  app.use("/api/v1/reports/repair", router);
+  app.use("/api/v1/reports/repair-report", router);
 
   return await new Promise((resolve) => {
     const server = app.listen(0, () => {
