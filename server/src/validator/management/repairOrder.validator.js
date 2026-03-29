@@ -2,11 +2,12 @@ import Joi from "joi";
 
 import createCrudValidator from "../../shared/crud/crud.validatorFactory.js";
 
-const REPAIR_ORDER_TRANG_THAI_VALUES = ["TiepNhan", "DangSua", "HoanTat"];
+const REPAIR_ORDER_TRANG_THAI_VALUES = ["TiepNhan", "DangSua", "HoanTat", "Huy"];
 const REPAIR_ORDER_TRANG_THAI_ALIASES = {
   "tiep nhan": ["TiepNhan"],
   "dang sua": ["DangSua"],
   "hoan tat": ["HoanTat"],
+  huy: ["Huy"],
 };
 const REPAIR_ORDER_FILTER_FIELDS = {
   MaPhieuSC: { type: "number", positive: true },
@@ -46,7 +47,7 @@ const repairOrderSchema = createCrudValidator({
     TrangThai: Joi.string().valid(...REPAIR_ORDER_TRANG_THAI_VALUES),
     NoiDungLoi: Joi.string().trim().max(255).allow(null, ""),
     GhiChu: Joi.string().trim().max(255).allow(null, ""),
-    TongTien: Joi.number().min(0).default(0),
+    TongTien: Joi.number().min(0),
   })
     .min(1)
     .unknown(false),

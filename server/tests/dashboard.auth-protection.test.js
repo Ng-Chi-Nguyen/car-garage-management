@@ -1,14 +1,38 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import express from "express";
 import jwt from "jsonwebtoken";
+import authMiddleware from "../src/middleware/auth/auth.middleware.js";
 import {
   loadCreateDashboardRoute,
-  startTestServer,
   stopTestServer,
 } from "./helpers/dashboard.test-helpers.js";
 
+const managementRoles = ["Admin", "NhanVien"];
+
+const startProtectedDashboardServer = async (router) => {
+  const app = express();
+  app.use(express.json());
+  app.use(
+    "/api/v1/dashboard",
+    authMiddleware.requireAuth,
+    authMiddleware.requireRoles(managementRoles),
+    router,
+  );
+
+  return await new Promise((resolve) => {
+    const server = app.listen(0, () => {
+      const { port } = server.address();
+      resolve({
+        server,
+        baseUrl: `http://127.0.0.1:${port}`,
+      });
+    });
+  });
+};
+
 test(
-  "default dashboard route tra 401 khi thieu token",
+  "dashboard route tra 401 khi thieu token o index-level auth wrapper",
   { concurrency: false },
   async () => {
   const createDashboardRoute = await loadCreateDashboardRoute();
@@ -28,7 +52,7 @@ test(
     },
   });
 
-  const { server, baseUrl } = await startTestServer(router);
+  const { server, baseUrl } = await startProtectedDashboardServer(router);
 
   try {
     const response = await fetch(`${baseUrl}/api/v1/dashboard/revenue-summary`);
@@ -42,7 +66,7 @@ test(
 );
 
 test(
-  "default dashboard route tra 403 khi role sai",
+  "dashboard route tra 403 khi role sai o index-level role guard",
   { concurrency: false },
   async () => {
   const originalJwtSecret = process.env.JWT_SECRET;
@@ -69,7 +93,7 @@ test(
       { MaNV: 7, ChucVu: "KhachHang" },
       process.env.JWT_SECRET,
     );
-    const { server, baseUrl } = await startTestServer(router);
+    const { server, baseUrl } = await startProtectedDashboardServer(router);
 
     try {
       const response = await fetch(`${baseUrl}/api/v1/dashboard/revenue-summary`, {

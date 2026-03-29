@@ -59,6 +59,7 @@ enum TrangThaiPhieuSuaChua {
     TiepNhan
     DangSua
     HoanTat
+    Huy
 }
 
 model PHIEU_SUA_CHUA {
@@ -70,6 +71,7 @@ model PHIEU_SUA_CHUA {
     NoiDungLoi     String?               @db.VarChar(255)
     GhiChu         String?               @db.VarChar(255)
     TongTien       Decimal               @db.Decimal(15, 2)
+    NgayKetThuc    DateTime?
     NgayTao        DateTime              @default(now())
     NgayCapNhat    DateTime              @updatedAt
     Xe             XE                    @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)

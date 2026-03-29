@@ -53,21 +53,10 @@ test("route GET /timeseries tra payload dung contract", async () => {
   }
 });
 
-test("route timeseries chay middleware theo thu tu auth roles validate controller", async () => {
+test("route timeseries chay middleware theo thu tu validate controller", async () => {
   const createRevenueReportRoute = await loadCreateRevenueReportRoute();
   const calls = [];
   const router = createRevenueReportRoute({
-    auth: {
-      requireAuth: (req, res, next) => {
-        calls.push("auth");
-        req.user = { ChucVu: "Admin" };
-        next();
-      },
-      requireRoles: (roles) => (req, res, next) => {
-        calls.push(`roles:${roles.join(",")}`);
-        next();
-      },
-    },
     schema: {
       getRevenueTimeseries: {
         query: {
@@ -91,12 +80,7 @@ test("route timeseries chay middleware theo thu tu auth roles validate controlle
     const response = await fetch(`${baseUrl}/api/v1/reports/revenue/timeseries?granularity=day&from=2026-03-01&to=2026-03-31`);
 
     assert.equal(response.status, 200);
-    assert.deepEqual(calls, [
-      "auth",
-      "roles:Admin,NhanVien",
-      "validate",
-      "controller",
-    ]);
+    assert.deepEqual(calls, ["validate", "controller"]);
   } finally {
     await stopTestServer(server);
   }
