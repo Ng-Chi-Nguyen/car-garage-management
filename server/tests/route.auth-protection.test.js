@@ -61,6 +61,30 @@ test("Routes active hiện tại là public và vẫn giữ comment protected ch
     /app\.use\(`\$\{apiPrefixV1\}\/reports\/customer-report`,\s*customerReportRoute\);\s*\r?\n\s*\/\/\s*app\.use\([^\n]*reports\/customer-report[^\n]*requireManagementAccess[^\n]*customerReportRoute/u,
     "index.route.js should keep protected customer-report mount as commented source line",
   );
+
+  const financeReportMount = mountByPath.get("/api/v1/reports/finance");
+  assert.ok(financeReportMount, "finance report route should be mounted");
+  assert.equal(
+    financeReportMount.length,
+    4,
+    "finance report active mount should include path, auth middlewares, and router",
+  );
+  assert.equal(
+    financeReportMount[1],
+    authMiddleware.requireAuth,
+    "finance report active mount should include requireAuth",
+  );
+  assert.equal(
+    typeof financeReportMount[2],
+    "function",
+    "finance report active mount should include role guard middleware",
+  );
+
+  assert.match(
+    indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/reports\/finance`,\s*\.\.\.requireManagementAccess,\s*financeReportRoute\);/u,
+    "index.route.js should mount finance-report with management access middleware",
+  );
 });
 
 test("dashboard route duoc mount voi rate limit va auth guard o index-level", async () => {

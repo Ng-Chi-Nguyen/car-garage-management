@@ -2,6 +2,7 @@ import authRoute from "./auth/auth.route.js";
 import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import dashboardRoute from "./report/dashboard.route.js";
 import customerReportRoute from "./report/customerReport.route.js";
+import financeReportRoute from "./report/financeReport.route.js";
 import revenueReportRoute from "./report/revenueReport.route.js";
 import repairReportRoute from "./report/repairReport.route.js";
 import carBrandRoute from "./management/carBrand.route.js";
@@ -56,10 +57,11 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/stock-receipts`, stockReceiptRoute);
   app.use(`${apiPrefixV1}/stock-receipt-details`, stockReceiptDetailRoute);
   app.use(`${apiPrefixV1}/payment-receipts`, paymentReceiptRoute);
-
+  app.use(`${apiPrefixV1}/reports/finance`, financeReportRoute);
   // =========================
   // API CẦN đăng nhập
   // =========================
+  // app.use(`${apiPrefixV1}/reports/finance`, ...requireManagementAccess, financeReportRoute);
   // app.use(`${apiPrefixV1}/auth`, authRoute);
   // app.use(`${apiPrefixV1}/dashboard`, ...requireManagementAccess, dashboardRoute);
   // app.use(`${apiPrefixV1}/reports/revenue`, ...requireManagementAccess, revenueReportRoute);

@@ -1,5 +1,0 @@
-{
-  "prisma.pinToPrisma6": false,
-  "prisma.enableDiagnostics": false,
-  "prisma.schemaPath": "prisma/schema.prisma"
-}
