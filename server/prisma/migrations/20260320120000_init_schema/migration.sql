@@ -1,0 +1,308 @@
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `HIEU_XE` (
+    `MaHieuXe` INTEGER NOT NULL AUTO_INCREMENT,
+    `TenHieuXe` VARCHAR(100) NOT NULL,
+    UNIQUE INDEX `HIEU_XE_TenHieuXe_key`(`TenHieuXe`),
+    PRIMARY KEY (`MaHieuXe`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `KHACH_HANG` (
+    `MaKH` INTEGER NOT NULL AUTO_INCREMENT,
+    `Email` VARCHAR(100) NULL,
+    `MatKhau` VARCHAR(255) NULL,
+    `TenChuXe` VARCHAR(100) NOT NULL,
+    `DienThoai` VARCHAR(20) NOT NULL,
+    `DiaChi` VARCHAR(255) NOT NULL,
+    `ChucVu` ENUM('Admin', 'NhanVien', 'KhachHang') NULL DEFAULT 'KhachHang',
+    `TrangThai` ENUM('HoatDong', 'BiKhoa', 'DaXoa') NULL DEFAULT 'HoatDong',
+    `Avatar` VARCHAR(255) NULL,
+    `NgayTao` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `NgayCapNhat` DATETIME(3) NOT NULL,
+    UNIQUE INDEX `KHACH_HANG_Email_key`(`Email`),
+    UNIQUE INDEX `KHACH_HANG_DienThoai_key`(`DienThoai`),
+    PRIMARY KEY (`MaKH`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `XE` (
+    `MaXe` INTEGER NOT NULL AUTO_INCREMENT,
+    `BienSo` VARCHAR(20) NOT NULL,
+    `MaHieuXe` INTEGER NOT NULL,
+    `MaKH` INTEGER NOT NULL,
+    `TienNoHienTai` DECIMAL(15, 2) NOT NULL,
+    UNIQUE INDEX `XE_BienSo_key`(`BienSo`),
+    PRIMARY KEY (`MaXe`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `PHIEU_SUA_CHUA` (
+    `MaPhieuSC` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaXe` INTEGER NOT NULL,
+    `MaNV` INTEGER NULL,
+    `NgaySC` DATE NOT NULL,
+    `TrangThai` ENUM('TiepNhan', 'DangSua', 'HoanTat') NOT NULL DEFAULT 'TiepNhan',
+    `NoiDungLoi` VARCHAR(255) NULL,
+    `GhiChu` VARCHAR(255) NULL,
+    `TongTien` DECIMAL(15, 2) NOT NULL,
+    `NgayTao` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `NgayCapNhat` DATETIME(3) NOT NULL,
+    PRIMARY KEY (`MaPhieuSC`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `TIEN_CONG` (
+    `MaTienCong` INTEGER NOT NULL AUTO_INCREMENT,
+    `NoiDung` VARCHAR(255) NOT NULL,
+    `DonGia` DECIMAL(15, 2) NOT NULL,
+    PRIMARY KEY (`MaTienCong`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `VAT_TU` (
+    `MaVatTu` INTEGER NOT NULL AUTO_INCREMENT,
+    `TenVatTu` VARCHAR(255) NOT NULL,
+    `DonViTinh` VARCHAR(50) NOT NULL,
+    `SoLuongTon` INTEGER NOT NULL,
+    `GiaVon` DECIMAL(15, 2) NOT NULL,
+    `DonGiaBan` DECIMAL(15, 2) NOT NULL,
+    `MaNCC` INTEGER NULL,
+    PRIMARY KEY (`MaVatTu`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `CT_PHIEU_SUA_CHUA` (
+    `MaCTSC` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaPhieuSC` INTEGER NOT NULL,
+    `MaVatTu` INTEGER NOT NULL,
+    `MaTienCong` INTEGER NOT NULL,
+    `SoLuong` INTEGER NOT NULL,
+    `DonGiaVatTu` DECIMAL(15, 2) NOT NULL,
+    `DonGiaTienCong` DECIMAL(15, 2) NOT NULL,
+    `ThanhTien` DECIMAL(15, 2) NOT NULL,
+    PRIMARY KEY (`MaCTSC`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `NHA_CUNG_CAP` (
+    `MaNCC` INTEGER NOT NULL AUTO_INCREMENT,
+    `TenNCC` VARCHAR(100) NOT NULL,
+    `DienThoai` VARCHAR(20) NOT NULL,
+    `Email` VARCHAR(100) NULL,
+    `NguoiLienHe` VARCHAR(100) NULL,
+    `DiaChi` VARCHAR(255) NOT NULL,
+    UNIQUE INDEX `NHA_CUNG_CAP_Email_key`(`Email`),
+    PRIMARY KEY (`MaNCC`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `PHIEU_NHAP_KHO` (
+    `MaPhieuNhap` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaNCC` INTEGER NOT NULL,
+    `NgayNhap` DATE NOT NULL,
+    `TongTien` DECIMAL(15, 2) NOT NULL,
+    PRIMARY KEY (`MaPhieuNhap`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `CT_PHIEU_NHAP` (
+    `MaCTPN` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaPhieuNhap` INTEGER NOT NULL,
+    `MaVatTu` INTEGER NOT NULL,
+    `SoLuong` INTEGER NOT NULL,
+    `DonGiaNhap` DECIMAL(15, 2) NOT NULL,
+    `ThanhTien` DECIMAL(15, 2) NOT NULL,
+    PRIMARY KEY (`MaCTPN`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE IF NOT EXISTS `PHIEU_THU_TIEN` (
+    `MaPhieuThu` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaXe` INTEGER NOT NULL,
+    `MaNV` INTEGER NULL,
+    `NgayThu` DATE NOT NULL,
+    `SoTienThu` DECIMAL(15, 2) NOT NULL,
+    `PhuongThucThu` ENUM('TienMat', 'ChuyenKhoan') NULL,
+    `TrangThai` ENUM('ChoXacNhan', 'DaThu', 'Huy') NULL DEFAULT 'ChoXacNhan',
+    `GhiChu` VARCHAR(255) NULL,
+    `NgayTao` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `NgayCapNhat` DATETIME(3) NOT NULL,
+    PRIMARY KEY (`MaPhieuThu`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey (idempotent cho baseline DB đã tồn tại)
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'XE'
+      AND CONSTRAINT_NAME = 'XE_MaHieuXe_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `XE` ADD CONSTRAINT `XE_MaHieuXe_fkey` FOREIGN KEY (`MaHieuXe`) REFERENCES `HIEU_XE`(`MaHieuXe`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'XE'
+      AND CONSTRAINT_NAME = 'XE_MaKH_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `XE` ADD CONSTRAINT `XE_MaKH_fkey` FOREIGN KEY (`MaKH`) REFERENCES `KHACH_HANG`(`MaKH`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'PHIEU_SUA_CHUA'
+      AND CONSTRAINT_NAME = 'PHIEU_SUA_CHUA_MaXe_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `PHIEU_SUA_CHUA` ADD CONSTRAINT `PHIEU_SUA_CHUA_MaXe_fkey` FOREIGN KEY (`MaXe`) REFERENCES `XE`(`MaXe`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'VAT_TU'
+      AND CONSTRAINT_NAME = 'VAT_TU_MaNCC_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `VAT_TU` ADD CONSTRAINT `VAT_TU_MaNCC_fkey` FOREIGN KEY (`MaNCC`) REFERENCES `NHA_CUNG_CAP`(`MaNCC`) ON DELETE SET NULL ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'CT_PHIEU_SUA_CHUA'
+      AND CONSTRAINT_NAME = 'CT_PHIEU_SUA_CHUA_MaPhieuSC_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `CT_PHIEU_SUA_CHUA` ADD CONSTRAINT `CT_PHIEU_SUA_CHUA_MaPhieuSC_fkey` FOREIGN KEY (`MaPhieuSC`) REFERENCES `PHIEU_SUA_CHUA`(`MaPhieuSC`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'CT_PHIEU_SUA_CHUA'
+      AND CONSTRAINT_NAME = 'CT_PHIEU_SUA_CHUA_MaVatTu_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `CT_PHIEU_SUA_CHUA` ADD CONSTRAINT `CT_PHIEU_SUA_CHUA_MaVatTu_fkey` FOREIGN KEY (`MaVatTu`) REFERENCES `VAT_TU`(`MaVatTu`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'CT_PHIEU_SUA_CHUA'
+      AND CONSTRAINT_NAME = 'CT_PHIEU_SUA_CHUA_MaTienCong_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `CT_PHIEU_SUA_CHUA` ADD CONSTRAINT `CT_PHIEU_SUA_CHUA_MaTienCong_fkey` FOREIGN KEY (`MaTienCong`) REFERENCES `TIEN_CONG`(`MaTienCong`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'PHIEU_NHAP_KHO'
+      AND CONSTRAINT_NAME = 'PHIEU_NHAP_KHO_MaNCC_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `PHIEU_NHAP_KHO` ADD CONSTRAINT `PHIEU_NHAP_KHO_MaNCC_fkey` FOREIGN KEY (`MaNCC`) REFERENCES `NHA_CUNG_CAP`(`MaNCC`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'CT_PHIEU_NHAP'
+      AND CONSTRAINT_NAME = 'CT_PHIEU_NHAP_MaPhieuNhap_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `CT_PHIEU_NHAP` ADD CONSTRAINT `CT_PHIEU_NHAP_MaPhieuNhap_fkey` FOREIGN KEY (`MaPhieuNhap`) REFERENCES `PHIEU_NHAP_KHO`(`MaPhieuNhap`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'CT_PHIEU_NHAP'
+      AND CONSTRAINT_NAME = 'CT_PHIEU_NHAP_MaVatTu_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `CT_PHIEU_NHAP` ADD CONSTRAINT `CT_PHIEU_NHAP_MaVatTu_fkey` FOREIGN KEY (`MaVatTu`) REFERENCES `VAT_TU`(`MaVatTu`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @constraint_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.TABLE_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'PHIEU_THU_TIEN'
+      AND CONSTRAINT_NAME = 'PHIEU_THU_TIEN_MaXe_fkey'
+);
+SET @sql = IF(
+    @constraint_exists = 0,
+    'ALTER TABLE `PHIEU_THU_TIEN` ADD CONSTRAINT `PHIEU_THU_TIEN_MaXe_fkey` FOREIGN KEY (`MaXe`) REFERENCES `XE`(`MaXe`) ON DELETE RESTRICT ON UPDATE CASCADE',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

@@ -14,6 +14,8 @@ const fileExists = async (filePath) => {
 test("CRUD file names and routes use English naming", async () => {
   const routesIndexPath = new URL("../src/routes/index.route.js", import.meta.url);
   const routesIndexContent = await readFile(routesIndexPath, "utf8");
+  const routeRegistryExists = await fileExists("../src/routes/route.registry.js");
+  const routeDefinitionContent = routesIndexContent;
 
   const expectedFiles = [
     "../src/routes/management/customer.route.js",
@@ -51,41 +53,58 @@ test("CRUD file names and routes use English naming", async () => {
     assert.equal(await fileExists(filePath), false, `${filePath} should not exist`);
   }
 
-  const expectedRouteSuffixes = [
-    "/customers",
-    "/car-brands",
-    "/vehicles",
-    "/repair-orders",
-    "/labor-fees",
-    "/parts",
-    "/repair-order-details",
-    "/suppliers",
-    "/stock-receipts",
-    "/stock-receipt-details",
-    "/payment-receipts",
+  const expectedProtectedRoutes = [
+    ["customers", "customerRoute"],
+    ["car-brands", "carBrandRoute"],
+    ["vehicles", "vehicleRoute"],
+    ["repair-orders", "repairOrderRoute"],
+    ["labor-fees", "laborFeeRoute"],
+    ["parts", "partRoute"],
+    ["repair-order-details", "repairOrderDetailRoute"],
+    ["suppliers", "supplierRoute"],
+    ["stock-receipts", "stockReceiptRoute"],
+    ["stock-receipt-details", "stockReceiptDetailRoute"],
+    ["payment-receipts", "paymentReceiptRoute"],
   ];
 
-  const legacyRouteSuffixes = [
-    "/user",
-    "/hieu-xe",
-    "/xe",
-    "/phieu-sua-chua",
-    "/tien-cong",
-    "/vat-tu",
-    "/ct-phieu-sua-chua",
-    "/nha-cung-cap",
-    "/phieu-nhap-kho",
-    "/ct-phieu-nhap",
-    "/phieu-thu-tien",
+  const legacyRouteSegments = [
+    "user",
+    "hieu-xe",
+    "xe",
+    "phieu-sua-chua",
+    "tien-cong",
+    "vat-tu",
+    "ct-phieu-sua-chua",
+    "nha-cung-cap",
+    "phieu-nhap-kho",
+    "ct-phieu-nhap",
+    "phieu-thu-tien",
   ];
 
-  assert.match(routesIndexContent, /const apiPrefixV1 = "\/api\/v1";/);
+  assert.equal(routeRegistryExists, false, "route.registry.js should not exist");
+  assert.doesNotMatch(routesIndexContent, /route\.registry\.js/);
+  assert.doesNotMatch(routesIndexContent, /createRoutesRegistrar\(/);
+  assert.match(routeDefinitionContent, /const apiPrefixV1\s*=\s*"\/api\/v1"/);
+  assert.match(routesIndexContent, /app\.use\(`\$\{apiPrefixV1\}\/auth`,\s*authRoute\)/);
 
-  for (const routePath of expectedRouteSuffixes) {
-    assert.match(routesIndexContent, new RegExp(routePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  for (const [routePath, routeModule] of expectedProtectedRoutes) {
+    const escapedRoutePath = routePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    assert.match(
+      routesIndexContent,
+      new RegExp(
+        `app\\.use\\([\\s\\S]*?\\$\\{apiPrefixV1\\}\\/${escapedRoutePath}[\\s\\S]*?\\.\\.\\.requireManagementAccess[\\s\\S]*?${routeModule}[\\s\\S]*?\\)`,
+      ),
+      `${routePath} should be mounted with ${routeModule} in index.route.js`,
+    );
   }
 
-  for (const routePath of legacyRouteSuffixes) {
-    assert.doesNotMatch(routesIndexContent, new RegExp(routePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  for (const routePath of legacyRouteSegments) {
+    const escapedRoutePath = routePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    assert.doesNotMatch(
+      routeDefinitionContent,
+      new RegExp(`(?:["'\\/])${escapedRoutePath}(?:["'\\/,])`),
+    );
   }
 });

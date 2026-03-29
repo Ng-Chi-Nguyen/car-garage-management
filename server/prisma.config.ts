@@ -1,16 +1,9 @@
 import "dotenv/config";
-
-import { defineConfig } from "prisma/config";
-
-const runtime = globalThis as typeof globalThis & {
-  process?: {
-    env?: Record<string, string | undefined>;
-  };
-};
+import { defineConfig, env } from "prisma/config";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
   datasource: {
-    url: runtime.process?.env?.DATABASE_URL ?? "",
+    url: env("DATABASE_URL"),
   },
 });
