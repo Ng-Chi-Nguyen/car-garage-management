@@ -39,10 +39,24 @@ export function getValidPage(page) {
     return !isNaN(p) && p > 0 ? p : 1;
 }
 
+export function applyFilterUpdates(prevParams, newFilters) {
+    const nextParams = new URLSearchParams(prevParams);
+
+    if (newFilters.status !== undefined) nextParams.set('status', newFilters.status);
+    if (newFilters.range !== undefined) nextParams.set('range', newFilters.range);
+    if (newFilters.search !== undefined) nextParams.set('search', newFilters.search);
+    if (newFilters.page !== undefined) nextParams.set('page', newFilters.page.toString());
+
+    if ((newFilters.status !== undefined || newFilters.range !== undefined || newFilters.search !== undefined) && newFilters.page === undefined) {
+        nextParams.set('page', '1');
+    }
+
+    return normalizeFilters(nextParams);
+}
+
 export function normalizeFilters(searchParams) {
     const nextParams = new URLSearchParams(searchParams);
 
-    // Normalize status
     const status = getValidStatus(nextParams.get('status'));
     if (status === DEFAULT_STATUS) {
         nextParams.delete('status');
@@ -50,7 +64,6 @@ export function normalizeFilters(searchParams) {
         nextParams.set('status', status);
     }
 
-    // Normalize range
     const range = getValidRange(nextParams.get('range'));
     if (range === DEFAULT_RANGE) {
         nextParams.delete('range');
@@ -58,7 +71,6 @@ export function normalizeFilters(searchParams) {
         nextParams.set('range', range);
     }
 
-    // Normalize search
     const search = getValidSearch(nextParams.get('search'));
     if (!search) {
         nextParams.delete('search');
@@ -66,7 +78,6 @@ export function normalizeFilters(searchParams) {
         nextParams.set('search', search);
     }
 
-    // Normalize page
     const page = getValidPage(nextParams.get('page'));
     if (page === 1) {
         nextParams.delete('page');

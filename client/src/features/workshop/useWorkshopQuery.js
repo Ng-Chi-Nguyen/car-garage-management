@@ -9,6 +9,7 @@ import {
     getValidSearch,
     getValidPage,
     normalizeFilters,
+    applyFilterUpdates,
     WORKSHOP_RANGE
 } from './workshop.filters.js';
 
@@ -73,21 +74,7 @@ export function useWorkshopQuery() {
     }, [range, filters, queryClient]);
 
     const updateFilters = (newFilters) => {
-        setSearchParams(prev => {
-            const nextParams = new URLSearchParams(prev);
-            
-            if (newFilters.status !== undefined) nextParams.set('status', newFilters.status);
-            if (newFilters.range !== undefined) nextParams.set('range', newFilters.range);
-            if (newFilters.search !== undefined) nextParams.set('search', newFilters.search);
-            if (newFilters.page !== undefined) nextParams.set('page', newFilters.page.toString());
-            
-            // Filter change resets page to 1 if not explicitly updating page
-            if ((newFilters.status !== undefined || newFilters.range !== undefined || newFilters.search !== undefined) && newFilters.page === undefined) {
-                nextParams.set('page', '1');
-            }
-            
-            return normalizeFilters(nextParams);
-        });
+        setSearchParams(prev => applyFilterUpdates(prev, newFilters));
     };
 
     const query = useQuery({

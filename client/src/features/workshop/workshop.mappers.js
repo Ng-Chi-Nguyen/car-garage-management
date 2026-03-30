@@ -14,9 +14,9 @@ function isValidDate(dateString) {
 }
 
 export function normalizeWorkshopData(rawData) {
-    const { repairOrders = [], vehicles = [], pagination } = rawData;
+    const { repairOrders = [], vehicles = [], pagination, globalMetrics } = rawData;
 
-    const metrics = {
+    const metrics = globalMetrics || {
         waiting: 0,
         in_progress: 0,
         completed: 0,
@@ -29,7 +29,10 @@ export function normalizeWorkshopData(rawData) {
         const rawStatus = ro.TrangThai;
         const mappedStatus = STATUS_MAP[rawStatus] || DEFAULT_STATUS;
         
-        metrics[mappedStatus.id]++;
+        // Use globalMetrics instead of counting local rows
+        if (!globalMetrics) {
+            metrics[mappedStatus.id]++;
+        }
 
         let time = '-';
         if (isValidDate(ro.NgaySC)) {
