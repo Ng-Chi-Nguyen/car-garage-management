@@ -6,6 +6,7 @@ test('dashboard quick actions routes exactly match expected paths', () => {
   const expectedPaths = [
     '/intake/new',
     '/repair-orders/new',
+    '/repair-orders?page=1',
     '/customers',
     '/inventory',
     '/finance/receivables'
@@ -14,5 +15,5 @@ test('dashboard quick actions routes exactly match expected paths', () => {
   const actualPaths = DASHBOARD_QUICK_ACTIONS.map(action => action.path);
 
   assert.deepStrictEqual(actualPaths, expectedPaths);
-  assert.strictEqual(DASHBOARD_QUICK_ACTIONS.length, 5);
+  assert.strictEqual(DASHBOARD_QUICK_ACTIONS.length, 6);
 });
