@@ -14,12 +14,13 @@ export function WorkshopKpiSection({ data, isLoading, isError }) {
     );
 }
 
-export function WorkshopQueueSection({ data, isLoading, isError, filters, updateFilters }) {
+export function WorkshopQueueSection({ data, isLoading, isFetching, isError, filters, updateFilters }) {
     return (
         <section>
             <WorkshopStatusPanel 
                 data={data}
                 isLoading={isLoading}
+                isFetching={isFetching}
                 isError={isError}
                 filters={filters}
                 updateFilters={updateFilters}

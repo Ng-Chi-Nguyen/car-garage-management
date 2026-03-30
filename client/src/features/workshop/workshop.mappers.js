@@ -45,7 +45,9 @@ export function normalizeWorkshopData(rawData) {
 
         return {
             id: ro.MaPhieuSC,
+            carId: ro.MaXe,
             licensePlate: vehicle.BienSo || 'Không rõ',
+            brand: vehicle.HieuXe?.TenHieuXe || vehicle.TenHieuXe || '',
             status: mappedStatus,
             time,
             actions: {

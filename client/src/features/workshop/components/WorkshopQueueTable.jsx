@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { getWorkshopRouteTarget } from '../workshop.interactions';
 
-export function WorkshopQueueTable({ rows, isLoading, isError, isEmpty }) {
+export function WorkshopQueueTable({ rows, isLoading, isFetching, isError, isEmpty }) {
     if (isLoading) {
         return (
             <div className="space-y-4 animate-pulse">
@@ -31,16 +31,34 @@ export function WorkshopQueueTable({ rows, isLoading, isError, isEmpty }) {
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className={`flex flex-col gap-3 relative transition-opacity duration-200 ${isFetching ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
+            {isFetching && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center">
+                    <div className="bg-surface-container-high text-on-surface px-4 py-2 rounded-full shadow-lg flex items-center gap-2 font-medium text-sm">
+                        <span className="material-symbols-outlined animate-spin text-primary" style={{ animationDuration: '1.5s' }}>refresh</span>
+                        Đang tải...
+                    </div>
+                </div>
+            )}
             {rows.map((row) => (
                 <div 
                     key={row.id} 
                     className="flex items-center justify-between bg-surface-container-lowest p-4 rounded-xl hover:bg-surface-container-low transition-colors"
                 >
                     <div className="flex items-center gap-6 flex-1">
-                        <div className="w-32">
+                        <div className="w-56">
                             <h4 className="text-lg font-bold text-on-surface">{row.licensePlate}</h4>
-                            <p className="text-xs text-on-surface-variant">Mã: {row.id}</p>
+                            <div className="text-xs text-on-surface-variant flex flex-wrap items-center gap-1 mt-0.5">
+                                <span className="font-mono bg-surface-container-high px-1 py-0.5 rounded text-[10px]" title="Mã phiếu">#{row.id}</span>
+                                <span>•</span>
+                                <span title="Mã xe">{row.carId || 'Không rõ mã'}</span>
+                                {row.brand && (
+                                    <>
+                                        <span>•</span>
+                                        <span title="Hãng xe">{row.brand}</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
                         
                         <div className="w-32">
@@ -89,7 +107,7 @@ export function WorkshopQueueTable({ rows, isLoading, isError, isEmpty }) {
                     
                     <div className="flex items-center gap-2">
                         <Link 
-                            to={getWorkshopRouteTarget('view_vehicle', { id: row.id })}
+                            to={getWorkshopRouteTarget('view_vehicle', { id: row.carId })}
                             className="text-primary hover:text-primary-container font-medium text-sm px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
                         >
                             Chi tiết

@@ -8,7 +8,7 @@ const STATUS_OPTIONS = [
     { value: 'completed', label: 'Hoàn tất' }
 ];
 
-export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateFilters }) {
+export function WorkshopStatusPanel({ data, isLoading, isFetching, isError, filters, updateFilters }) {
     const currentStatus = filters?.status || 'all';
     
     const currentPage = Number(filters?.page) || 1;
@@ -29,6 +29,7 @@ export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateF
                     {STATUS_OPTIONS.map(opt => (
                         <button
                             key={opt.value}
+                            type="button"
                             onClick={() => updateFilters({ status: opt.value, page: 1 })}
                             className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none ${
                                 currentStatus === opt.value 
@@ -45,6 +46,7 @@ export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateF
             <WorkshopQueueTable 
                 rows={data?.activeRows} 
                 isLoading={isLoading} 
+                isFetching={isFetching}
                 isError={isError} 
                 isEmpty={!data?.activeRows?.length}
             />
@@ -56,15 +58,17 @@ export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateF
                     </div>
                     <div className="flex gap-2">
                         <button
+                            type="button"
                             onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage <= 1}
+                            disabled={currentPage <= 1 || isFetching}
                             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none bg-surface-container-high text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Trước
                         </button>
                         <button
+                            type="button"
                             onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage >= totalPages}
+                            disabled={currentPage >= totalPages || isFetching}
                             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none bg-surface-container-high text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Sau

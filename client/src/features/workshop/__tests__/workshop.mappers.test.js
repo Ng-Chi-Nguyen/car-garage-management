@@ -35,8 +35,8 @@ describe('normalizeWorkshopData', () => {
     ];
 
     const vehicles = [
-      { MaXe: 'X1', BienSo: '51F-12345' },
-      { MaXe: 'X2', BienSo: '51F-67890' },
+      { MaXe: 'X1', BienSo: '51F-12345', TenHieuXe: 'Toyota' },
+      { MaXe: 'X2', BienSo: '51F-67890', HieuXe: { TenHieuXe: 'Honda' } },
       { MaXe: 'X3', BienSo: '51F-99999' }
     ];
 
@@ -49,13 +49,19 @@ describe('normalizeWorkshopData', () => {
     assert.strictEqual(result.activeRows[0].status.badge, 'secondary');
     assert.strictEqual(result.activeRows[0].time, '2023-01-01T10:00:00Z');
     assert.strictEqual(result.activeRows[0].licensePlate, '51F-12345');
+    assert.strictEqual(result.activeRows[0].carId, 'X1');
+    assert.strictEqual(result.activeRows[0].brand, 'Toyota');
 
     // Row 2: DangSua -> in_progress, primary. Time = NgayTao
     assert.strictEqual(result.activeRows[1].status.id, 'in_progress');
     assert.strictEqual(result.activeRows[1].status.badge, 'primary');
     assert.strictEqual(result.activeRows[1].time, '2023-01-02T10:00:00Z');
+    assert.strictEqual(result.activeRows[1].carId, 'X2');
+    assert.strictEqual(result.activeRows[1].brand, 'Honda');
     
     // Row 3: invalid time -> "-"
     assert.strictEqual(result.activeRows[2].time, '-');
+    assert.strictEqual(result.activeRows[2].carId, 'X3');
+    assert.strictEqual(result.activeRows[2].brand, '');
   });
 });
