@@ -1,6 +1,6 @@
 import axiosClient from '../../lib/axiosClient.js';
 import { normalizeWorkshopData } from './workshop.mappers.js';
-import { getValidRange, WORKSHOP_RANGE } from './workshop.filters.js';
+import { getValidRange, WORKSHOP_RANGE, buildQueryString } from './workshop.filters.js';
 
 function toDateRange(rangeType) {
     const end = new Date();
@@ -54,10 +54,10 @@ export async function fetchWorkshopData(filters = {}) {
     const metricParams = { search, limit: 1, NgayTaoFrom: startDate, NgayTaoTo: endDate };
 
     const [roResponse, waitingRes, inProgressRes, completedRes] = await Promise.all([
-        axiosClient.get('/api/v1/repair-orders', { params: repairOrderParams }),
-        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: 'TiepNhan' } }).catch(() => null),
-        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: 'DangSua' } }).catch(() => null),
-        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: ['HoanTat', 'Huy'] } }).catch(() => null)
+        axiosClient.get(`/api/v1/repair-orders?${buildQueryString(repairOrderParams)}`),
+        axiosClient.get(`/api/v1/repair-orders?${buildQueryString({ ...metricParams, TrangThai: 'TiepNhan' })}`).catch(() => null),
+        axiosClient.get(`/api/v1/repair-orders?${buildQueryString({ ...metricParams, TrangThai: 'DangSua' })}`).catch(() => null),
+        axiosClient.get(`/api/v1/repair-orders?${buildQueryString({ ...metricParams, TrangThai: ['HoanTat', 'Huy'] })}`).catch(() => null)
     ]);
     
     const repairOrders = roResponse.data?.data?.repairOrders || [];

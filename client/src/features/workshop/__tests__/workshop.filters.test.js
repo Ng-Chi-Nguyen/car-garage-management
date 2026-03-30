@@ -6,7 +6,8 @@ import {
     getValidSearch,
     getValidPage,
     normalizeFilters,
-    applyFilterUpdates
+    applyFilterUpdates,
+    buildQueryString
 } from '../workshop.filters.js';
 
 describe('workshop filters', () => {
@@ -135,6 +136,37 @@ describe('workshop filters', () => {
             
             assert.equal(updated.get('status'), 'in_progress');
             assert.equal(updated.get('page'), '2');
+        });
+    });
+
+    describe('buildQueryString', () => {
+        it('serializes simple key-value pairs', () => {
+            const params = { page: 1, limit: 10, search: 'test' };
+            const result = buildQueryString(params);
+            assert.equal(result, 'page=1&limit=10&search=test');
+        });
+
+        it('omits undefined, null, and empty string values', () => {
+            const params = { page: 1, search: '', status: undefined, type: null, valid: 'yes' };
+            const result = buildQueryString(params);
+            assert.equal(result, 'page=1&valid=yes');
+        });
+
+        it('serializes arrays as repeated keys (deterministic)', () => {
+            const params = { TrangThai: ['HoanTat', 'Huy'], page: 1 };
+            const result = buildQueryString(params);
+            assert.equal(result, 'TrangThai=HoanTat&TrangThai=Huy&page=1');
+        });
+
+        it('handles mixed valid and array parameters', () => {
+            const params = { 
+                limit: 20, 
+                search: '', 
+                TrangThai: ['TiepNhan', 'DangSua'],
+                Sort: 'asc'
+            };
+            const result = buildQueryString(params);
+            assert.equal(result, 'limit=20&TrangThai=TiepNhan&TrangThai=DangSua&Sort=asc');
         });
     });
 });
