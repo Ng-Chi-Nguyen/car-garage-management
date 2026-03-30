@@ -27,8 +27,18 @@ ChartJS.register(
   BarController,
 );
 
-export function DashboardTrendChart({ trendSeries }) {
+export function DashboardTrendChart({ trendSeries, isLoading }) {
   const [chartType, setChartType] = useState('mixed'); // 'mixed' or 'line'
+
+  if (isLoading) {
+    return (
+      <SectionCard title="Biểu đồ doanh thu">
+        <div className="h-64 flex items-center justify-center text-slate-500 text-sm">
+          Đang tải biểu đồ...
+        </div>
+      </SectionCard>
+    );
+  }
 
   if (!trendSeries || !trendSeries.dates || trendSeries.dates.length === 0) {
     return (
