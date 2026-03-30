@@ -4,6 +4,7 @@ import prisma from "../../db/prisma.js";
 import {
   buildListWhere,
   buildPagination,
+  runWithDbRetry,
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
@@ -110,7 +111,7 @@ const paymentReceiptService = {
       filterFields: PAYMENT_RECEIPT_FILTER_FIELDS,
     });
 
-    const [totalItems, paymentReceipts] = await prisma.$transaction([
+    const [totalItems, paymentReceipts] = await runWithDbRetry(() => Promise.all([
       prisma.pHIEU_THU_TIEN.count({ where }),
       prisma.pHIEU_THU_TIEN.findMany({
         where,
@@ -120,7 +121,7 @@ const paymentReceiptService = {
           MaPhieuThu: "desc",
         },
       }),
-    ]);
+    ]));
 
     return {
       paymentReceipts,

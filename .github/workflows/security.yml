@@ -60,3 +60,26 @@ jobs:
           base: ""
           head: ${{ github.ref_name }}
           extra_args: --debug --results=verified,unknown
+
+  # 4. Compatibility CodeQL scan to preserve existing main-branch config key
+  # Keeps Code Scanning PR delta check from reporting
+  # "1 configuration not found" for `.github/workflows/security.yml:codeql-analysis`.
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Initialize CodeQL (compat)
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Perform CodeQL Analysis (compat category)
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript"

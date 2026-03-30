@@ -2,6 +2,7 @@ import prisma from "../../db/prisma.js";
 import {
   buildListWhere,
   buildPagination,
+  runWithDbRetry,
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
@@ -76,7 +77,7 @@ const createCustomerService = ({
       filterFields: CUSTOMER_FILTER_FIELDS,
     });
 
-    const [totalItems, customers] = await prismaClient.$transaction([
+    const [totalItems, customers] = await runWithDbRetry(() => Promise.all([
       customerDelegate.count({ where }),
       customerDelegate.findMany({
         where,
@@ -86,7 +87,7 @@ const createCustomerService = ({
           MaKH: "desc",
         },
       }),
-    ]);
+    ]));
 
     return sanitizeCustomerListResult({
       customers,

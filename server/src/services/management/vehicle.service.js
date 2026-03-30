@@ -2,6 +2,7 @@ import prisma from "../../db/prisma.js";
 import {
   buildListWhere,
   buildPagination,
+  runWithDbRetry,
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
@@ -48,7 +49,7 @@ const vehicleService = {
       filterFields: VEHICLE_FILTER_FIELDS,
     });
 
-    const [totalItems, vehicles] = await prisma.$transaction([
+    const [totalItems, vehicles] = await runWithDbRetry(() => Promise.all([
       prisma.xE.count({ where }),
       prisma.xE.findMany({
         where,
@@ -58,7 +59,7 @@ const vehicleService = {
           MaXe: "desc",
         },
       }),
-    ]);
+    ]));
 
     return {
       vehicles,
