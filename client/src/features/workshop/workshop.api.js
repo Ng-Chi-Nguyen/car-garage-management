@@ -18,9 +18,22 @@ export async function fetchWorkshopData(filters = {}) {
         repairOrderParams.TrangThai = ['HoanTat', 'Huy'];
     }
 
-    const roResponse = await axiosClient.get('/api/v1/repair-orders', { params: repairOrderParams });
+    const [roResponse, waitingRes, inProgressRes, completedRes] = await Promise.all([
+        axiosClient.get('/api/v1/repair-orders', { params: repairOrderParams }),
+        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: 'TiepNhan' } }).catch(() => null),
+        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: 'DangSua' } }).catch(() => null),
+        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: ['HoanTat', 'Huy'] } }).catch(() => null)
+    ]);
+    
     const repairOrders = roResponse.data?.data?.repairOrders || [];
     const pagination = roResponse.data?.data?.pagination || { page: 1, limit: 10, totalItems: 0, totalPages: 0 };
+
+    const globalMetrics = {
+        waiting: waitingRes?.data?.data?.pagination?.totalItems || 0,
+        in_progress: inProgressRes?.data?.data?.pagination?.totalItems || 0,
+        completed: completedRes?.data?.data?.pagination?.totalItems || 0,
+    };
+    globalMetrics.total = globalMetrics.waiting + globalMetrics.in_progress + globalMetrics.completed;
 
     const vehicleIds = [...new Set(repairOrders.map(ro => ro.MaXe).filter(Boolean))];
     
@@ -36,7 +49,8 @@ export async function fetchWorkshopData(filters = {}) {
     const rawData = {
         vehicles,
         repairOrders,
-        pagination
+        pagination,
+        globalMetrics
     };
 
     return normalizeWorkshopData(rawData);

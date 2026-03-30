@@ -11,7 +11,8 @@ const STATUS_OPTIONS = [
 export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateFilters }) {
     const currentStatus = filters?.status || 'all';
     
-    const { page = 1, totalPages = 1, totalItems = 0 } = data?.pagination || {};
+    const currentPage = Number(filters?.page) || 1;
+    const { totalPages = 1, totalItems = 0 } = data?.pagination || {};
     
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -28,7 +29,7 @@ export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateF
                     {STATUS_OPTIONS.map(opt => (
                         <button
                             key={opt.value}
-                            onClick={() => updateFilters({ status: opt.value })}
+                            onClick={() => updateFilters({ status: opt.value, page: 1 })}
                             className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none ${
                                 currentStatus === opt.value 
                                     ? 'bg-primary text-white' 
@@ -51,19 +52,19 @@ export function WorkshopStatusPanel({ data, isLoading, isError, filters, updateF
             {!isLoading && !isError && totalPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-2">
                     <div className="text-sm text-on-surface-variant">
-                        Hiển thị trang {page} / {totalPages} ({totalItems} kết quả)
+                        Hiển thị trang {currentPage} / {totalPages} ({totalItems} kết quả)
                     </div>
                     <div className="flex gap-2">
                         <button
-                            onClick={() => handlePageChange(page - 1)}
-                            disabled={page <= 1}
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage <= 1}
                             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none bg-surface-container-high text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Trước
                         </button>
                         <button
-                            onClick={() => handlePageChange(page + 1)}
-                            disabled={page >= totalPages}
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage >= totalPages}
                             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none bg-surface-container-high text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Sau

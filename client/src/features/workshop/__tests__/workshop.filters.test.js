@@ -5,7 +5,8 @@ import {
     getValidRange,
     getValidSearch,
     getValidPage,
-    normalizeFilters
+    normalizeFilters,
+    applyFilterUpdates
 } from '../workshop.filters.js';
 
 describe('workshop filters', () => {
@@ -97,6 +98,43 @@ describe('workshop filters', () => {
             assert.equal(clean.get('status'), null);
             assert.equal(clean.get('range'), null);
             assert.equal(clean.get('search'), null);
+        });
+
+        it('query uses URL page contract (reads valid page from URL params)', () => {
+            const params = new URLSearchParams('page=5');
+            const clean = normalizeFilters(params);
+            assert.equal(clean.get('page'), '5');
+            
+            const paramsDefault = new URLSearchParams('page=1');
+            const cleanDefault = normalizeFilters(paramsDefault);
+            assert.equal(cleanDefault.get('page'), null); // 1 is default
+        });
+    });
+
+    describe('applyFilterUpdates', () => {
+        it('preserves existing filters when page changes', () => {
+            const prev = new URLSearchParams('status=waiting&search=abc&page=1');
+            const updated = applyFilterUpdates(prev, { page: 2 });
+            
+            assert.equal(updated.get('status'), 'waiting');
+            assert.equal(updated.get('search'), 'abc');
+            assert.equal(updated.get('page'), '2');
+        });
+
+        it('resets page to 1 when a filter changes and page is not explicitly set', () => {
+            const prev = new URLSearchParams('status=waiting&page=3');
+            const updated = applyFilterUpdates(prev, { status: 'in_progress' });
+            
+            assert.equal(updated.get('status'), 'in_progress');
+            assert.equal(updated.get('page'), null); // page 1 is default, so it's removed
+        });
+
+        it('does not reset page when filter changes but page is explicitly set', () => {
+            const prev = new URLSearchParams('status=waiting&page=3');
+            const updated = applyFilterUpdates(prev, { status: 'in_progress', page: 2 });
+            
+            assert.equal(updated.get('status'), 'in_progress');
+            assert.equal(updated.get('page'), '2');
         });
     });
 });
