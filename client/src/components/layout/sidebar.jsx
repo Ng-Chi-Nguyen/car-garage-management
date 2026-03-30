@@ -6,6 +6,7 @@ export function Sidebar() {
     { name: 'Tổng quan', path: '/dashboard', icon: 'dashboard' },
     { name: 'Trạng thái xưởng', path: '/workshop', icon: 'build' },
     { name: 'Tiếp nhận xe', path: '/intake', icon: 'directions_car' },
+    { name: 'Phiếu sửa chữa', path: '/repair-orders?page=1', icon: 'receipt_long' },
     { name: 'Kho vật tư', path: '/inventory', icon: 'inventory_2' },
     { name: 'Tài chính', path: '/finance/receivables', icon: 'payments' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },

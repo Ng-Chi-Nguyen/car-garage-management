@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { SectionCard } from '../../../components/ui/section-card';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Filler, LineController, BarController } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Tooltip,
+  Filler,
+  LineController,
+  BarController,
+} from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import { buildMixedChartConfig, buildLineChartConfig } from '../dashboard.chartConfig.js';
 
@@ -13,7 +24,7 @@ ChartJS.register(
   Tooltip,
   Filler,
   LineController,
-  BarController
+  BarController,
 );
 
 export function DashboardTrendChart({ trendSeries }) {
@@ -58,12 +69,12 @@ export function DashboardTrendChart({ trendSeries }) {
       }
     >
       <div className="h-64 w-full pt-4">
-        <Chart 
-          key={chartType} 
-          redraw 
-          type={chartConfig.type} 
-          data={chartConfig.data} 
-          options={chartConfig.options} 
+        <Chart
+          key={chartType}
+          redraw
+          type={chartConfig.type}
+          data={chartConfig.data}
+          options={chartConfig.options}
         />
       </div>
     </SectionCard>

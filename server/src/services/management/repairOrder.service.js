@@ -4,6 +4,7 @@ import prisma from "../../db/prisma.js";
 import {
   buildPagination,
   buildListWhere,
+  runWithDbRetry,
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
@@ -88,7 +89,7 @@ const repairOrderService = {
       filterFields: REPAIR_ORDER_FILTER_FIELDS,
     });
 
-    const [totalItems, repairOrders] = await prisma.$transaction([
+    const [totalItems, repairOrders] = await runWithDbRetry(() => Promise.all([
       prisma.pHIEU_SUA_CHUA.count({ where }),
       prisma.pHIEU_SUA_CHUA.findMany({
         where,
@@ -98,7 +99,7 @@ const repairOrderService = {
           MaPhieuSC: "desc",
         },
       }),
-    ]);
+    ]));
 
     return {
       repairOrders,

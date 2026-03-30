@@ -49,6 +49,9 @@ client/build/
 
 # Local worktrees
 .worktrees/
+.hive/
 
 
 superpowers/
+# CocoIndex Code (ccc)
+/.cocoindex_code/

@@ -422,6 +422,38 @@ const buildServiceError = (status, message) => {
   return error;
 };
 
+const isTransientDbPoolTimeoutError = (error) => {
+  const message = String(error?.message ?? "").toLowerCase();
+  return message.includes("pool timeout") || message.includes("unable to start a transaction in the given time");
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const runWithDbRetry = async (
+  operation,
+  {
+    attempts = 3,
+    delayMs = 1200,
+    shouldRetry = isTransientDbPoolTimeoutError,
+  } = {},
+) => {
+  let lastError;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      if (!shouldRetry(error) || attempt === attempts) {
+        throw error;
+      }
+      await sleep(delayMs * attempt);
+    }
+  }
+
+  throw lastError;
+};
+
 // Export các helper dùng lại cho CRUD factory/service.
 export {
   buildFilterCondition,
@@ -431,4 +463,5 @@ export {
   buildServiceError,
   buildWriteData,
   normalizeKeyword,
+  runWithDbRetry,
 };
