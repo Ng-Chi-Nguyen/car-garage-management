@@ -7,6 +7,7 @@ import { useRepairOrdersQuery } from '../../features/repair-orders/useRepairOrde
 export default function RepairOrdersListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = searchParams.get('page');
+  const searchParam = searchParams.get('search') || '';
   const page = pageParam ? parseInt(pageParam, 10) : 1;
 
   // Ensure URL is updated if invalid page
@@ -21,7 +22,7 @@ export default function RepairOrdersListPage() {
 
   const validPage = isNaN(page) || page < 1 ? 1 : page;
 
-  const { data, isLoading, isError } = useRepairOrdersQuery({ page: validPage, limit: 10 });
+  const { data, isLoading, isError } = useRepairOrdersQuery({ page: validPage, limit: 10, search: searchParam });
 
   const repairOrders = data?.data?.repairOrders || [];
   const pagination = data?.data?.pagination || { page: 1, totalPages: 1 };
@@ -29,7 +30,7 @@ export default function RepairOrdersListPage() {
   const columns = [
     { header: 'Mã Phiếu', accessor: 'MaPhieuSC' },
     { header: 'Mã Xe', accessor: 'MaXe' },
-    { header: 'Ngày SC', cell: (row) => new Date(row.NgaySC).toLocaleDateString('vi-VN') },
+    { header: 'Ngày SC', cell: (row) => row.NgaySC && !isNaN(new Date(row.NgaySC).getTime()) ? new Date(row.NgaySC).toLocaleDateString('vi-VN') : '-' },
     { header: 'Nội dung', accessor: 'NoiDungLoi' },
     { 
       header: 'Tổng tiền', 
@@ -45,9 +46,37 @@ export default function RepairOrdersListPage() {
     });
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const searchTerm = formData.get('search')?.toString() || '';
+    setSearchParams(prev => {
+      prev.set('search', searchTerm);
+      prev.set('page', '1'); // Reset to page 1 on search
+      return prev;
+    });
+  };
+
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       <SectionCard title="Danh sách phiếu sửa chữa">
+        <div className="mb-4">
+          <form onSubmit={handleSearchSubmit} className="flex gap-2">
+            <input 
+              name="search"
+              type="text" 
+              defaultValue={searchParam}
+              placeholder="Tìm kiếm phiếu sửa chữa..." 
+              className="px-4 py-2 border rounded-lg flex-1 max-w-sm"
+            />
+            <button 
+              type="submit" 
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Tìm kiếm
+            </button>
+          </form>
+        </div>
         {isError && <div className="p-8 text-center text-red-500">Lỗi khi tải danh sách.</div>}
         {isLoading && <div className="p-8 text-center text-slate-500">Đang tải danh sách...</div>}
         {!isLoading && !isError && (

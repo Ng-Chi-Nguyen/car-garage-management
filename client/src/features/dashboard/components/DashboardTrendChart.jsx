@@ -58,7 +58,13 @@ export function DashboardTrendChart({ trendSeries }) {
       }
     >
       <div className="h-64 w-full pt-4">
-        <Chart type={chartConfig.type} data={chartConfig.data} options={chartConfig.options} />
+        <Chart 
+          key={chartType} 
+          redraw 
+          type={chartConfig.type} 
+          data={chartConfig.data} 
+          options={chartConfig.options} 
+        />
       </div>
     </SectionCard>
   );
