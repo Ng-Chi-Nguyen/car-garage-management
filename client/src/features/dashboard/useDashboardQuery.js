@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { fetchDashboardData } from './dashboard.api.js';
@@ -48,7 +48,11 @@ export function useDashboardQuery() {
     const query = useQuery({
         queryKey: dashboardKeys.metricByRange(range),
         queryFn: () => fetchDashboardData(range),
+        // Cache strategy: keep previous UI while switching range to avoid flicker
+        placeholderData: keepPreviousData,
         staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 15 * 60 * 1000, // keep cache in memory for smooth range back-and-forth
+        refetchOnWindowFocus: false,
     });
 
     return {
