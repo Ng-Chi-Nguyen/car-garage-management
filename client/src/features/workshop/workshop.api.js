@@ -1,13 +1,46 @@
 import axiosClient from '../../lib/axiosClient.js';
 import { normalizeWorkshopData } from './workshop.mappers.js';
+import { getValidRange, WORKSHOP_RANGE } from './workshop.filters.js';
+
+function toDateRange(rangeType) {
+    const end = new Date();
+    const start = new Date();
+    const validRange = getValidRange(rangeType);
+
+    if (validRange === WORKSHOP_RANGE.TODAY) {
+        start.setHours(0, 0, 0, 0);
+    } else if (validRange === WORKSHOP_RANGE.LAST_7_DAYS) {
+        start.setDate(end.getDate() - 7);
+    } else if (validRange === WORKSHOP_RANGE.LAST_30_DAYS) {
+        start.setDate(end.getDate() - 30);
+    } else if (validRange === WORKSHOP_RANGE.LAST_90_DAYS) {
+        start.setDate(end.getDate() - 90);
+    } else if (validRange === WORKSHOP_RANGE.THIS_MONTH) {
+        start.setDate(1);
+        start.setHours(0, 0, 0, 0);
+    } else if (validRange === WORKSHOP_RANGE.ALL_TIME) {
+        start.setFullYear(2000, 0, 1);
+    } else {
+        start.setDate(end.getDate() - 7);
+    }
+
+    return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString()
+    };
+}
 
 export async function fetchWorkshopData(filters = {}) {
-    const { page = 1, limit = 10, status, search } = filters;
-    
+    const { page = 1, limit = 10, status, search, range } = filters;
+
+    const { startDate, endDate } = toDateRange(range);
+
     const repairOrderParams = {
         page,
         limit,
         search,
+        NgayTaoFrom: startDate,
+        NgayTaoTo: endDate,
     };
 
     if (status === 'waiting') {
@@ -18,11 +51,13 @@ export async function fetchWorkshopData(filters = {}) {
         repairOrderParams.TrangThai = ['HoanTat', 'Huy'];
     }
 
+    const metricParams = { search, limit: 1, NgayTaoFrom: startDate, NgayTaoTo: endDate };
+
     const [roResponse, waitingRes, inProgressRes, completedRes] = await Promise.all([
         axiosClient.get('/api/v1/repair-orders', { params: repairOrderParams }),
-        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: 'TiepNhan' } }).catch(() => null),
-        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: 'DangSua' } }).catch(() => null),
-        axiosClient.get('/api/v1/repair-orders', { params: { search, limit: 1, TrangThai: ['HoanTat', 'Huy'] } }).catch(() => null)
+        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: 'TiepNhan' } }).catch(() => null),
+        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: 'DangSua' } }).catch(() => null),
+        axiosClient.get('/api/v1/repair-orders', { params: { ...metricParams, TrangThai: ['HoanTat', 'Huy'] } }).catch(() => null)
     ]);
     
     const repairOrders = roResponse.data?.data?.repairOrders || [];
@@ -42,8 +77,8 @@ export async function fetchWorkshopData(filters = {}) {
         const vehiclePromises = vehicleIds.map(id => axiosClient.get(`/api/v1/vehicles/${id}`).catch(() => null));
         const vehicleResults = await Promise.all(vehiclePromises);
         vehicles = vehicleResults
-            .filter(res => res && res.data?.data)
-            .map(res => res.data.data);
+            .filter(res => res && res.data?.data?.vehicle)
+            .map(res => res.data.data.vehicle);
     }
 
     const rawData = {

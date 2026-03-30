@@ -6,7 +6,7 @@ import { WorkshopKpiSection, WorkshopQueueSection } from './workshop-sections';
 import { getWorkshopRouteTarget } from '../../features/workshop/workshop.interactions';
 
 export default function WorkshopStatusPage() {
-    const { data, isLoading, isError, filters, updateFilters } = useWorkshopQuery();
+    const { data, isLoading, isFetching, isError, filters, updateFilters } = useWorkshopQuery();
     const navigate = useNavigate();
 
     const topActions = (
@@ -49,6 +49,7 @@ export default function WorkshopStatusPage() {
             <WorkshopQueueSection 
                 data={data} 
                 isLoading={isLoading} 
+                isFetching={isFetching}
                 isError={isError}
                 filters={filters}
                 updateFilters={updateFilters}
