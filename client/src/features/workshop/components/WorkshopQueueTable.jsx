@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getWorkshopRouteTarget } from '../workshop.interactions';
 
 export function WorkshopQueueTable({ rows, isLoading, isError, isEmpty }) {
     if (isLoading) {
@@ -88,7 +89,7 @@ export function WorkshopQueueTable({ rows, isLoading, isError, isEmpty }) {
                     
                     <div className="flex items-center gap-2">
                         <Link 
-                            to={row.actions.view}
+                            to={getWorkshopRouteTarget('view_vehicle', { id: row.id })}
                             className="text-primary hover:text-primary-container font-medium text-sm px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
                         >
                             Chi tiết
