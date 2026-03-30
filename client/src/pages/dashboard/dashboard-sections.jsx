@@ -5,15 +5,10 @@ import { DashboardQuickActions } from '../../features/dashboard/components/Dashb
 import { DashboardTrendChart } from '../../features/dashboard/components/DashboardTrendChart';
 
 export function MainMetricGrid({ kpis, isLoading, isError }) {
-  if (isLoading) {
-    return <div className="p-8 text-center text-slate-500 bg-white rounded-xl shadow-sm">Đang tải dữ liệu tổng quan...</div>;
-  }
   if (isError) {
     return <div className="p-8 text-center text-red-500 bg-white rounded-xl shadow-sm">Lỗi khi tải dữ liệu tổng quan.</div>;
   }
-  if (!kpis) return null;
-
-  return <KpiCardGrid kpis={kpis} />;
+  return <KpiCardGrid kpis={kpis} isLoading={isLoading} />;
 }
 
 export function SecondaryGrid({ recentOrders, trendSeries, isLoading, isError }) {
@@ -22,7 +17,7 @@ export function SecondaryGrid({ recentOrders, trendSeries, isLoading, isError })
       <RecentRepairOrdersTable orders={recentOrders} isLoading={isLoading} isError={isError} />
 
       <div className="space-y-8">
-        <DashboardTrendChart trendSeries={trendSeries} />
+        <DashboardTrendChart trendSeries={trendSeries} isLoading={isLoading} />
         <DashboardQuickActions />
       </div>
     </div>

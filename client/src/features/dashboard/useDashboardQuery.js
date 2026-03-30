@@ -1,12 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { fetchDashboardData } from './dashboard.api.js';
 import { dashboardKeys } from './dashboard.queryKeys.js';
 import { getValidRange } from './dashboard.dateRange.js';
+import { DASHBOARD_RANGES } from './dashboard.constants.js';
 
 export function useDashboardQuery() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const queryClient = useQueryClient();
     
     // Read and validate range from URL
     const urlRange = searchParams.get('range');
@@ -21,6 +23,19 @@ export function useDashboardQuery() {
             }, { replace: true });
         }
     }, [urlRange, range, setSearchParams]);
+
+    // Prefetch adjacent ranges
+    useEffect(() => {
+        const adjacentRanges = Object.values(DASHBOARD_RANGES).filter(r => r !== range);
+        
+        adjacentRanges.forEach(prefetchRange => {
+            queryClient.prefetchQuery({
+                queryKey: dashboardKeys.metricByRange(prefetchRange),
+                queryFn: () => fetchDashboardData(prefetchRange),
+                staleTime: 5 * 60 * 1000, // 5 minutes
+            });
+        });
+    }, [range, queryClient]);
 
     const setRange = (newRange) => {
         setSearchParams(prev => {

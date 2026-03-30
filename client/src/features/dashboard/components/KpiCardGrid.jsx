@@ -1,7 +1,59 @@
 import React from 'react';
 import { StatCard } from '../../../components/ui/stat-card';
 
-export function KpiCardGrid({ kpis }) {
+export function KpiCardGrid({ kpis, isLoading }) {
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="md:col-span-2 bg-white p-6 rounded-3xl relative overflow-hidden">
+          <div className="relative z-10 flex flex-col justify-center h-full">
+            <p className="text-slate-500 text-sm font-medium mb-1">Tổng doanh thu</p>
+            <div className="h-10 w-48 bg-slate-200 animate-pulse rounded mt-2"></div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl flex flex-col justify-between bg-slate-50/80">
+          <div>
+            <p className="text-slate-500 text-sm font-medium mb-1">Tổng xe & khách</p>
+            <div className="mt-2 space-y-2">
+              <div className="h-4 w-full bg-slate-200 animate-pulse rounded"></div>
+              <div className="h-4 w-full bg-slate-200 animate-pulse rounded"></div>
+              <div className="h-4 w-full bg-slate-200 animate-pulse rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <StatCard 
+          label="Chờ tiếp nhận" 
+          value={<span className="h-8 w-12 bg-slate-200 animate-pulse rounded inline-block"></span>}
+          icon={<span className="p-2 bg-blue-50 text-blue-700 rounded-lg material-symbols-outlined">schedule</span>} 
+        />
+
+        <StatCard 
+          label="Đang sửa" 
+          value={<span className="h-8 w-12 bg-slate-200 animate-pulse rounded inline-block"></span>}
+          icon={<span className="p-2 bg-indigo-50 text-indigo-600 rounded-lg material-symbols-outlined">build</span>} 
+        />
+
+        <StatCard 
+          label="Hoàn thành" 
+          value={<span className="h-8 w-12 bg-slate-200 animate-pulse rounded inline-block"></span>}
+          icon={<span className="p-2 bg-emerald-50 text-emerald-600 rounded-lg material-symbols-outlined">check_circle</span>} 
+        />
+
+        <div className="bg-white p-6 rounded-3xl flex flex-col justify-between bg-slate-50/80">
+          <p className="text-slate-500 text-sm font-medium mb-1">Doanh thu TB/phiếu</p>
+          <div className="h-8 w-32 bg-slate-200 animate-pulse rounded mt-2"></div>
+        </div>
+
+        <div className="bg-blue-700 p-6 rounded-3xl flex flex-col justify-between text-white">
+          <p className="text-white/80 text-sm font-medium mb-1">Tỷ lệ hoàn thành</p>
+          <div className="h-8 w-24 bg-blue-800 animate-pulse rounded mt-2"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (!kpis) return null;
 
   return (
