@@ -9,7 +9,6 @@ const __dirname = path.dirname(__filename);
 
 const kpiGridPath = path.join(__dirname, '../components/WorkshopKpiGrid.jsx');
 const queueTablePath = path.join(__dirname, '../components/WorkshopQueueTable.jsx');
-const statusPanelPath = path.join(__dirname, '../components/WorkshopStatusPanel.jsx');
 
 describe('Workshop UI Contracts', () => {
     describe('WorkshopKpiGrid.jsx', () => {
