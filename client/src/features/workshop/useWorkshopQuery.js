@@ -7,6 +7,7 @@ import {
     getValidRange,
     getValidStatus,
     getValidSearch,
+    getValidPage,
     normalizeFilters,
     WORKSHOP_RANGE
 } from './workshop.filters.js';
@@ -18,10 +19,12 @@ export function useWorkshopQuery() {
     const urlRange = searchParams.get('range');
     const urlStatus = searchParams.get('status');
     const urlSearch = searchParams.get('search');
+    const urlPage = searchParams.get('page');
     
     const range = getValidRange(urlRange);
     const status = getValidStatus(urlStatus);
     const search = getValidSearch(urlSearch);
+    const page = getValidPage(urlPage);
 
     // Filter URL normalization
     useEffect(() => {
@@ -47,7 +50,7 @@ export function useWorkshopQuery() {
         }
     }, [searchParams, setSearchParams]);
 
-    const filters = useMemo(() => ({ range, status, search }), [range, status, search]);
+    const filters = useMemo(() => ({ range, status, search, page }), [range, status, search, page]);
 
     // Bounded prefetch for adjacent range
     useEffect(() => {
@@ -60,7 +63,7 @@ export function useWorkshopQuery() {
         const prefetchRange = ranges[currentIndex + 1] ?? ranges[currentIndex - 1];
         if (!prefetchRange) return;
 
-        const prefetchFilters = { ...filters, range: prefetchRange };
+        const prefetchFilters = { ...filters, range: prefetchRange, page: 1 };
 
         queryClient.prefetchQuery({
             queryKey: workshopKeys.data(prefetchFilters),
@@ -76,9 +79,10 @@ export function useWorkshopQuery() {
             if (newFilters.status !== undefined) nextParams.set('status', newFilters.status);
             if (newFilters.range !== undefined) nextParams.set('range', newFilters.range);
             if (newFilters.search !== undefined) nextParams.set('search', newFilters.search);
+            if (newFilters.page !== undefined) nextParams.set('page', newFilters.page.toString());
             
-            // Filter change resets page to 1 if pagination param exists
-            if (nextParams.has('page')) {
+            // Filter change resets page to 1 if not explicitly updating page
+            if ((newFilters.status !== undefined || newFilters.range !== undefined || newFilters.search !== undefined) && newFilters.page === undefined) {
                 nextParams.set('page', '1');
             }
             

@@ -34,6 +34,11 @@ export function getValidSearch(search) {
     return trimmed.slice(0, 100);
 }
 
+export function getValidPage(page) {
+    const p = parseInt(page, 10);
+    return !isNaN(p) && p > 0 ? p : 1;
+}
+
 export function normalizeFilters(searchParams) {
     const nextParams = new URLSearchParams(searchParams);
 
@@ -59,6 +64,14 @@ export function normalizeFilters(searchParams) {
         nextParams.delete('search');
     } else {
         nextParams.set('search', search);
+    }
+
+    // Normalize page
+    const page = getValidPage(nextParams.get('page'));
+    if (page === 1) {
+        nextParams.delete('page');
+    } else {
+        nextParams.set('page', page.toString());
     }
 
     return nextParams;
