@@ -4,6 +4,7 @@ import prisma from "../../db/prisma.js";
 import {
   buildPagination,
   buildListWhere,
+  runWithDbRetry,
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
@@ -49,6 +50,18 @@ const REPAIR_ORDER_FILTER_FIELDS = {
 };
 
 const WRITE_FIELDS = ["MaXe", "MaNV", "NgaySC", "TrangThai", "NoiDungLoi", "GhiChu", "TongTien"];
+const REPAIR_ORDER_LIST_SELECT = {
+  MaPhieuSC: true,
+  MaXe: true,
+  MaNV: true,
+  NgaySC: true,
+  TrangThai: true,
+  NoiDungLoi: true,
+  GhiChu: true,
+  TongTien: true,
+  NgayTao: true,
+  NgayCapNhat: true,
+};
 const TRANSACTION_OPTIONS = {
   isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
 };
@@ -133,17 +146,18 @@ const createRepairOrderService = ({
         filterFields: REPAIR_ORDER_FILTER_FIELDS,
       });
 
-      const [totalItems, repairOrders] = await db.$transaction([
+      const [totalItems, repairOrders] = await runWithDbRetry(() => Promise.all([
         db.pHIEU_SUA_CHUA.count({ where }),
         db.pHIEU_SUA_CHUA.findMany({
           where,
           skip: pagination.skip,
           take: pagination.limit,
+          select: REPAIR_ORDER_LIST_SELECT,
           orderBy: {
             MaPhieuSC: "desc",
           },
         }),
-      ]);
+      ]));
 
       return {
         repairOrders,

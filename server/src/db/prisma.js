@@ -9,7 +9,25 @@ if (!databaseUrl) {
   throw new Error("DATABASE_URL is required to initialize Prisma client.");
 }
 
-const adapter = new PrismaMariaDb(databaseUrl);
+const buildDatabaseUrlWithSafePoolParams = (rawUrl) => {
+  const parsed = new URL(rawUrl);
+
+  if (!parsed.searchParams.has("connectTimeout")) {
+    parsed.searchParams.set("connectTimeout", "60000");
+  }
+
+  if (!parsed.searchParams.has("acquireTimeout")) {
+    parsed.searchParams.set("acquireTimeout", "60000");
+  }
+
+  if (!parsed.searchParams.has("connectionLimit")) {
+    parsed.searchParams.set("connectionLimit", "10");
+  }
+
+  return parsed.toString();
+};
+
+const adapter = new PrismaMariaDb(buildDatabaseUrlWithSafePoolParams(databaseUrl));
 const prisma = new PrismaClient({ adapter });
 
 export async function connectDB() {
