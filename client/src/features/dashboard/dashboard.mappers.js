@@ -32,7 +32,7 @@ export function normalizeDashboardData(rawData) {
             licensePlate: vehicle?.BienSo || 'Không rõ',
             vehicleModel: vehicle?.HieuXe?.TenHieuXe || (vehicle?.MaHieuXe ? `Hãng xe ${vehicle.MaHieuXe}` : 'Không rõ'),
             customerName: customer?.TenChuXe || 'Không rõ',
-            createdAt: ro.NgayTao || new Date().toISOString(),
+            createdAt: ro.NgayTao ?? null,
             status: ro.TrangThai
         };
     });

@@ -24,16 +24,20 @@ export function useDashboardQuery() {
         }
     }, [urlRange, range, setSearchParams]);
 
-    // Prefetch adjacent ranges
+    // Prefetch one adjacent range only to avoid request bursts
     useEffect(() => {
-        const adjacentRanges = Object.values(DASHBOARD_RANGES).filter(r => r !== range);
-        
-        adjacentRanges.forEach(prefetchRange => {
-            queryClient.prefetchQuery({
-                queryKey: dashboardKeys.metricByRange(prefetchRange),
-                queryFn: () => fetchDashboardData(prefetchRange),
-                staleTime: 5 * 60 * 1000, // 5 minutes
-            });
+        const ranges = Object.values(DASHBOARD_RANGES);
+        const currentIndex = ranges.indexOf(range);
+
+        if (currentIndex === -1) return;
+
+        const prefetchRange = ranges[currentIndex + 1] ?? ranges[currentIndex - 1];
+        if (!prefetchRange) return;
+
+        queryClient.prefetchQuery({
+            queryKey: dashboardKeys.metricByRange(prefetchRange),
+            queryFn: () => fetchDashboardData(prefetchRange),
+            staleTime: 5 * 60 * 1000, // 5 minutes
         });
     }, [range, queryClient]);
 
