@@ -4,6 +4,7 @@ import {
     getValidStatus,
     getValidRange,
     getValidSearch,
+    getValidPage,
     normalizeFilters
 } from '../workshop.filters.js';
 
@@ -60,6 +61,21 @@ describe('workshop filters', () => {
             const valid = getValidSearch(longString);
             assert.equal(valid.length, 100);
             assert.equal(valid, 'a'.repeat(100));
+        });
+    });
+
+    describe('getValidPage', () => {
+        it('returns valid page number', () => {
+            assert.equal(getValidPage('2'), 2);
+            assert.equal(getValidPage(5), 5);
+        });
+
+        it('returns 1 for invalid or missing page', () => {
+            assert.equal(getValidPage('invalid'), 1);
+            assert.equal(getValidPage('-5'), 1);
+            assert.equal(getValidPage('0'), 1);
+            assert.equal(getValidPage(null), 1);
+            assert.equal(getValidPage(undefined), 1);
         });
     });
 

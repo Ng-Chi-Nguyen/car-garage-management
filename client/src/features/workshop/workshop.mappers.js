@@ -14,13 +14,13 @@ function isValidDate(dateString) {
 }
 
 export function normalizeWorkshopData(rawData) {
-    const { repairOrders = [], vehicles = [] } = rawData;
+    const { repairOrders = [], vehicles = [], pagination } = rawData;
 
     const metrics = {
         waiting: 0,
         in_progress: 0,
         completed: 0,
-        total: repairOrders.length
+        total: pagination?.totalItems ?? repairOrders.length
     };
 
     const vehicleMap = new Map(vehicles.map(v => [v.MaXe, v]));
@@ -54,6 +54,7 @@ export function normalizeWorkshopData(rawData) {
 
     return {
         metrics,
-        activeRows
+        activeRows,
+        pagination
     };
 }

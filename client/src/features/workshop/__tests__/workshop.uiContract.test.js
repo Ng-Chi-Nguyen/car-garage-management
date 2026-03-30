@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const kpiGridPath = path.join(__dirname, '../components/WorkshopKpiGrid.jsx');
 const queueTablePath = path.join(__dirname, '../components/WorkshopQueueTable.jsx');
+const statusPanelPath = path.join(__dirname, '../components/WorkshopStatusPanel.jsx');
 
 describe('Workshop UI Contracts', () => {
     describe('WorkshopKpiGrid.jsx', () => {
@@ -49,6 +50,14 @@ describe('Workshop UI Contracts', () => {
         it('uses soft-fill status badges dynamically', () => {
             assert.ok(content.includes('bg-primary/10') && content.includes('bg-secondary/10'), 'Should use soft background for badges');
             assert.ok(content.includes('text-primary') && content.includes('text-secondary'), 'Should use dynamic text color');
+        });
+    });
+
+    describe('WorkshopStatusPanel.jsx', () => {
+        const content = fs.readFileSync(statusPanelPath, 'utf-8');
+
+        it('does not use 1px divider borders for pagination', () => {
+            assert.ok(!content.includes('border-t'), 'Should not use border-t for pagination separator');
         });
     });
 });
