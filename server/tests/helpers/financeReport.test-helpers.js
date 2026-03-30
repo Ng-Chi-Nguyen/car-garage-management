@@ -4,26 +4,22 @@ const ensureTestDatabaseUrl = () => {
   process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
 };
 
-const loadCreateDashboardRoute = async () => {
+const loadCreateFinanceReportRoute = async () => {
   ensureTestDatabaseUrl();
-  const module = await import("../../src/routes/report/dashboard.route.js");
-  return module.createDashboardRoute;
+  const module = await import("../../src/routes/report/financeReport.route.js");
+  return module.createFinanceReportRoute;
 };
 
-const loadDashboardAccessSecurity = async () => {
+const loadCreateFinanceReportController = async () => {
   ensureTestDatabaseUrl();
-  const module = await import("../../src/routes/report/dashboard.access.js");
-
-  return {
-    dashboardAccessMiddlewares: module.dashboardAccessMiddlewares,
-    createDashboardAccessMiddlewares: module.createDashboardAccessMiddlewares,
-  };
+  const module = await import("../../src/controllers/report/financeReport.controller.js");
+  return module.createFinanceReportController;
 };
 
 const startTestServer = async (router) => {
   const app = express();
   app.use(express.json());
-  app.use("/api/v1/dashboard", router);
+  app.use("/api/v1/reports/finance", router);
 
   return await new Promise((resolve) => {
     const server = app.listen(0, () => {
@@ -43,8 +39,8 @@ const stopTestServer = async (server) =>
 
 export {
   ensureTestDatabaseUrl,
-  loadDashboardAccessSecurity,
-  loadCreateDashboardRoute,
+  loadCreateFinanceReportController,
+  loadCreateFinanceReportRoute,
   startTestServer,
   stopTestServer,
 };

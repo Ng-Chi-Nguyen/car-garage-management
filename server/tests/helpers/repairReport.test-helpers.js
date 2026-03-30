@@ -4,26 +4,16 @@ const ensureTestDatabaseUrl = () => {
   process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
 };
 
-const loadCreateDashboardRoute = async () => {
+const loadCreateRepairReportRoute = async () => {
   ensureTestDatabaseUrl();
-  const module = await import("../../src/routes/report/dashboard.route.js");
-  return module.createDashboardRoute;
-};
-
-const loadDashboardAccessSecurity = async () => {
-  ensureTestDatabaseUrl();
-  const module = await import("../../src/routes/report/dashboard.access.js");
-
-  return {
-    dashboardAccessMiddlewares: module.dashboardAccessMiddlewares,
-    createDashboardAccessMiddlewares: module.createDashboardAccessMiddlewares,
-  };
+  const module = await import("../../src/routes/report/repairReport.route.js");
+  return module.createRepairReportRoute;
 };
 
 const startTestServer = async (router) => {
   const app = express();
   app.use(express.json());
-  app.use("/api/v1/dashboard", router);
+  app.use("/api/v1/reports/repair-report", router);
 
   return await new Promise((resolve) => {
     const server = app.listen(0, () => {
@@ -43,8 +33,7 @@ const stopTestServer = async (server) =>
 
 export {
   ensureTestDatabaseUrl,
-  loadDashboardAccessSecurity,
-  loadCreateDashboardRoute,
+  loadCreateRepairReportRoute,
   startTestServer,
   stopTestServer,
 };

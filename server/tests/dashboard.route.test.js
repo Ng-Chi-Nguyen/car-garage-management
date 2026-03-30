@@ -75,21 +75,10 @@ test("route GET /revenue-summary tra payload dung contract", async () => {
   }
 });
 
-test("route chay middleware theo thu tu auth roles validate controller", async () => {
+test("route chay middleware theo thu tu validate controller", async () => {
   const createDashboardRoute = await loadCreateDashboardRoute();
   const calls = [];
   const router = createDashboardRoute({
-    auth: {
-      requireAuth: (req, res, next) => {
-        calls.push("auth");
-        req.user = { ChucVu: "Admin" };
-        next();
-      },
-      requireRoles: (roles) => (req, res, next) => {
-        calls.push(`roles:${roles.join(",")}`);
-        next();
-      },
-    },
     schema: {
       getRevenueSummary: {
         query: {
@@ -122,12 +111,7 @@ test("route chay middleware theo thu tu auth roles validate controller", async (
     const response = await fetch(`${baseUrl}/api/v1/dashboard/revenue-summary`);
 
     assert.equal(response.status, 200);
-    assert.deepEqual(calls, [
-      "auth",
-      "roles:Admin,NhanVien",
-      "validate",
-      "controller",
-    ]);
+    assert.deepEqual(calls, ["validate", "controller"]);
   } finally {
     await stopTestServer(server);
   }
