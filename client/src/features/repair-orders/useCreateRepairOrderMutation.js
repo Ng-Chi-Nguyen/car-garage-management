@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { repairOrdersKeys } from './repairOrders.queryKeys';
+import { repairOrdersKeys } from './repairOrders.queryKeys.js';
 
 export const INVALIDATES_KEYS = [repairOrdersKeys.lists()];
 
