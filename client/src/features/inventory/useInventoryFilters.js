@@ -1,32 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
+import { getInventoryFilters, applyInventoryFilterUpdates } from './inventory.filters.js';
 
 export function useInventoryFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const filters = {
-    search: searchParams.get('search') || '',
-    category: searchParams.get('category') || 'all',
-    page: parseInt(searchParams.get('page') || '1', 10),
-  };
+  const filters = getInventoryFilters(searchParams);
 
   const setFilters = (newFilters) => {
-    const params = new URLSearchParams(searchParams);
-    
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value === '' || value === 'all' || (key === 'page' && value === 1)) {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
-    });
-
-    if (newFilters.search !== undefined && newFilters.search !== filters.search && newFilters.page === undefined) {
-        params.delete('page');
-    }
-    if (newFilters.category !== undefined && newFilters.category !== filters.category && newFilters.page === undefined) {
-        params.delete('page');
-    }
-
+    const params = applyInventoryFilterUpdates(searchParams, newFilters);
     setSearchParams(params);
   };
 
