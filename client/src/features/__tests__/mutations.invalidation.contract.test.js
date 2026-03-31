@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const featuresDir = path.resolve(__dirname, '../');
 
 describe('Mutation Invalidation Contract', () => {
-  it('should ensure any use*Mutation.js exports INVALIDATES_KEYS and calls invalidateQueries correctly', () => {
+  it('should ensure any use*Mutation.js exports INVALIDATES_KEYS and calls invalidateQueries correctly', async () => {
     const featureDirs = fs.readdirSync(featuresDir, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory() && !dirent.name.startsWith('_') && !dirent.name.startsWith('.'));
 
@@ -21,22 +21,21 @@ describe('Mutation Invalidation Contract', () => {
 
       for (const mutFile of mutationFiles) {
         const filePath = path.join(featuresDir, featureName, mutFile);
-        const content = fs.readFileSync(filePath, 'utf-8');
-
-        // Verify INVALIDATES_KEYS is structurally exported as an object or array
-        const invalidatesExportPattern = /export\s+const\s+INVALIDATES_KEYS\s*=\s*[[{]([^}\]]*)[}\]]/s;
-        const match = content.match(invalidatesExportPattern);
-        assert.ok(
-          match,
-          `${mutFile} in ${featureName} must export INVALIDATES_KEYS structurally`
-        );
         
-        // Verify we actually loop/call invalidateQueries
-        const invalidateCallPattern = /queryClient\.invalidateQueries\(\s*\{\s*queryKey:\s*[^}]+\}\s*\)/s;
-        assert.ok(
-          invalidateCallPattern.test(content) || content.includes('queryClient.invalidateQueries('),
-          `${mutFile} in ${featureName} must structurally call queryClient.invalidateQueries({ queryKey: ... })`
-        );
+        // Dynamic import to verify actual exported contract rather than just string scanning
+        let moduleExports;
+        try {
+            moduleExports = await import(`file://${filePath}`);
+        } catch (e) {
+            assert.fail(`Could not import ${filePath}: ${e.message}`);
+        }
+        
+        assert.ok(moduleExports.INVALIDATES_KEYS, `${mutFile} in ${featureName} must export INVALIDATES_KEYS array/object`);
+        
+        // We still use string scanning as a backup for implementation details (function call within hook body),
+        // but we verify the actual export structure programmatically above.
+        const content = fs.readFileSync(filePath, 'utf-8');
+        assert.ok(content.includes('queryClient.invalidateQueries('), `${mutFile} in ${featureName} must call queryClient.invalidateQueries()`);
       }
     }
   });

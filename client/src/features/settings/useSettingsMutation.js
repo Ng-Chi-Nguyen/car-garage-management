@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSystemParameters } from "./settings.api";
-import { SETTINGS_KEYS } from "./settings.queryKeys";
+import { updateSystemParameters } from "./settings.api.js";
+import { SETTINGS_KEYS } from "./settings.queryKeys.js";
 
 export const INVALIDATES_KEYS = {
   updateSystemParameters: [SETTINGS_KEYS.parameters()],

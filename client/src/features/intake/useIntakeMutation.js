@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createIntake } from "./intake.api";
-import { INTAKE_KEYS } from "./intake.queryKeys";
+import { createIntake } from "./intake.api.js";
+import { INTAKE_KEYS } from "./intake.queryKeys.js";
 
 export const INVALIDATES_KEYS = [INTAKE_KEYS.all];
 

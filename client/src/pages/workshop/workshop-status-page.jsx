@@ -43,9 +43,9 @@ export default function WorkshopStatusPage() {
         description="Quản lý và theo dõi tiến độ sửa chữa xe trong xưởng"
         actions={topActions}
       />
-      <StateShell 
-        isLoading={isLoading} 
-        isError={isError} 
+      <StateShell
+        isLoading={isLoading}
+        isError={isError}
         loadingFallback={<LoadingState message="Đang tải dữ liệu xưởng..." />}
         errorFallback={<ErrorState message="Lỗi tải dữ liệu xưởng" />}
       >
