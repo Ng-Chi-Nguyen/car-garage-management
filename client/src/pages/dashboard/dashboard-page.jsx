@@ -3,9 +3,9 @@ import { MainMetricGrid, SecondaryGrid } from "./dashboard-sections";
 import { PageHeader } from "../../components/ui/page-header";
 import { useDashboardQuery } from "../../features/dashboard/useDashboardQuery";
 import { DASHBOARD_RANGES } from "../../features/dashboard/dashboard.constants";
-import { LoadingState } from "../../components/ui/state-shell/loading-state";
-import { ErrorState } from "../../components/ui/state-shell/error-state";
-import { StateShell } from "../../components/ui/state-shell/state-shell";
+import { LoadingState } from "../../components/ui/loading-state";
+import { ErrorState } from "../../components/ui/error-state";
+import { StateShell } from "../../components/ui/state-shell";
 
 export default function DashboardPage() {
   const { data, range, setRange, isLoading, isError } = useDashboardQuery();
