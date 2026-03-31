@@ -1,23 +1,43 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-const vehicleTypes = ['Sedan', 'SUV / Crossover', 'Hatchback', 'Bán tải (Pickup)', 'MPV'];
-const carBrands = ['Toyota', 'Honda', 'Mazda', 'Hyundai', 'Kia', 'Mercedes-Benz', 'BMW'];
-const carModels = ['Camry', 'Vios', 'Corolla Cross', 'Fortuner'];
-const quickConditions = ['Xước nhẹ', 'Móp méo', 'Hỏng đèn', 'Nứt kính', 'Bẩn nội thất'];
+const vehicleTypes = [
+  "Sedan",
+  "SUV / Crossover",
+  "Hatchback",
+  "Bán tải (Pickup)",
+  "MPV",
+];
+const carBrands = [
+  "Toyota",
+  "Honda",
+  "Mazda",
+  "Hyundai",
+  "Kia",
+  "Mercedes-Benz",
+  "BMW",
+];
+const carModels = ["Camry", "Vios", "Corolla Cross", "Fortuner"];
+const quickConditions = [
+  "Xước nhẹ",
+  "Móp méo",
+  "Hỏng đèn",
+  "Nứt kính",
+  "Bẩn nội thất",
+];
 
 const initialForm = {
-  phone: '',
-  ownerName: '',
-  address: '',
-  licensePlate: '',
-  vehicleType: 'Sedan',
-  brand: 'Toyota',
-  model: 'Camry',
-  advisor: 'Nguyễn Văn A',
-  note: '',
+  phone: "",
+  ownerName: "",
+  address: "",
+  licensePlate: "",
+  vehicleType: "Sedan",
+  brand: "Toyota",
+  model: "Camry",
+  advisor: "Nguyễn Văn A",
+  note: "",
 };
 
-function formatDisplay(value, fallback = '-- Chưa nhập --') {
+function formatDisplay(value, fallback = "-- Chưa nhập --") {
   return value?.trim() ? value : fallback;
 }
 
@@ -83,20 +103,22 @@ function DetailCard({ icon, title, description, children }) {
 
 export default function VehicleIntake() {
   const [form, setForm] = useState(initialForm);
-  const [selectedConditions, setSelectedConditions] = useState(['Xước nhẹ']);
+  const [selectedConditions, setSelectedConditions] = useState(["Xước nhẹ"]);
 
   const today = useMemo(
     () =>
-      new Intl.DateTimeFormat('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
+      new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }).format(new Date()),
     [],
   );
 
-  const summaryVehicle = `${form.brand || '--'} ${form.model || '--'}`.trim();
-  const summaryConditions = selectedConditions.length ? selectedConditions.join(', ') : 'Chưa có ghi chú hiện trạng nào được chọn hoặc nhập.';
+  const summaryVehicle = `${form.brand || "--"} ${form.model || "--"}`.trim();
+  const summaryConditions = selectedConditions.length
+    ? selectedConditions.join(", ")
+    : "Chưa có ghi chú hiện trạng nào được chọn hoặc nhập.";
 
   const updateField = (field) => (event) => {
     setForm((current) => ({ ...current, [field]: event.target.value }));
@@ -112,7 +134,7 @@ export default function VehicleIntake() {
 
   const resetForm = () => {
     setForm(initialForm);
-    setSelectedConditions(['Xước nhẹ']);
+    setSelectedConditions(["Xước nhẹ"]);
   };
 
   return (
@@ -122,8 +144,12 @@ export default function VehicleIntake() {
           <div className="flex flex-col gap-5 border-b border-slate-200/80 px-6 py-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">Precision Engine</p>
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Tiếp nhận xe mới</h1>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  Precision Engine
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                  Tiếp nhận xe mới
+                </h1>
               </div>
               <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
                 <div className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
@@ -132,7 +158,9 @@ export default function VehicleIntake() {
                 </div>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm">
                   <p className="font-semibold">Hạn mức tiếp nhận</p>
-                  <p className="mt-1 text-amber-700">Chỉ còn 03 lượt tiếp nhận miễn phí hôm nay.</p>
+                  <p className="mt-1 text-amber-700">
+                    Chỉ còn 03 lượt tiếp nhận miễn phí hôm nay.
+                  </p>
                 </div>
               </div>
             </div>
@@ -177,7 +205,7 @@ export default function VehicleIntake() {
                     icon="📞"
                     placeholder="Nhập số điện thoại khách hàng"
                     value={form.phone}
-                    onChange={updateField('phone')}
+                    onChange={updateField("phone")}
                   />
                   <IntakeInput
                     label="Họ và tên"
@@ -185,7 +213,7 @@ export default function VehicleIntake() {
                     icon="🪪"
                     placeholder="Nhập họ tên chủ xe"
                     value={form.ownerName}
-                    onChange={updateField('ownerName')}
+                    onChange={updateField("ownerName")}
                   />
                 </div>
                 <div className="mt-4">
@@ -194,7 +222,7 @@ export default function VehicleIntake() {
                     icon="📍"
                     placeholder="Số nhà, phường/xã, quận/huyện..."
                     value={form.address}
-                    onChange={updateField('address')}
+                    onChange={updateField("address")}
                   />
                 </div>
               </DetailCard>
@@ -214,7 +242,7 @@ export default function VehicleIntake() {
                           icon="🔖"
                           placeholder="51G-123.45"
                           value={form.licensePlate}
-                          onChange={updateField('licensePlate')}
+                          onChange={updateField("licensePlate")}
                         />
                       </div>
                       <button
@@ -227,17 +255,36 @@ export default function VehicleIntake() {
                     </div>
                   </div>
 
-                  <IntakeSelect label="Loại xe" options={vehicleTypes} value={form.vehicleType} onChange={updateField('vehicleType')} />
-                  <IntakeSelect label="Hãng xe" options={carBrands} value={form.brand} onChange={updateField('brand')} />
+                  <IntakeSelect
+                    label="Loại xe"
+                    options={vehicleTypes}
+                    value={form.vehicleType}
+                    onChange={updateField("vehicleType")}
+                  />
+                  <IntakeSelect
+                    label="Hãng xe"
+                    options={carBrands}
+                    value={form.brand}
+                    onChange={updateField("brand")}
+                  />
                   <div className="md:col-span-2">
-                    <IntakeSelect label="Model / Dòng xe" options={carModels} value={form.model} onChange={updateField('model')} />
+                    <IntakeSelect
+                      label="Model / Dòng xe"
+                      options={carModels}
+                      value={form.model}
+                      onChange={updateField("model")}
+                    />
                   </div>
                 </div>
 
                 <div className="mt-6 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700">Ghi chú tình trạng xe</h3>
-                    <p className="mt-1 text-sm text-slate-500">Chọn nhanh tình trạng</p>
+                    <h3 className="text-sm font-semibold text-slate-700">
+                      Ghi chú tình trạng xe
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Chọn nhanh tình trạng
+                    </p>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {quickConditions.map((condition) => {
@@ -250,11 +297,11 @@ export default function VehicleIntake() {
                           onClick={() => toggleCondition(condition)}
                           className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
                             active
-                              ? 'border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/10'
-                              : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'
+                              ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                              : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
                           }`}
                         >
-                          <span>{active ? '☑' : '☐'}</span>
+                          <span>{active ? "☑" : "☐"}</span>
                           {condition}
                         </button>
                       );
@@ -264,11 +311,13 @@ export default function VehicleIntake() {
 
                 <div className="mt-6">
                   <label className="space-y-2">
-                    <span className="text-sm font-semibold text-slate-700">Ghi chú thêm</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                      Ghi chú thêm
+                    </span>
                     <textarea
                       rows={4}
                       value={form.note}
-                      onChange={updateField('note')}
+                      onChange={updateField("note")}
                       placeholder="Mô tả thêm hiện trạng xe hoặc yêu cầu ban đầu của khách hàng"
                       className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
                     />
@@ -282,7 +331,10 @@ export default function VehicleIntake() {
                 <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
                   <div>
                     <h2 className="text-lg font-semibold">Tóm tắt xác nhận</h2>
-                    <p className="mt-1 text-sm text-slate-300">Phiếu tiếp nhận được cập nhật trực tiếp từ thông tin bạn nhập.</p>
+                    <p className="mt-1 text-sm text-slate-300">
+                      Phiếu tiếp nhận được cập nhật trực tiếp từ thông tin bạn
+                      nhập.
+                    </p>
                   </div>
                   <button
                     type="button"
@@ -295,25 +347,37 @@ export default function VehicleIntake() {
 
                 <div className="space-y-6 px-6 py-6">
                   <div className="rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Phiếu tiếp nhận xe</p>
-                    <p className="mt-2 text-lg font-semibold">ID: #PN-20240524-001</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                      Phiếu tiếp nhận xe
+                    </p>
+                    <p className="mt-2 text-lg font-semibold">
+                      ID: #PN-20240524-001
+                    </p>
 
                     <dl className="mt-5 space-y-4 text-sm">
                       <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
                         <dt className="text-slate-400">Khách hàng</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.ownerName)}</dd>
+                        <dd className="text-right font-medium text-white">
+                          {formatDisplay(form.ownerName)}
+                        </dd>
                       </div>
                       <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
                         <dt className="text-slate-400">Điện thoại</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.phone)}</dd>
+                        <dd className="text-right font-medium text-white">
+                          {formatDisplay(form.phone)}
+                        </dd>
                       </div>
                       <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
                         <dt className="text-slate-400">Biển số</dt>
-                        <dd className="text-right font-medium text-white">{formatDisplay(form.licensePlate, '-- --')}</dd>
+                        <dd className="text-right font-medium text-white">
+                          {formatDisplay(form.licensePlate, "-- --")}
+                        </dd>
                       </div>
                       <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
                         <dt className="text-slate-400">Phương tiện</dt>
-                        <dd className="text-right font-medium text-white">{summaryVehicle}</dd>
+                        <dd className="text-right font-medium text-white">
+                          {summaryVehicle}
+                        </dd>
                       </div>
                       <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-3">
                         <dt className="text-slate-400">Trạng thái tiếp nhận</dt>
@@ -323,15 +387,25 @@ export default function VehicleIntake() {
                       </div>
                       <div className="flex items-start justify-between gap-4">
                         <dt className="text-slate-400">Cố vấn dịch vụ</dt>
-                        <dd className="text-right font-medium text-white">{form.advisor}</dd>
+                        <dd className="text-right font-medium text-white">
+                          {form.advisor}
+                        </dd>
                       </div>
                     </dl>
                   </div>
 
                   <div className="rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-white">Ghi chú nhanh</p>
-                    <p className="mt-3 text-sm leading-6 text-slate-300">{summaryConditions}</p>
-                    {form.note ? <p className="mt-3 text-sm leading-6 text-slate-400">{form.note}</p> : null}
+                    <p className="text-sm font-semibold text-white">
+                      Ghi chú nhanh
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">
+                      {summaryConditions}
+                    </p>
+                    {form.note ? (
+                      <p className="mt-3 text-sm leading-6 text-slate-400">
+                        {form.note}
+                      </p>
+                    ) : null}
                   </div>
 
                   <button
@@ -350,8 +424,12 @@ export default function VehicleIntake() {
                     🕘
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-slate-900">Lịch sử gần nhất</h2>
-                    <p className="mt-1 text-sm text-slate-500">Không tìm thấy dữ liệu cũ</p>
+                    <h2 className="text-lg font-semibold text-slate-900">
+                      Lịch sử gần nhất
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Không tìm thấy dữ liệu cũ
+                    </p>
                   </div>
                 </div>
               </section>

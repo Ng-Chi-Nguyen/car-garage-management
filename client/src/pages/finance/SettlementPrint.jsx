@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function SettlementPrint() {
   const handleSubmit = (e) => {
@@ -8,9 +8,14 @@ export default function SettlementPrint() {
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto w-full">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-slate-800">Quyết toán / In hóa đơn</h2>
+        <h2 className="text-xl font-bold text-slate-800">
+          Quyết toán / In hóa đơn
+        </h2>
         <div className="flex gap-2">
-          <button type="button" className="flex items-center gap-2 px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">
+          <button
+            type="button"
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50"
+          >
             <span className="material-symbols-outlined text-sm">print</span>
             In PDF
           </button>
@@ -20,19 +25,25 @@ export default function SettlementPrint() {
       <form onSubmit={handleSubmit}>
         <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
           <div className="text-center mb-8 border-b pb-6">
-            <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">Hóa Đơn Sửa Chữa</h1>
+            <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">
+              Hóa Đơn Sửa Chữa
+            </h1>
             <p className="text-slate-500 mt-2">Mã phiếu: #QT-2024-001</p>
           </div>
 
           <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
             <div>
-              <h4 className="font-semibold text-slate-700 mb-2">Thông tin khách hàng</h4>
+              <h4 className="font-semibold text-slate-700 mb-2">
+                Thông tin khách hàng
+              </h4>
               <p>Tên: Nguyễn Văn A</p>
               <p>SĐT: 0909.123.456</p>
               <p>Ngày in: 24/05/2024</p>
             </div>
             <div className="text-right">
-              <h4 className="font-semibold text-slate-700 mb-2">Thông tin xe</h4>
+              <h4 className="font-semibold text-slate-700 mb-2">
+                Thông tin xe
+              </h4>
               <p>Biển số: 51H-123.45</p>
               <p>Hiệu xe: Toyota Vios</p>
             </div>
@@ -42,9 +53,15 @@ export default function SettlementPrint() {
             <thead className="border-b">
               <tr>
                 <th className="py-3 font-semibold text-slate-600">Nội dung</th>
-                <th className="py-3 font-semibold text-slate-600 text-center">SL</th>
-                <th className="py-3 font-semibold text-slate-600 text-right">Đơn giá</th>
-                <th className="py-3 font-semibold text-slate-600 text-right">Thành tiền</th>
+                <th className="py-3 font-semibold text-slate-600 text-center">
+                  SL
+                </th>
+                <th className="py-3 font-semibold text-slate-600 text-right">
+                  Đơn giá
+                </th>
+                <th className="py-3 font-semibold text-slate-600 text-right">
+                  Thành tiền
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -87,7 +104,10 @@ export default function SettlementPrint() {
           </div>
 
           <div className="flex justify-end">
-            <button type="submit" className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700">
+            <button
+              type="submit"
+              className="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700"
+            >
               Xác nhận thanh toán
             </button>
           </div>
