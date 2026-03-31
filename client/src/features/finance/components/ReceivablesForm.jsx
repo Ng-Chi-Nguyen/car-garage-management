@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { calculateReceivablesSummary } from "../finance.utils.js";
 import { StateShell } from "../../../components/ui/state-shell";
 import { useReceivablesQuery } from "../useFinanceQuery";
 
@@ -63,11 +64,7 @@ export function ReceivablesForm() {
   const cashGivenNumber = Number(cashGiven) || 0;
   const changeAmount = Math.max(cashGivenNumber - collectedAmount, 0);
 
-  const totalDebtVehicles = receivableCustomers.length;
-  const totalReceivable = useMemo(
-    () => receivableCustomers.reduce((sum, item) => sum + item.debt, 0),
-    [receivableCustomers],
-  );
+  const { totalDebtVehicles, totalReceivable } = useMemo(() => calculateReceivablesSummary(receivableCustomers), [receivableCustomers]);
 
   return (
     <StateShell
