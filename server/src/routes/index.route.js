@@ -3,6 +3,7 @@ import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import dashboardRoute from "./report/dashboard.route.js";
 import customerReportRoute from "./report/customerReport.route.js";
 import financeReportRoute from "./report/financeReport.route.js";
+import inventoryReportRoute from "./report/inventoryReport.route.js";
 import revenueReportRoute from "./report/revenueReport.route.js";
 import repairReportRoute from "./report/repairReport.route.js";
 import carBrandRoute from "./management/carBrand.route.js";
@@ -33,7 +34,8 @@ const Routes = (app) => {
   // =========================
   // API dashboard nội bộ cần đăng nhập + rate limit
   // =========================
-  app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
+  app.use(`${apiPrefixV1}/dashboard`, dashboardRoute);
+  // app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
 
   // =========================
   // API KHÔNG cần đăng nhập
@@ -42,6 +44,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   // app.use(`${apiPrefixV1}/reports/customer-report`, ...requireManagementAccess, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
+  app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
