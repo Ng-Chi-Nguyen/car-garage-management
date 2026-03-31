@@ -1,8 +1,13 @@
+import React from 'react';
+import { SectionCard as CanonicalSectionCard } from './ui/section-card';
+
+/**
+ * @deprecated Use import { SectionCard } from '@/components/ui' instead.
+ */
 export default function SectionCard({ title, children }) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      {title && <h2 className="text-lg font-semibold text-gray-800 mb-4">{title}</h2>}
+    <CanonicalSectionCard title={title}>
       {children}
-    </div>
+    </CanonicalSectionCard>
   );
 }
