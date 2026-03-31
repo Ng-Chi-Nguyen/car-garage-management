@@ -2,23 +2,17 @@ import React from "react";
 import { WorkshopKpiGrid } from "../../features/workshop/components/WorkshopKpiGrid";
 import { WorkshopStatusPanel } from "../../features/workshop/components/WorkshopStatusPanel";
 
-export function WorkshopKpiSection({ data, isLoading, isError }) {
+export function WorkshopKpiSection({ data }) {
   return (
     <section className="mb-6">
-      <WorkshopKpiGrid
-        metrics={data?.metrics}
-        isLoading={isLoading}
-        isError={isError}
-      />
+      <WorkshopKpiGrid metrics={data?.metrics} />
     </section>
   );
 }
 
 export function WorkshopQueueSection({
   data,
-  isLoading,
   isFetching,
-  isError,
   filters,
   updateFilters,
 }) {
@@ -26,9 +20,7 @@ export function WorkshopQueueSection({
     <section>
       <WorkshopStatusPanel
         data={data}
-        isLoading={isLoading}
         isFetching={isFetching}
-        isError={isError}
         filters={filters}
         updateFilters={updateFilters}
       />

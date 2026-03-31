@@ -4,6 +4,9 @@ import { PageHeader } from "../../components/ui/page-header";
 import { useWorkshopQuery } from "../../features/workshop/useWorkshopQuery";
 import { WorkshopKpiSection, WorkshopQueueSection } from "./workshop-sections";
 import { getWorkshopRouteTarget } from "../../features/workshop/workshop.interactions";
+import { StateShell } from "../../components/ui/state-shell";
+import { LoadingState } from "../../components/ui/loading-state";
+import { ErrorState } from "../../components/ui/error-state";
 
 export default function WorkshopStatusPage() {
   const { data, isLoading, isFetching, isError, filters, updateFilters } =
@@ -40,17 +43,21 @@ export default function WorkshopStatusPage() {
         description="Quản lý và theo dõi tiến độ sửa chữa xe trong xưởng"
         actions={topActions}
       />
+      <StateShell 
+        isLoading={isLoading} 
+        isError={isError} 
+        loadingFallback={<LoadingState message="Đang tải dữ liệu xưởng..." />}
+        errorFallback={<ErrorState message="Lỗi tải dữ liệu xưởng" />}
+      >
+        <WorkshopKpiSection data={data} />
 
-      <WorkshopKpiSection data={data} isLoading={isLoading} isError={isError} />
-
-      <WorkshopQueueSection
-        data={data}
-        isLoading={isLoading}
-        isFetching={isFetching}
-        isError={isError}
-        filters={filters}
-        updateFilters={updateFilters}
-      />
+        <WorkshopQueueSection
+          data={data}
+          isFetching={isFetching}
+          filters={filters}
+          updateFilters={updateFilters}
+        />
+      </StateShell>
     </div>
   );
 }
