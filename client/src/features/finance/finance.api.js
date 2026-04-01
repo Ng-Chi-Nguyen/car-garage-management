@@ -30,6 +30,7 @@ export async function fetchReceiptHistory(params = {}) {
     MaXe: params.vehicleId ? Number(params.vehicleId) : undefined,
     page: params.page ? Number(params.page) : 1,
     limit: params.limit ? Number(params.limit) : 10,
+    TrangThai: params.status || "DaThu",
   };
   
   // Strip out undefined values

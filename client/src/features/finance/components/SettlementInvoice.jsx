@@ -5,6 +5,8 @@ import { StateShell } from "../../../components/ui/state-shell";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+const toNumber = (value) => Number(value ?? 0);
+
 export function SettlementInvoice({ id }) {
   const { isLoading, isError, error, data } = useSettlementQuery(id);
   const createPayment = useCreateReceivableMutation();
@@ -16,10 +18,19 @@ export function SettlementInvoice({ id }) {
     );
   }
 
-  // Calculate parts and labor totals
-  const totalParts = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaVatTu)), 0) || 0;
-  const totalLabor = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaTienCong)), 0) || 0;
-  const grandTotal = Number(data.TongTien) || (totalParts + totalLabor);
+  const lineItems = data.ChiTietSuaChua?.map((item) => {
+    const partsTotal = toNumber(item.SoLuong) * toNumber(item.DonGiaVatTu);
+    const laborTotal = toNumber(item.SoLuong) * toNumber(item.DonGiaTienCong);
+    return {
+      item,
+      partsTotal,
+      laborTotal,
+      lineTotal: partsTotal + laborTotal,
+    };
+  }) || [];
+  const totalParts = lineItems.reduce((acc, item) => acc + item.partsTotal, 0);
+  const totalLabor = lineItems.reduce((acc, item) => acc + item.laborTotal, 0);
+  const grandTotal = lineItems.reduce((acc, item) => acc + item.lineTotal, 0) || toNumber(data.TongTien);
   const remainingDebtCandidates = [data.NoConLai, data.CongNoConLai, data.SoTienConLai];
   const firstDefinedDebt = remainingDebtCandidates.find(v => v !== null && v !== undefined);
   const remainingDebt = firstDefinedDebt !== undefined ? Number(firstDefinedDebt) : grandTotal;
@@ -91,29 +102,33 @@ export function SettlementInvoice({ id }) {
             </tr>
           </thead>
           <tbody>
-            {data.ChiTietSuaChua?.length > 0 ? data.ChiTietSuaChua.map((item) => {
-              const rowPartsTotal = Number(item.SoLuong) * Number(item.DonGiaVatTu);
-              const rowLaborTotal = Number(item.SoLuong) * Number(item.DonGiaTienCong);
-              
-              // Only render if there's actual content
+            {lineItems.length > 0 ? lineItems.map(({ item, partsTotal, laborTotal, lineTotal }) => {
               const renderRows = [];
-              if (item.VatTu && rowPartsTotal > 0) {
+              if (item.VatTu && partsTotal > 0) {
                 renderRows.push(
                   <tr key={`${item.MaCTSC}-vattu`}>
                     <td className="py-3">{item.VatTu.TenVatTu}</td>
                     <td className="py-3 text-center">{item.SoLuong}</td>
                     <td className="py-3 text-right">{Number(item.DonGiaVatTu).toLocaleString("vi-VN")}</td>
-                    <td className="py-3 text-right">{rowPartsTotal.toLocaleString("vi-VN")}</td>
+                    <td className="py-3 text-right">{partsTotal.toLocaleString("vi-VN")}</td>
                   </tr>
                 );
               }
-              if (item.TienCong && rowLaborTotal > 0) {
+              if (item.TienCong && laborTotal > 0) {
                 renderRows.push(
                   <tr key={`${item.MaCTSC}-tiencong`}>
                     <td className="py-3">{item.TienCong.NoiDung}</td>
                     <td className="py-3 text-center">{item.SoLuong}</td>
                     <td className="py-3 text-right">{Number(item.DonGiaTienCong).toLocaleString("vi-VN")}</td>
-                    <td className="py-3 text-right">{rowLaborTotal.toLocaleString("vi-VN")}</td>
+                    <td className="py-3 text-right">{laborTotal.toLocaleString("vi-VN")}</td>
+                  </tr>
+                );
+              }
+              if (renderRows.length > 0) {
+                renderRows.push(
+                  <tr key={`${item.MaCTSC}-total`}>
+                    <td className="py-3 font-semibold text-slate-700" colSpan="3">Tổng dòng</td>
+                    <td className="py-3 text-right font-semibold text-slate-900">{lineTotal.toLocaleString("vi-VN")}</td>
                   </tr>
                 );
               }

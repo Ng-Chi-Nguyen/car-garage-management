@@ -57,7 +57,7 @@ function FinancePanel({ icon, title, description, children, className = "" }) {
 }
 
 function ReceiptHistoryPanel({ vehicleId }) {
-  const { data, isLoading, isError } = useReceiptHistoryQuery({ vehicleId, limit: 5 });
+  const { data, isLoading, isError } = useReceiptHistoryQuery({ vehicleId, limit: 5, status: "DaThu" });
   const history = data?.paymentReceipts || [];
 
   if (!vehicleId) return null;
@@ -66,7 +66,7 @@ function ReceiptHistoryPanel({ vehicleId }) {
     <FinancePanel
       icon="🕒"
       title="Lịch sử thu tiền"
-      description="Các giao dịch thu tiền gần đây của xe này."
+      description="Các giao dịch đã thu gần đây của xe này."
       className="mt-6"
     >
       <StateShell isLoading={isLoading} isError={isError} isEmpty={history.length === 0}>
@@ -166,7 +166,7 @@ export function ReceivablesForm() {
     const payload = {
       MaXe: Number(selectedVehicle.vehicleId),
       NgayThu: paymentDate,
-      SoTienThu: collectedAmount,
+      SoTienThu: Number(collectedAmount),
       PhuongThucThu: "TienMat",
       TrangThai: "DaThu",
       GhiChu: note,
@@ -262,7 +262,7 @@ export function ReceivablesForm() {
 
             {createdReceiptId ? (
               <div className="mt-5 flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3 ring-1 ring-inset ring-emerald-200/70">
-                <p className="text-sm font-semibold text-emerald-800">Đã tạo phiếu thu. In ngay nếu cần.</p>
+                <p className="text-sm font-semibold text-emerald-800">Đã tạo phiếu thu đã xác nhận. In ngay nếu cần.</p>
                 <button type="button" className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white" onClick={() => window.print()}>
                   In phiếu
                 </button>

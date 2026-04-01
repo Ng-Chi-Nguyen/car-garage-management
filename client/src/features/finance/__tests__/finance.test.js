@@ -28,6 +28,7 @@ test("Finance api includes hardened fetchReceiptHistory", async () => {
   const content = fs.readFileSync(apiFile, "utf-8");
   assert.ok(content.includes("fetchReceiptHistory"), "Must export fetchReceiptHistory");
   assert.ok(content.includes("allowedParams"), "Must harden params by whitelisting");
+  assert.ok(content.includes('TrangThai: params.status || "DaThu"'), "Must default receipt history to DaThu-only semantics");
 });
 
 test("Finance components exist", () => {
@@ -75,6 +76,7 @@ test("SettlementInvoice complies with AGENTS.md rules", () => {
   assert.ok(content.includes('SoTienThu: Number(settlementAmount)'), "Must coerce payload amounts to Number");
   assert.ok(content.includes('PhuongThucThu: "TienMat"'), "Must set payment method from settlement");
   assert.ok(content.includes('TrangThai: "DaThu"'), "Must set paid status from settlement");
+  assert.ok(content.includes('lineTotal'), "Must calculate row totals using backend formula semantics");
   assert.ok(content.includes('TenChuXe'), "Must use TenChuXe contract field");
   assert.ok(content.includes('toast.success'), "Must use toast instead of alert");
   assert.ok(!content.includes('alert('), "Must not use alert");
