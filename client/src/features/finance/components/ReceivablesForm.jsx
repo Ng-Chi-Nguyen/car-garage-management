@@ -143,6 +143,10 @@ export function ReceivablesForm() {
       toast.error("Số tiền thu phải lớn hơn 0");
       return;
     }
+    if (collectedAmount <= 0) {
+      toast.error("Số tiền thực thu phải lớn hơn 0 (xe không còn nợ)");
+      return;
+    }
 
     const payload = {
       MaXe: Number(selectedVehicle.vehicleId),
@@ -188,7 +192,7 @@ export function ReceivablesForm() {
               <FinanceField
                 label="Khách hàng"
                 icon="👤"
-                value={selectedVehicle ? selectedVehicle.customerName || "Không xác định" : ""}
+                value={selectedVehicle ? `${selectedVehicle.customerName || "Không xác định"}${selectedVehicle.phoneNumber ? ` - ${selectedVehicle.phoneNumber}` : ""}` : ""}
                 readOnly
                 placeholder="Chọn xe bên cạnh..."
               />
@@ -321,6 +325,7 @@ export function ReceivablesForm() {
                     <div>
                       <h3 className="text-base font-semibold text-slate-900">
                         {item.customerName || "Không xác định"}
+                        {item.phoneNumber ? <span className="ml-2 text-sm font-normal text-slate-500">{item.phoneNumber}</span> : null}
                       </h3>
                       <div className="mt-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
                         {item.licensePlate}
@@ -377,6 +382,7 @@ export function ReceivablesForm() {
                     <dt>Khách hàng</dt>
                     <dd className="text-right font-semibold">
                       {selectedVehicle?.customerName || "--"}
+                      {selectedVehicle?.phoneNumber ? <div className="text-xs font-normal text-emerald-800">{selectedVehicle.phoneNumber}</div> : null}
                     </dd>
                   </div>
                   <div className="flex items-start justify-between gap-4 border-b border-emerald-200 pb-3">
