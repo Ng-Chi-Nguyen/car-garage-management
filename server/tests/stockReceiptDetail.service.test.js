@@ -80,7 +80,7 @@ test("stock receipt detail create update delete preserve quantity transitions an
   const createStockReceiptDetailService = await loadCreateDetailService();
   const fixture = createDetailDb({
     parts: [{ MaVatTu: 10, SoLuongTon: 10 }],
-    receipts: [{ MaPhieuNhap: 1, TongTien: 0 }],
+    receipts: [{ MaPhieuNhap: 1, MaNCC: 1, NgayNhap: new Date("2026-03-30"), TongTien: 0 }],
     details: [{ MaCTPN: 1, MaPhieuNhap: 1, MaVatTu: 10, SoLuong: 2, DonGiaNhap: 100000, ThanhTien: 200000 }],
   });
 
@@ -90,8 +90,8 @@ test("stock receipt detail create update delete preserve quantity transitions an
   assert.deepEqual(Object.keys(created).sort(), ["items", "receipt", "totals"]);
   assert.deepEqual(created.receipt, {
     id: 1,
-    supplierId: undefined,
-    importedAt: undefined,
+    supplierId: 1,
+    importedAt: new Date("2026-03-30"),
     totalAmount: 500000,
   });
   assert.deepEqual(created.items[0], {
@@ -122,8 +122,8 @@ test("stock receipt detail create update delete preserve quantity transitions an
   });
   assert.deepEqual(updated.receipt, {
     id: 1,
-    supplierId: undefined,
-    importedAt: undefined,
+    supplierId: 1,
+    importedAt: new Date("2026-03-30"),
     totalAmount: 900000,
   });
   assert.deepEqual(updated.totals, { receiptQuantity: 5, receiptAmount: 600000 });
@@ -140,8 +140,8 @@ test("stock receipt detail create update delete preserve quantity transitions an
   });
   assert.deepEqual(deleted.receipt, {
     id: 1,
-    supplierId: undefined,
-    importedAt: undefined,
+    supplierId: 1,
+    importedAt: new Date("2026-03-30"),
     totalAmount: 600000,
   });
   assert.deepEqual(deleted.totals, { receiptQuantity: 3, receiptAmount: 300000 });
