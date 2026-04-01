@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { routeManifest } from './routeManifest';
 import AppShell from '../layouts/AppShell';
 import AuthLayout from '../layouts/AuthLayout';
+import { authStorage } from '../features/auth/auth.storage';
 
 // Eagerly import all page components
 const pages = import.meta.glob('../pages/**/*.jsx', { eager: true });
