@@ -316,7 +316,7 @@ export function ReceivablesForm() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10">
-                      {item.licensePlate.split("-")[0]}
+                      {typeof item.licensePlate === 'string' && item.licensePlate ? item.licensePlate.split('-')[0] : '--'}
                     </div>
                     <div>
                       <h3 className="text-base font-semibold text-slate-900">
