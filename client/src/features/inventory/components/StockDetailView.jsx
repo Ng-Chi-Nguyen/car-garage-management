@@ -8,7 +8,7 @@ import { useStockDetailQuery } from "../useInventoryQuery";
 export function StockDetailView() {
   const [searchParams] = useSearchParams();
   const idParam = searchParams.get("id");
-  const id = idParam?.trim() ? idParam.trim() : "VT-0012";
+  const id = idParam?.trim() ? idParam.trim() : null;
   const { data, isLoading, error } = useStockDetailQuery(id);
 
   return (
@@ -18,79 +18,73 @@ export function StockDetailView() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">Mã vật tư</span>
-              <span className="block font-medium text-on-surface">{data?.id || "VT-0012"}</span>
+              <span className="block font-medium text-on-surface">{data?.id || ""}</span>
             </div>
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">
                 Tên vật tư
               </span>
               <span className="block font-medium text-on-surface">
-                {data?.name || "Lọc nhớt Innova"}
+                {data?.name || ""}
               </span>
             </div>
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">
                 Đơn vị tính
               </span>
-              <span className="block font-medium text-on-surface">Cái</span>
+              <span className="block font-medium text-on-surface">{data?.unit || ""}</span>
             </div>
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">
                 Tồn kho hiện tại
               </span>
-              <span className="block font-medium text-on-surface">45</span>
+              <span className="block font-medium text-on-surface">{data?.stock || 0}</span>
             </div>
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">
                 Giá nhập chuẩn
               </span>
-              <span className="block font-medium text-on-surface">120,000 đ</span>
+              <span className="block font-medium text-on-surface">{data?.cost ? new Intl.NumberFormat('vi-VN').format(data.cost) : 0} đ</span>
             </div>
             <div>
               <span className="block text-sm text-on-surface-variant mb-1">
                 Giá bán chuẩn
               </span>
-              <span className="block font-medium text-on-surface">150,000 đ</span>
+              <span className="block font-medium text-on-surface">{data?.price ? new Intl.NumberFormat('vi-VN').format(data.price) : 0} đ</span>
             </div>
           </div>
         </SectionCard>
 
         <SectionCard title="Lịch sử giao dịch" noPadding>
           <DataTable headers={["Ngày", "Loại", "Số lượng", "Tồn cuối", "Ghi chú"]}>
-            <tr className="hover:bg-surface-container-low transition-colors group">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                2026-03-21
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
-                Xuất
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-error font-medium">
-                -2
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
-                45
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                Sửa chữa xe 51A-123.45
-              </td>
-            </tr>
-            <tr className="hover:bg-surface-container-low transition-colors group">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                2026-03-20
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
-                Nhập
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">
-                +50
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
-                47
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                Nhập hàng NCC A
-              </td>
-            </tr>
+            {data?.history?.map((historyItem, index) => (
+              <tr key={index} className="hover:bg-surface-container-low transition-colors group">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
+                  {/* historyItem date formatting if present, fallback empty */}
+                  {historyItem.PhieuNhapKho?.NgayNhap ? new Date(historyItem.PhieuNhapKho.NgayNhap).toISOString().split('T')[0] : ''}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
+                  Nhập
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">
+                  +{historyItem.SoLuong}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
+                  {/* Cannot calculate exact ending stock trivially without chronological order, show - for now */}
+                  -
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
+                  Nhập hàng
+                </td>
+              </tr>
+            ))}
+            {(!data?.history || data.history.length === 0) && (
+              <tr>
+                <td colSpan={5} className="px-6 py-4 text-center text-sm text-on-surface-variant">
+                  Chưa có lịch sử giao dịch
+                </td>
+              </tr>
+            )}
           </DataTable>
         </SectionCard>
       </div>
