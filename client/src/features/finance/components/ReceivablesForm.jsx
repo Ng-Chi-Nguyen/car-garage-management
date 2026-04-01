@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { calculateReceivablesSummary } from "../finance.utils.js";
+import { applyReceivablesSearchParams } from "../receivablesSearchParams.js";
 import { StateShell } from "../../../components/ui/state-shell";
 import { useReceivablesQuery, useReceiptHistoryQuery } from "../useFinanceQuery";
 import { useCreateReceivableMutation } from "../useFinanceMutation";
@@ -293,14 +294,7 @@ export function ReceivablesForm() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
-                    setSearchParams(prev => {
-                      if (e.target.value) prev.set('search', e.target.value);
-                      else prev.delete('search');
-                      // clean up legacy q if it exists
-                      prev.delete('q');
-                      prev.set('page', '1');
-                      return prev;
-                    });
+                    setSearchParams(prev => applyReceivablesSearchParams(prev, e.target.value));
                   }
                 }}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-slate-400 focus:bg-white"

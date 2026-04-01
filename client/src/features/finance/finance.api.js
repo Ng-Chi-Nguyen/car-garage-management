@@ -1,4 +1,4 @@
-import axiosClient from '../../lib/axiosClient';
+import axiosClient from '../../lib/axiosClient.js';
 
 export async function fetchReceivables(params = {}) {
   const response = await axiosClient.get("/api/v1/reports/finance/debtors", {
