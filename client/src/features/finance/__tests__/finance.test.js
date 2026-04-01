@@ -72,7 +72,7 @@ test("SettlementInvoice complies with AGENTS.md rules", () => {
   const invoiceFile = path.join(__dirname, "../components/SettlementInvoice.jsx");
   const content = fs.readFileSync(invoiceFile, "utf-8");
   assert.ok(content.includes('<form onSubmit={handleConfirm}'), "Must use form onSubmit");
-  assert.ok(content.includes('SoTienThu: Number(grandTotal)'), "Must coerce payload amounts to Number");
+  assert.ok(content.includes('SoTienThu: Number(settlementAmount)'), "Must coerce payload amounts to Number");
   assert.ok(content.includes('PhuongThucThu: "TienMat"'), "Must set payment method from settlement");
   assert.ok(content.includes('TrangThai: "DaThu"'), "Must set paid status from settlement");
   assert.ok(content.includes('TenChuXe'), "Must use TenChuXe contract field");

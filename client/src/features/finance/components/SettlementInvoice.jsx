@@ -20,6 +20,9 @@ export function SettlementInvoice({ id }) {
   const totalParts = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaVatTu)), 0) || 0;
   const totalLabor = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaTienCong)), 0) || 0;
   const grandTotal = Number(data.TongTien) || (totalParts + totalLabor);
+  const remainingDebt = Number(data.NoConLai ?? data.CongNoConLai ?? data.SoTienConLai ?? grandTotal) || grandTotal;
+  const settlementAmount = Math.min(grandTotal, Math.max(remainingDebt, 0));
+  const isOverCollect = settlementAmount < grandTotal;
   const invoiceDate = data.NgaySC ? new Date(data.NgaySC).toLocaleDateString("vi-VN") : new Date().toLocaleDateString("vi-VN");
 
   const handleConfirm = (e) => {
@@ -28,7 +31,7 @@ export function SettlementInvoice({ id }) {
         {
           MaXe: Number(data.MaXe),
           NgayThu: new Date().toISOString(),
-          SoTienThu: Number(grandTotal),
+          SoTienThu: Number(settlementAmount),
           PhuongThucThu: "TienMat",
           TrangThai: "DaThu",
         },
@@ -135,6 +138,13 @@ export function SettlementInvoice({ id }) {
               <span>Tổng cộng:</span>
               <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
+            <div className="flex justify-between font-semibold text-emerald-700">
+              <span>Thực thu:</span>
+              <span>{settlementAmount.toLocaleString("vi-VN")} ₫</span>
+            </div>
+            {isOverCollect ? (
+              <p className="text-right text-xs text-amber-700">Số thu đã được giới hạn theo công nợ còn lại.</p>
+            ) : null}
           </div>
         </div>
 
