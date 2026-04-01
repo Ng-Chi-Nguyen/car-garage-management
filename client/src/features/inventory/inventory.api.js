@@ -1,43 +1,40 @@
+import axiosClient from '../../lib/axiosClient';
+
 export const inventoryApi = {
   getInventory: async (filters) => {
+    const response = await axiosClient.get('/api/v1/parts', { params: filters });
+    const { parts, pagination } = response.data.data;
     return {
-      data: [
-        {
-          id: 'VT-00921',
-          name: 'Dầu nhớt Castrol Power1 10W-40',
-          group: 'Dầu nhớt & Phụ gia',
-          unit: 'Chai 1L',
-          stock: 142,
-          cost: '125,000',
-          price: '185,000',
-          status: 'Đủ hàng',
-          statusCode: 'success'
-        },
-        {
-          id: 'VT-00922',
-          name: 'Bugi NGK Iridium CPR8EAIX-9',
-          group: 'Điện & Đánh lửa',
-          unit: 'Cái',
-          stock: 5,
-          cost: '225,000',
-          price: '285,000',
-          status: 'Sắp hết',
-          statusCode: 'error'
-        }
-      ],
-      pagination: {
-        page: filters.page || 1,
-        limit: 10,
-        total: 1284,
-        totalPages: 129
-      }
+      data: parts.map(part => ({
+        id: part.MaVatTu,
+        name: part.TenVatTu,
+        group: 'Vật tư', // Mock group as parts doesn't have it natively
+        unit: part.DonViTinh,
+        stock: part.SoLuongTon,
+        cost: new Intl.NumberFormat('vi-VN').format(part.GiaVon) + ' đ',
+        price: new Intl.NumberFormat('vi-VN').format(part.DonGiaBan) + ' đ',
+        status: part.SoLuongTon > 10 ? 'Đủ hàng' : 'Sắp hết',
+        statusCode: part.SoLuongTon > 10 ? 'success' : 'error'
+      })),
+      pagination
     };
   },
   getStockDetail: async (id) => {
+    const response = await axiosClient.get(`/api/v1/parts/${id}`);
+    const part = response.data.data.part;
+    
+    // Also fetch transaction history if needed, for now just use the part data
+    // /api/v1/stock-receipt-details?MaVatTu=id
+    const historyResponse = await axiosClient.get('/api/v1/stock-receipt-details', { params: { MaVatTu: id } }).catch(() => ({ data: { data: { stockReceiptDetails: [] } } }));
+    
     return {
-      id,
-      name: 'Dầu nhớt Castrol Power1 10W-40',
-      group: 'Dầu nhớt & Phụ gia'
+      id: part.MaVatTu,
+      name: part.TenVatTu,
+      unit: part.DonViTinh,
+      stock: part.SoLuongTon,
+      cost: part.GiaVon,
+      price: part.DonGiaBan,
+      history: historyResponse.data.data.stockReceiptDetails || []
     };
   }
 };
