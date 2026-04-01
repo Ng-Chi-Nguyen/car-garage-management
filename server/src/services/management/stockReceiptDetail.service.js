@@ -43,10 +43,22 @@ const getStockReceiptDetailByIdInternal = async (db, id) => {
 };
 
 const createStockReceiptDetailService = ({ db = prisma } = {}) => {
-  const buildMutationResponse = (stockReceiptDetail) => ({
-    ...stockReceiptDetail,
-    inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
-  });
+  const buildMutationResponse = async (tx, stockReceiptDetail) => {
+    const part = await tx.vAT_TU.findUnique({
+      where: {
+        MaVatTu: Number(stockReceiptDetail.MaVatTu),
+      },
+      select: {
+        SoLuongTon: true,
+      },
+    });
+
+    return {
+      ...stockReceiptDetail,
+      stockAfter: Number(part?.SoLuongTon ?? 0),
+      inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
+    };
+  };
 
   return {
     createStockReceiptDetail: async (payload) => {
@@ -61,7 +73,7 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
         await adjustPartStock(tx, stockReceiptDetail.MaVatTu, Number(stockReceiptDetail.SoLuong));
         await syncStockReceiptTotal(tx, stockReceiptDetail.MaPhieuNhap);
 
-        return buildMutationResponse(stockReceiptDetail);
+        return buildMutationResponse(tx, stockReceiptDetail);
       }, TRANSACTION_OPTIONS);
     },
     getStockReceiptDetailList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
@@ -131,7 +143,7 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
           await syncStockReceiptTotal(tx, nextStockReceiptId);
         }
 
-        return buildMutationResponse(updatedStockReceiptDetail);
+        return buildMutationResponse(tx, updatedStockReceiptDetail);
       }, TRANSACTION_OPTIONS);
     },
     deleteStockReceiptDetail: async (id) => {
@@ -146,7 +158,7 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
         await adjustPartStock(tx, existingStockReceiptDetail.MaVatTu, -Number(existingStockReceiptDetail.SoLuong));
         await syncStockReceiptTotal(tx, existingStockReceiptDetail.MaPhieuNhap);
 
-        return buildMutationResponse(deletedStockReceiptDetail);
+        return buildMutationResponse(tx, deletedStockReceiptDetail);
       }, TRANSACTION_OPTIONS);
     },
   };

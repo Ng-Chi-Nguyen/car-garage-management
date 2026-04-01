@@ -34,11 +34,16 @@ const buildStockReceiptDetailCreateData = (maPhieuNhap, details) => {
 
 const buildStockReceiptMutationResponse = (stockReceipt, stockReceiptDetails) => {
   return {
-    stockReceipt,
-    stockReceiptDetails,
-    inventoryValueAfter: stockReceiptDetails.reduce((total, detail) => {
-      return total + Number(detail.ThanhTien ?? 0);
-    }, 0),
+    receipt: stockReceipt,
+    items: stockReceiptDetails,
+    totals: {
+      totalQuantity: stockReceiptDetails.reduce((total, detail) => {
+        return total + Number(detail.SoLuong ?? 0);
+      }, 0),
+      inventoryValueAfter: stockReceiptDetails.reduce((total, detail) => {
+        return total + Number(detail.ThanhTien ?? 0);
+      }, 0),
+    },
   };
 };
 
@@ -114,7 +119,25 @@ const createStockReceiptWorkflowService = ({
           },
         });
 
-        return buildStockReceiptMutationResponse(createdStockReceipt, createdStockReceiptDetails);
+        const stockReceiptItems = [];
+        for (const detail of createdStockReceiptDetails) {
+          const part = await tx.vAT_TU.findUnique({
+            where: {
+              MaVatTu: Number(detail.MaVatTu),
+            },
+            select: {
+              SoLuongTon: true,
+            },
+          });
+
+          stockReceiptItems.push({
+            ...detail,
+            stockAfter: Number(part?.SoLuongTon ?? 0),
+            inventoryValueAfter: Number(detail.ThanhTien ?? 0),
+          });
+        }
+
+        return buildStockReceiptMutationResponse(createdStockReceipt, stockReceiptItems);
       }, TRANSACTION_OPTIONS);
     },
   };
