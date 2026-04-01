@@ -89,60 +89,62 @@ test("stock receipt detail create update delete preserve quantity transitions an
   const created = await service.createStockReceiptDetail({ MaPhieuNhap: 1, MaVatTu: 10, SoLuong: 3, DonGiaNhap: 100000 });
   assert.deepEqual(Object.keys(created).sort(), ["items", "receipt", "totals"]);
   assert.deepEqual(created.receipt, {
-    receiptId: 1,
-    supplierId: null,
-    receivedAt: null,
+    id: 1,
+    supplierId: undefined,
+    importedAt: undefined,
     totalAmount: 500000,
   });
   assert.deepEqual(created.items[0], {
-    detailId: 2,
-    receiptId: 1,
+    receiptDetailId: 2,
     partId: 10,
     quantity: 3,
-    importPrice: 100000,
+    unitPrice: 100000,
     lineTotal: 300000,
     stockAfter: 13,
     inventoryValueAfter: 300000,
   });
-  assert.deepEqual(created.totals, { totalQuantity: 3, inventoryValueAfter: 300000 });
+  assert.deepEqual(created.totals, { receiptQuantity: 3, receiptAmount: 300000 });
+  assert.equal(created.receipt.receiptId, undefined);
+  assert.equal(created.items[0].detailId, undefined);
+  assert.equal(created.items[0].importPrice, undefined);
+  assert.equal(created.totals.totalQuantity, undefined);
+  assert.equal(created.totals.inventoryValueAfter, undefined);
 
   const updated = await service.updateStockReceiptDetail(1, { SoLuong: 5, DonGiaNhap: 120000 });
   assert.deepEqual(updated.items[0], {
-    detailId: 1,
-    receiptId: 1,
+    receiptDetailId: 1,
     partId: 10,
     quantity: 5,
-    importPrice: 120000,
+    unitPrice: 120000,
     lineTotal: 600000,
     stockAfter: 16,
     inventoryValueAfter: 600000,
   });
   assert.deepEqual(updated.receipt, {
-    receiptId: 1,
-    supplierId: null,
-    receivedAt: null,
+    id: 1,
+    supplierId: undefined,
+    importedAt: undefined,
     totalAmount: 900000,
   });
-  assert.deepEqual(updated.totals, { totalQuantity: 5, inventoryValueAfter: 600000 });
+  assert.deepEqual(updated.totals, { receiptQuantity: 5, receiptAmount: 600000 });
 
-  const deleted = await service.deleteStockReceiptDetail(created.items[0].detailId);
+  const deleted = await service.deleteStockReceiptDetail(created.items[0].receiptDetailId);
   assert.deepEqual(deleted.items[0], {
-    detailId: 2,
-    receiptId: 1,
+    receiptDetailId: 2,
     partId: 10,
     quantity: 3,
-    importPrice: 100000,
+    unitPrice: 100000,
     lineTotal: 300000,
     stockAfter: 13,
     inventoryValueAfter: 300000,
   });
   assert.deepEqual(deleted.receipt, {
-    receiptId: 1,
-    supplierId: null,
-    receivedAt: null,
+    id: 1,
+    supplierId: undefined,
+    importedAt: undefined,
     totalAmount: 600000,
   });
-  assert.deepEqual(deleted.totals, { totalQuantity: 3, inventoryValueAfter: 300000 });
+  assert.deepEqual(deleted.totals, { receiptQuantity: 3, receiptAmount: 300000 });
 });
 
 test("stock receipt detail delete rejects stock decrement below zero", async () => {

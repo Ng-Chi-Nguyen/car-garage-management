@@ -94,22 +94,25 @@ test("stock receipt workflow returns Contract A shape with item stock after and 
 
   assert.deepEqual(Object.keys(result).sort(), ["items", "receipt", "totals"]);
   assert.deepEqual(result.receipt, {
-    receiptId: 1,
+    id: 1,
     supplierId: 1,
-    receivedAt: new Date("2026-03-30"),
+    importedAt: new Date("2026-03-30"),
     totalAmount: 200000,
   });
   assert.equal(result.items.length, 1);
   assert.deepEqual(result.items[0], {
-    detailId: 1,
-    receiptId: 1,
+    receiptDetailId: 1,
     partId: 10,
     quantity: 2,
-    importPrice: 100000,
+    unitPrice: 100000,
     lineTotal: 200000,
     stockAfter: 7,
     inventoryValueAfter: 200000,
   });
-  assert.equal(result.totals.totalQuantity, 2);
-  assert.equal(result.totals.inventoryValueAfter, 200000);
+  assert.deepEqual(result.totals, { receiptQuantity: 2, receiptAmount: 200000 });
+  assert.equal(result.receipt.receiptId, undefined);
+  assert.equal(result.items[0].detailId, undefined);
+  assert.equal(result.items[0].importPrice, undefined);
+  assert.equal(result.totals.totalQuantity, undefined);
+  assert.equal(result.totals.inventoryValueAfter, undefined);
 });
