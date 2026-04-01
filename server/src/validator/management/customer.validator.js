@@ -22,7 +22,7 @@ const customerSchema = createCrudValidator({
     TenChuXe: Joi.string().trim().max(100).required(),
     DienThoai: Joi.string().trim().max(20).required(),
     DiaChi: Joi.string().trim().max(255).allow("").required(),
-    ChucVu: Joi.string().valid("Admin", "NhanVien", "KhachHang").allow(null, ""),
+    ChucVu: Joi.string().valid("NhanVien", "KhachHang").allow(null, ""),
     TrangThai: Joi.string().valid("HoatDong", "BiKhoa", "DaXoa").allow(null, ""),
   }).unknown(false),
   updateBodySchema: Joi.object({
@@ -30,7 +30,7 @@ const customerSchema = createCrudValidator({
     TenChuXe: Joi.string().trim().max(100),
     DienThoai: Joi.string().trim().max(20),
     DiaChi: Joi.string().trim().max(255).allow(""),
-    ChucVu: Joi.string().valid("Admin", "NhanVien", "KhachHang").allow(null, ""),
+    ChucVu: Joi.string().valid("NhanVien", "KhachHang").allow(null, ""),
     TrangThai: Joi.string().valid("HoatDong", "BiKhoa", "DaXoa").allow(null, ""),
   })
     .min(1)

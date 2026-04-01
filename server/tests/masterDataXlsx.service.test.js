@@ -236,7 +236,99 @@ test("createXlsxService exportDataBuffer tạo workbook có header đúng", asyn
   assert.equal(worksheet.getRow(2).getCell(2).value, "A");
 });
 
-test("createXlsxService exportDataBuffer gan data validation dropdown cho cot enum", async () => {
+test("createXlsxService createTemplateBuffer gan data validation dropdown cho cot enum", async () => {
+  const prismaClient = {
+    demo: {
+      findMany: async () => [],
+    },
+  };
+
+  const service = createXlsxService({
+    entityLabel: "demo",
+    fileBaseName: "demo",
+    sheetName: "Demo",
+    delegateName: "demo",
+    idField: "MaDemo",
+    prismaClient,
+    columns: [
+      { key: "MaDemo", header: "MaDemo", type: "number" },
+      {
+        key: "TrangThai",
+        header: "TrangThai",
+        type: "string",
+        validation: {
+          type: "list",
+          formulae: ['"Moi,DangXuLy,HoanTat"'],
+        },
+      },
+    ],
+    createSchema: Joi.object({
+      TrangThai: Joi.string().required(),
+    }).unknown(false),
+    updateSchema: Joi.object({
+      TrangThai: Joi.string(),
+    }).min(1).unknown(false),
+  });
+
+  const buffer = await service.createTemplateBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet("Demo");
+
+  assert.equal(worksheet.getCell("B2").dataValidation.type, "list");
+  assert.deepEqual(worksheet.getCell("B2").dataValidation.formulae, ['"Moi,DangXuLy,HoanTat"']);
+});
+
+test("createXlsxService createTemplateBuffer gan dinh dang va validation cho cot ngay", async () => {
+  const prismaClient = {
+    demo: {
+      findMany: async () => [],
+    },
+  };
+
+  const service = createXlsxService({
+    entityLabel: "demo",
+    fileBaseName: "demo",
+    sheetName: "Demo",
+    delegateName: "demo",
+    idField: "MaDemo",
+    prismaClient,
+    columns: [
+      { key: "MaDemo", header: "MaDemo", type: "number" },
+      {
+        key: "NgayLap",
+        header: "NgayLap",
+        type: "string",
+        numFmt: "yyyy-mm-dd",
+        validation: {
+          type: "date",
+          operator: "between",
+          formulae: ["DATE(2000,1,1)", "DATE(2100,12,31)"],
+          prompt: "Nhap ngay theo dinh dang yyyy-mm-dd.",
+        },
+      },
+    ],
+    createSchema: Joi.object({
+      NgayLap: Joi.date().required(),
+    }).unknown(false),
+    updateSchema: Joi.object({
+      NgayLap: Joi.date(),
+    }).min(1).unknown(false),
+  });
+
+  const buffer = await service.createTemplateBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet("Demo");
+
+  assert.equal(worksheet.getColumn(2).numFmt, "yyyy-mm-dd");
+  assert.equal(worksheet.getCell("B2").dataValidation.type, "date");
+  assert.equal(worksheet.getCell("B2").dataValidation.operator, "between");
+  assert.equal(worksheet.getCell("B2").dataValidation.showInputMessage, true);
+  assert.equal(worksheet.getCell("B2").dataValidation.prompt, "Nhap ngay theo dinh dang yyyy-mm-dd.");
+});
+
+test("createXlsxService exportDataBuffer khong gan validation mac dinh cho cot enum", async () => {
   const prismaClient = {
     demo: {
       findMany: async () => [],
@@ -275,57 +367,7 @@ test("createXlsxService exportDataBuffer gan data validation dropdown cho cot en
   await workbook.xlsx.load(buffer);
   const worksheet = workbook.getWorksheet("Demo");
 
-  assert.equal(worksheet.getCell("B2").dataValidation.type, "list");
-  assert.deepEqual(worksheet.getCell("B2").dataValidation.formulae, ['"Moi,DangXuLy,HoanTat"']);
-});
-
-test("createXlsxService exportDataBuffer gan dinh dang va validation cho cot ngay", async () => {
-  const prismaClient = {
-    demo: {
-      findMany: async () => [],
-    },
-  };
-
-  const service = createXlsxService({
-    entityLabel: "demo",
-    fileBaseName: "demo",
-    sheetName: "Demo",
-    delegateName: "demo",
-    idField: "MaDemo",
-    prismaClient,
-    columns: [
-      { key: "MaDemo", header: "MaDemo", type: "number" },
-      {
-        key: "NgayLap",
-        header: "NgayLap",
-        type: "string",
-        numFmt: "yyyy-mm-dd",
-        validation: {
-          type: "date",
-          operator: "between",
-          formulae: ["DATE(2000,1,1)", "DATE(2100,12,31)"],
-          prompt: "Nhap ngay theo dinh dang yyyy-mm-dd.",
-        },
-      },
-    ],
-    createSchema: Joi.object({
-      NgayLap: Joi.date().required(),
-    }).unknown(false),
-    updateSchema: Joi.object({
-      NgayLap: Joi.date(),
-    }).min(1).unknown(false),
-  });
-
-  const buffer = await service.exportDataBuffer();
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(buffer);
-  const worksheet = workbook.getWorksheet("Demo");
-
-  assert.equal(worksheet.getColumn(2).numFmt, "yyyy-mm-dd");
-  assert.equal(worksheet.getCell("B2").dataValidation.type, "date");
-  assert.equal(worksheet.getCell("B2").dataValidation.operator, "between");
-  assert.equal(worksheet.getCell("B2").dataValidation.showInputMessage, true);
-  assert.equal(worksheet.getCell("B2").dataValidation.prompt, "Nhap ngay theo dinh dang yyyy-mm-dd.");
+  assert.equal(worksheet.getCell("B2").dataValidation, undefined);
 });
 
 test("createXlsxService exportDataBuffer cho phep prepareWorkbook gan dropdown dong", async () => {
