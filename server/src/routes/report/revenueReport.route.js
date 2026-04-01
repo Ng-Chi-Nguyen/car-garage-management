@@ -24,40 +24,40 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/timeseries",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
     mergedController.getRevenueTimeseries,
   );
 
   router.get(
     "/by-car-brand",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
     mergedController.getRevenueByCarBrand,
   );
 
   router.get(
     "/by-part",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
     mergedController.getRevenueByPart,
   );
 
   router.get(
     "/comparison",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
     mergedController.getRevenueComparison,
   );
 
   router.get(
     "/composition",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
     mergedController.getRevenueComposition,
   );
