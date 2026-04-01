@@ -20,7 +20,7 @@ function FinanceField({ label, icon, value, onChange, placeholder, readOnly }) {
   return (
     <label className="space-y-2">
       <div className="text-sm font-semibold text-slate-700">{label}</div>
-      <div className={`flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition ${!readOnly ? 'focus-within:border-slate-400 focus-within:shadow-md' : 'bg-slate-50 opacity-80'}`}>
+      <div className={`flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.35)] transition ring-1 ring-inset ring-slate-200/70 ${!readOnly ? 'focus-within:ring-slate-400/60 focus-within:shadow-[0_16px_36px_-26px_rgba(15,23,42,0.4)]' : 'bg-slate-50 opacity-80'}`}>
         <span className="text-lg text-slate-400">{icon}</span>
         <input
           className="w-full border-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
@@ -36,8 +36,8 @@ function FinanceField({ label, icon, value, onChange, placeholder, readOnly }) {
 
 function FinancePanel({ icon, title, description, children, className = "" }) {
   return (
-    <section
-      className={`rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)] ${className}`}
+      <section
+      className={`rounded-[28px] bg-white p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)] ring-1 ring-inset ring-slate-200/70 ${className}`}
     >
       <div className="mb-5 flex items-start gap-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-lg">
@@ -71,7 +71,7 @@ function ReceiptHistoryPanel({ vehicleId }) {
       <StateShell isLoading={isLoading} isError={isError} isEmpty={history.length === 0}>
         <div className="space-y-3">
           {history.map((receipt) => (
-            <div key={receipt.MaPhieuThu} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div key={receipt.MaPhieuThu} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-inset ring-slate-200/70">
               <div>
                 <p className="text-sm font-semibold text-slate-900">Mã phiếu: #{receipt.MaPhieuThu}</p>
                 <p className="text-xs text-slate-500">
@@ -218,7 +218,7 @@ export function ReceivablesForm() {
             </div>
 
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <div className="rounded-[26px] border border-rose-200 bg-rose-50 px-5 py-4">
+              <div className="rounded-[26px] bg-rose-50 px-5 py-4 ring-1 ring-inset ring-rose-200/70">
                 <p className="text-sm text-rose-700">Nợ hiện tại</p>
                 <p className="mt-2 text-2xl font-semibold text-rose-950">
                   {formatCurrency(currentDebt)}
@@ -228,7 +228,7 @@ export function ReceivablesForm() {
                 <div className="text-sm font-semibold text-slate-700">
                   Khách đưa
                 </div>
-                <div className="flex items-center gap-3 rounded-[26px] border border-slate-200 bg-slate-50 px-4 py-4 shadow-sm transition focus-within:border-slate-400 focus-within:bg-white focus-within:shadow-md">
+                <div className="flex items-center gap-3 rounded-[26px] bg-slate-50 px-4 py-4 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.3)] ring-1 ring-inset ring-slate-200/70 transition focus-within:bg-white focus-within:ring-slate-400/60 focus-within:shadow-[0_16px_36px_-26px_rgba(15,23,42,0.4)]">
                   <span className="text-sm font-semibold text-slate-400">
                     ₫
                   </span>
@@ -246,13 +246,13 @@ export function ReceivablesForm() {
             </div>
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-[26px] border border-emerald-200 bg-emerald-50 px-5 py-4">
+                <div className="rounded-[26px] bg-emerald-50 px-5 py-4 ring-1 ring-inset ring-emerald-200/70">
                 <p className="text-sm text-emerald-700">Thực thu</p>
                 <p className="mt-2 text-2xl font-semibold text-emerald-950">
                   {formatCurrency(collectedAmount)}
                 </p>
               </div>
-              <div className="rounded-[26px] border border-sky-200 bg-sky-50 px-5 py-4">
+                <div className="rounded-[26px] bg-sky-50 px-5 py-4 ring-1 ring-inset ring-sky-200/70">
                 <p className="text-sm text-sky-700">Tiền thối</p>
                 <p className="mt-2 text-2xl font-semibold text-sky-950">
                   {formatCurrency(changeAmount)}
@@ -270,12 +270,12 @@ export function ReceivablesForm() {
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
                   placeholder="Bổ sung mô tả cho giao dịch hoặc xác nhận đặc biệt"
-                  className="w-full rounded-[28px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
+                  className="w-full rounded-[28px] bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ring-1 ring-inset ring-slate-200/70 focus:bg-white focus:ring-slate-400/60"
                 />
               </label>
             </div>
 
-            <div className="mt-6 rounded-[28px] border border-amber-200 bg-amber-50 px-5 py-4">
+            <div className="mt-6 rounded-[28px] bg-amber-50 px-5 py-4 ring-1 ring-inset ring-amber-200/70">
               <p className="text-sm font-semibold text-amber-900">
                 Xác nhận giao dịch
               </p>
@@ -319,7 +319,7 @@ export function ReceivablesForm() {
                     });
                   }
                 }}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm outline-none transition focus:border-slate-400 focus:bg-white"
+                className="w-full rounded-xl bg-slate-50 px-4 py-2 text-sm outline-none transition ring-1 ring-inset ring-slate-200/70 focus:bg-white focus:ring-slate-400/60"
               />
             </div>
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
@@ -330,7 +330,7 @@ export function ReceivablesForm() {
                 <article
                   key={item.vehicleId}
                   onClick={() => handleSelectVehicle(item)}
-                  className={`flex flex-col gap-4 cursor-pointer rounded-[26px] border ${selectedVehicle?.vehicleId === item.vehicleId ? 'border-slate-900 bg-slate-100' : 'border-slate-200 bg-slate-50'} px-5 py-4 transition hover:border-slate-400 lg:flex-row lg:items-center lg:justify-between`}
+                  className={`flex flex-col gap-4 cursor-pointer rounded-[26px] px-5 py-4 transition lg:flex-row lg:items-center lg:justify-between ${selectedVehicle?.vehicleId === item.vehicleId ? 'bg-slate-100 ring-1 ring-inset ring-slate-900/30' : 'bg-slate-50 ring-1 ring-inset ring-slate-200/70 hover:ring-slate-400/50'}`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10">
@@ -356,7 +356,7 @@ export function ReceivablesForm() {
               ))}
             </div>
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
+              <div className="mt-4 flex items-center justify-between pt-4 relative before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-slate-200/70">
                 <button
                   type="button"
                   disabled={page <= 1}
@@ -382,7 +382,7 @@ export function ReceivablesForm() {
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-[28px] border border-slate-200 bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)] p-6 text-white shadow-[0_36px_80px_-44px_rgba(15,23,42,0.9)]">
+          <section className="rounded-[28px] bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)] p-6 text-white shadow-[0_36px_80px_-44px_rgba(15,23,42,0.9)] ring-1 ring-inset ring-white/10">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-xl text-white">
                 💼
@@ -401,7 +401,7 @@ export function ReceivablesForm() {
             </div>
           </section>
 
-          <section className="rounded-[28px] border border-emerald-200 bg-emerald-50 p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)]">
+          <section className="rounded-[28px] bg-emerald-50 p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)] ring-1 ring-inset ring-emerald-200/70">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-xl text-white shadow-lg shadow-emerald-700/20">
                 ✅

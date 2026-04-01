@@ -16,7 +16,7 @@ export default function SettlementPrint() {
         actions={
           <button
             type="button"
-            className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-[13px] font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 active:scale-[0.98]"
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-[13px] font-semibold text-slate-700 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.35)] ring-1 ring-inset ring-slate-200/70 transition-all hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 active:scale-[0.98]"
             onClick={() => window.print()}
           >
             <span className="material-symbols-outlined text-[18px]">print</span>

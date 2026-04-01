@@ -25,11 +25,13 @@ export function SettlementInvoice({ id }) {
   const handleConfirm = (e) => {
     e.preventDefault();
     createPayment.mutate(
-      {
-        MaXe: Number(data.MaXe),
-        NgayThu: new Date().toISOString(),
-        SoTienThu: Number(grandTotal),
-      },
+        {
+          MaXe: Number(data.MaXe),
+          NgayThu: new Date().toISOString(),
+          SoTienThu: Number(grandTotal),
+          PhuongThucThu: "TienMat",
+          TrangThai: "DaThu",
+        },
       {
         onSuccess: () => {
           toast.success("Tạo phiếu thu thành công!");
@@ -44,8 +46,8 @@ export function SettlementInvoice({ id }) {
 
   return (
     <StateShell isLoading={isLoading} isError={isError} error={error}>
-      <form onSubmit={handleConfirm} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 block">
-        <div className="text-center mb-8 border-b pb-6">
+      <form onSubmit={handleConfirm} className="bg-white p-8 rounded-2xl shadow-[0_24px_60px_-48px_rgba(15,23,42,0.35)] block">
+        <div className="text-center mb-8 pb-6 relative after:absolute after:inset-x-24 after:bottom-0 after:h-px after:bg-slate-100/80">
           <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">
             Hóa Đơn Sửa Chữa
           </h1>
@@ -57,7 +59,7 @@ export function SettlementInvoice({ id }) {
             <h4 className="font-semibold text-slate-700 mb-2">
               Thông tin khách hàng
             </h4>
-            <p>Tên: {data.Xe?.KhachHang?.TenKH || "Không rõ"}</p>
+            <p>Tên: {data.Xe?.KhachHang?.TenChuXe || "Không rõ"}</p>
             <p>SĐT: {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
             <p>Ngày in: {invoiceDate}</p>
           </div>
@@ -68,8 +70,8 @@ export function SettlementInvoice({ id }) {
           </div>
         </div>
 
-        <table className="w-full text-left text-sm mb-8 border-t border-b">
-          <thead className="border-b">
+        <table className="w-full text-left text-sm mb-8 border-separate border-spacing-0">
+          <thead>
             <tr>
               <th className="py-3 font-semibold text-slate-600">Nội dung</th>
               <th className="py-3 font-semibold text-slate-600 text-center">
@@ -83,7 +85,7 @@ export function SettlementInvoice({ id }) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody>
             {data.ChiTietSuaChua?.length > 0 ? data.ChiTietSuaChua.map((item) => {
               const rowPartsTotal = Number(item.SoLuong) * Number(item.DonGiaVatTu);
               const rowLaborTotal = Number(item.SoLuong) * Number(item.DonGiaTienCong);
@@ -129,7 +131,7 @@ export function SettlementInvoice({ id }) {
               <span>Tổng tiền công:</span>
               <span>{totalLabor.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between text-lg font-bold text-slate-900 pt-2 border-t">
+            <div className="flex justify-between text-lg font-bold text-slate-900 pt-2 relative before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-slate-100/80">
               <span>Tổng cộng:</span>
               <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
