@@ -20,6 +20,24 @@ const buildStockReceiptCreateData = (stockReceipt) => {
   };
 };
 
+const normalizeReceipt = (stockReceipt) => ({
+  receiptId: Number(stockReceipt.MaPhieuNhap),
+  supplierId: Number(stockReceipt.MaNCC),
+  receivedAt: stockReceipt.NgayNhap,
+  totalAmount: Number(stockReceipt.TongTien ?? 0),
+});
+
+const normalizeReceiptItem = (detail) => ({
+  detailId: Number(detail.MaCTPN),
+  receiptId: Number(detail.MaPhieuNhap),
+  partId: Number(detail.MaVatTu),
+  quantity: Number(detail.SoLuong),
+  importPrice: Number(detail.DonGiaNhap),
+  lineTotal: Number(detail.ThanhTien ?? 0),
+  stockAfter: Number(detail.stockAfter ?? 0),
+  inventoryValueAfter: Number(detail.inventoryValueAfter ?? detail.ThanhTien ?? 0),
+});
+
 // Chuan hoa detail va tinh ThanhTien ngay tai service de payload luu kho nhat quan,
 // khong phu thuoc so tien client tu tinh.
 const buildStockReceiptDetailCreateData = (maPhieuNhap, details) => {
@@ -34,14 +52,14 @@ const buildStockReceiptDetailCreateData = (maPhieuNhap, details) => {
 
 const buildStockReceiptMutationResponse = (stockReceipt, stockReceiptDetails) => {
   return {
-    receipt: stockReceipt,
-    items: stockReceiptDetails,
+    receipt: normalizeReceipt(stockReceipt),
+    items: stockReceiptDetails.map(normalizeReceiptItem),
     totals: {
       totalQuantity: stockReceiptDetails.reduce((total, detail) => {
-        return total + Number(detail.SoLuong ?? 0);
+        return total + Number(detail.quantity ?? detail.SoLuong ?? 0);
       }, 0),
       inventoryValueAfter: stockReceiptDetails.reduce((total, detail) => {
-        return total + Number(detail.ThanhTien ?? 0);
+        return total + Number(detail.inventoryValueAfter ?? detail.ThanhTien ?? 0);
       }, 0),
     },
   };
