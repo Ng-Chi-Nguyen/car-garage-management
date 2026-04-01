@@ -16,11 +16,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data = await login({ username, password });
-      if (data.token) {
-        authStorage.setToken(data.token);
+      const responseData = await login({ username, password });
+      const token = responseData?.data?.accessToken;
+      if (token) {
+        authStorage.setToken(token);
       }
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
