@@ -93,10 +93,10 @@ function ReceiptHistoryPanel({ vehicleId }) {
 export function ReceivablesForm() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const q = searchParams.get("q") || "";
+  const search = searchParams.get("search") || searchParams.get("q") || "";
   const vehicleIdParam = searchParams.get("vehicleId");
 
-  const { data, isLoading, isError, error } = useReceivablesQuery({ page, limit: 10, q, groupBy: "vehicle" });
+  const { data, isLoading, isError, error } = useReceivablesQuery({ page, limit: 10, search, groupBy: "vehicle" });
   const receivableCustomers = useMemo(() => data?.items || [], [data?.items]);
 
   const createMutation = useCreateReceivableMutation();
@@ -289,13 +289,15 @@ export function ReceivablesForm() {
               <input
                 type="text"
                 placeholder="Tìm biển số, khách hàng... (Enter để tìm)"
-                defaultValue={q}
+                defaultValue={search}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     setSearchParams(prev => {
-                      if (e.target.value) prev.set('q', e.target.value);
-                      else prev.delete('q');
+                      if (e.target.value) prev.set('search', e.target.value);
+                      else prev.delete('search');
+                      // clean up legacy q if it exists
+                      prev.delete('q');
                       prev.set('page', '1');
                       return prev;
                     });
