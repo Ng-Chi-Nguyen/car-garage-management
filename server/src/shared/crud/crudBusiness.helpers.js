@@ -209,6 +209,7 @@ const syncRepairOrderTotal = async (tx, maPhieuSC) => {
 const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) => {
   const paymentWhere = {
     MaXe: Number(maXe),
+    TrangThai: "DaThu",
   };
 
   // Khi cập nhật phiếu thu hiện có, loại trừ chính phiếu đó khỏi phép cộng tổng đã thu.

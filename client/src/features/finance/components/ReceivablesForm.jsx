@@ -92,7 +92,7 @@ function ReceiptHistoryPanel({ vehicleId }) {
 
 export function ReceivablesForm() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page")) || 1;
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const q = searchParams.get("q") || "";
   const vehicleIdParam = searchParams.get("vehicleId");
 
@@ -133,7 +133,9 @@ export function ReceivablesForm() {
   };
 
   const [cashGiven, setCashGiven] = useState("");
+  const [paymentDate, setPaymentDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [note, setNote] = useState("");
+  const [createdReceiptId, setCreatedReceiptId] = useState(null);
 
   const currentDebt = selectedVehicle ? selectedVehicle.outstandingDebt : 0;
   const cashGivenNumber = Number(cashGiven) || 0;
@@ -162,7 +164,7 @@ export function ReceivablesForm() {
 
     const payload = {
       MaXe: Number(selectedVehicle.vehicleId),
-      NgayThu: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+      NgayThu: paymentDate,
       SoTienThu: collectedAmount,
       PhuongThucThu: "TienMat",
       TrangThai: "DaThu",
@@ -170,11 +172,12 @@ export function ReceivablesForm() {
     };
 
     createMutation.mutate(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success("Tạo phiếu thu thành công");
         handleSelectVehicle(null);
         setCashGiven("");
         setNote("");
+        setCreatedReceiptId(data?.MaPhieuThu ?? data?.paymentReceipt?.MaPhieuThu ?? null);
       },
       onError: (err) => {
         toast.error(err.response?.data?.message || "Lỗi khi tạo phiếu thu");
@@ -193,6 +196,8 @@ export function ReceivablesForm() {
         handleSelectVehicle(null);
         setCashGiven("");
         setNote("");
+        setPaymentDate(new Date().toISOString().split("T")[0]);
+        setCreatedReceiptId(null);
       }} className="grid gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)] lg:px-8 lg:py-8">
         <div className="space-y-6">
           <FinancePanel
@@ -225,6 +230,15 @@ export function ReceivablesForm() {
                 </p>
               </div>
               <label className="space-y-2 md:col-span-2">
+                <div className="text-sm font-semibold text-slate-700">Ngày thu</div>
+                <input
+                  type="date"
+                  className="w-full rounded-[26px] bg-slate-50 px-4 py-4 text-lg font-semibold text-slate-900 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.3)] ring-1 ring-inset ring-slate-200/70 outline-none transition focus:bg-white focus:ring-slate-400/60"
+                  value={paymentDate}
+                  onChange={(event) => setPaymentDate(event.target.value)}
+                />
+              </label>
+              <label className="space-y-2 md:col-span-2">
                 <div className="text-sm font-semibold text-slate-700">
                   Khách đưa
                 </div>
@@ -244,6 +258,15 @@ export function ReceivablesForm() {
                 </div>
               </label>
             </div>
+
+            {createdReceiptId ? (
+              <div className="mt-5 flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3 ring-1 ring-inset ring-emerald-200/70">
+                <p className="text-sm font-semibold text-emerald-800">Đã tạo phiếu thu. In ngay nếu cần.</p>
+                <button type="button" className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white" onClick={() => window.print()}>
+                  In phiếu
+                </button>
+              </div>
+            ) : null}
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <div className="rounded-[26px] bg-emerald-50 px-5 py-4 ring-1 ring-inset ring-emerald-200/70">
