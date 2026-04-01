@@ -12,7 +12,9 @@ export function Sidebar() {
     { name: 'Kho vật tư', path: '/inventory', icon: 'inventory_2' },
     { name: 'Tài chính', path: '/finance/receivables', icon: 'payments' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
+    { name: 'Thống kê KH', path: '/customers/analytics', icon: 'analytics' },
     { name: 'Cài đặt', path: '/settings', icon: 'settings' },
+    { name: 'Lịch sử HĐ', path: '/settings/activity-log', icon: 'history' },
   ];
 
   const handleLogout = (e) => {
