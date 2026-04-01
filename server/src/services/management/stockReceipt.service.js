@@ -16,11 +16,22 @@ const STOCK_RECEIPT_FILTER_FIELDS = {
 
 const WRITE_FIELDS = ["MaNCC", "NgayNhap"];
 
+export const STOCK_RECEIPT_INCLUDE_SUPPLIER = {
+  NhaCungCap: {
+    select: {
+      MaNCC: true,
+      TenNCC: true,
+      DienThoai: true,
+    },
+  },
+};
+
 const getStockReceiptByIdInternal = async (db, id) => {
   const stockReceipt = await db.pHIEU_NHAP_KHO.findUnique({
     where: {
       MaPhieuNhap: Number(id),
     },
+    include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
   });
 
   if (!stockReceipt) {
@@ -53,6 +64,7 @@ const stockReceiptService = {
         where,
         skip: pagination.skip,
         take: pagination.limit,
+        include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
         orderBy: {
           MaPhieuNhap: "desc",
         },

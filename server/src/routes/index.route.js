@@ -9,6 +9,7 @@ import repairReportRoute from "./report/repairReport.route.js";
 import carBrandRoute from "./management/carBrand.route.js";
 import customerRoute from "./management/customer.route.js";
 import laborFeeRoute from "./management/laborFee.route.js";
+import masterDataXlsxRoute from "./management/masterDataXlsx.route.js";
 import authMiddleware from "../middleware/auth/auth.middleware.js";
 import partRoute from "./management/part.route.js";
 import paymentReceiptRoute from "./management/paymentReceipt.route.js";
@@ -49,6 +50,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/payment-receipts`, paymentReceiptWorkflowRoute);
+  app.use(`${apiPrefixV1}/master-data/xlsx`, masterDataXlsxRoute);
   app.use(`${apiPrefixV1}/customers`, customerRoute);
   app.use(`${apiPrefixV1}/car-brands`, carBrandRoute);
   app.use(`${apiPrefixV1}/vehicles`, vehicleRoute);
