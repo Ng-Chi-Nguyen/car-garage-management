@@ -13,7 +13,11 @@ const loadModules = async () => {
     import("../src/services/management/stockReceipt.service.js"),
     import("../src/db/prisma.js"),
   ]);
-  return { stockReceiptService: serviceModule.default, prisma: prismaModule.default };
+  return {
+    stockReceiptService: serviceModule.default,
+    STOCK_RECEIPT_INCLUDE_SUPPLIER: serviceModule.STOCK_RECEIPT_INCLUDE_SUPPLIER,
+    prisma: prismaModule.default,
+  };
 };
 
 test("stock receipt list returns Contract B items and pagination", async () => {
@@ -53,6 +57,84 @@ test("stock receipt list returns Contract B items and pagination", async () => {
     });
   } finally {
     prisma.$transaction = originalTransaction;
+    prisma.pHIEU_NHAP_KHO = originalDelegate;
+  }
+});
+
+test("stock receipt list query includes supplier relation", async () => {
+  const { stockReceiptService, STOCK_RECEIPT_INCLUDE_SUPPLIER, prisma } = await loadModules();
+  const originalTransaction = prisma.$transaction;
+  const originalDelegate = prisma.pHIEU_NHAP_KHO;
+  const calls = {
+    count: null,
+    findMany: null,
+  };
+
+  prisma.$transaction = async (operations) => Promise.all(operations);
+  prisma.pHIEU_NHAP_KHO = {
+    count: async (args) => {
+      calls.count = args;
+      return 1;
+    },
+    findMany: async (args) => {
+      calls.findMany = args;
+      return [
+        {
+          MaPhieuNhap: 24,
+          MaNCC: 6,
+          NgayNhap: new Date("2026-02-18"),
+          TongTien: "55000000",
+          NhaCungCap: {
+            MaNCC: 6,
+            TenNCC: "Cong ty A",
+            DienThoai: "0900000000",
+          },
+        },
+      ];
+    },
+  };
+
+  try {
+    const result = await stockReceiptService.getStockReceiptList({});
+
+    assert.deepEqual(calls.count, { where: {} });
+    assert.deepEqual(calls.findMany.include, STOCK_RECEIPT_INCLUDE_SUPPLIER);
+    assert.equal(result.items.length, 1);
+  } finally {
+    prisma.$transaction = originalTransaction;
+    prisma.pHIEU_NHAP_KHO = originalDelegate;
+  }
+});
+
+test("stock receipt by id query includes supplier relation", async () => {
+  const { stockReceiptService, STOCK_RECEIPT_INCLUDE_SUPPLIER, prisma } = await loadModules();
+  const originalDelegate = prisma.pHIEU_NHAP_KHO;
+  let findUniqueArgs = null;
+
+  prisma.pHIEU_NHAP_KHO = {
+    ...originalDelegate,
+    findUnique: async (args) => {
+      findUniqueArgs = args;
+      return {
+        MaPhieuNhap: 24,
+        MaNCC: 6,
+        NgayNhap: new Date("2026-02-18"),
+        TongTien: "55000000",
+        NhaCungCap: {
+          MaNCC: 6,
+          TenNCC: "Cong ty A",
+          DienThoai: "0900000000",
+        },
+      };
+    },
+  };
+
+  try {
+    const result = await stockReceiptService.getStockReceiptById(24);
+
+    assert.deepEqual(findUniqueArgs.include, STOCK_RECEIPT_INCLUDE_SUPPLIER);
+    assert.equal(result.NhaCungCap.MaNCC, 6);
+  } finally {
     prisma.pHIEU_NHAP_KHO = originalDelegate;
   }
 });

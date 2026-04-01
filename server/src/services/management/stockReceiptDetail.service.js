@@ -28,11 +28,29 @@ const TRANSACTION_OPTIONS = {
   isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
 };
 
+export const STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS = {
+  PhieuNhapKho: {
+    select: {
+      MaPhieuNhap: true,
+      MaNCC: true,
+      NgayNhap: true,
+    },
+  },
+  VatTu: {
+    select: {
+      MaVatTu: true,
+      TenVatTu: true,
+      DonViTinh: true,
+    },
+  },
+};
+
 const getStockReceiptDetailByIdInternal = async (db, id) => {
   const stockReceiptDetail = await db.cT_PHIEU_NHAP.findUnique({
     where: {
       MaCTPN: Number(id),
     },
+    include: STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS,
   });
 
   if (!stockReceiptDetail) {
@@ -137,6 +155,7 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
           where,
           skip: pagination.skip,
           take: pagination.limit,
+          include: STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS,
           orderBy: {
             MaCTPN: "desc",
           },

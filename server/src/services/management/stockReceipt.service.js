@@ -16,6 +16,16 @@ const STOCK_RECEIPT_FILTER_FIELDS = {
 
 const WRITE_FIELDS = ["MaNCC", "NgayNhap"];
 
+export const STOCK_RECEIPT_INCLUDE_SUPPLIER = {
+  NhaCungCap: {
+    select: {
+      MaNCC: true,
+      TenNCC: true,
+      DienThoai: true,
+    },
+  },
+};
+
 const normalizeListItem = (stockReceipt) => ({
   partId: Number(stockReceipt.MaVatTu ?? stockReceipt.partId ?? stockReceipt.MaPhieuNhap ?? 0),
   partCode: stockReceipt.MaVatTu ?? stockReceipt.partCode ?? stockReceipt.MaPhieuNhap ?? null,
@@ -32,6 +42,7 @@ const getStockReceiptByIdInternal = async (db, id) => {
     where: {
       MaPhieuNhap: Number(id),
     },
+    include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
   });
 
   if (!stockReceipt) {
@@ -64,6 +75,7 @@ const stockReceiptService = {
         where,
         skip: pagination.skip,
         take: pagination.limit,
+        include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
         orderBy: {
           MaPhieuNhap: "desc",
         },

@@ -13,6 +13,20 @@ const loadCreateDetailService = async () => {
   return module.createStockReceiptDetailService;
 };
 
+const loadDetailModules = async () => {
+  ensureTestDatabaseUrl();
+  const [serviceModule, prismaModule] = await Promise.all([
+    import("../src/services/management/stockReceiptDetail.service.js"),
+    import("../src/db/prisma.js"),
+  ]);
+
+  return {
+    stockReceiptDetailService: serviceModule.default,
+    STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS: serviceModule.STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS,
+    prisma: prismaModule.default,
+  };
+};
+
 const cloneValue = (value) => structuredClone(value);
 
 const createDetailDb = (initialState) => {
@@ -197,4 +211,91 @@ test("stock receipt detail list returns Contract B items and pagination", async 
     totalItems: 2,
     totalPages: 1,
   });
+});
+
+test("stock receipt detail list query includes receipt and part relations", async () => {
+  const { stockReceiptDetailService, STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS, prisma } = await loadDetailModules();
+  const originalTransaction = prisma.$transaction;
+  const originalCount = prisma.cT_PHIEU_NHAP.count;
+  const originalFindMany = prisma.cT_PHIEU_NHAP.findMany;
+  const calls = {
+    count: null,
+    findMany: null,
+  };
+
+  prisma.cT_PHIEU_NHAP.count = async (args) => {
+    calls.count = args;
+    return 1;
+  };
+  prisma.cT_PHIEU_NHAP.findMany = async (args) => {
+    calls.findMany = args;
+    return [
+      {
+        MaCTPN: 72,
+        MaPhieuNhap: 24,
+        MaVatTu: 12,
+        SoLuong: 110,
+        DonGiaNhap: "50000",
+        ThanhTien: "5500000",
+        PhieuNhapKho: {
+          MaPhieuNhap: 24,
+          MaNCC: 6,
+          NgayNhap: new Date("2026-04-01"),
+        },
+        VatTu: {
+          MaVatTu: 12,
+          TenVatTu: "Cau chi va bong den phu",
+          DonViTinh: "Bo",
+        },
+      },
+    ];
+  };
+  prisma.$transaction = async (operations) => Promise.all(operations);
+
+  try {
+    const result = await stockReceiptDetailService.getStockReceiptDetailList({});
+
+    assert.deepEqual(calls.count, { where: {} });
+    assert.deepEqual(calls.findMany.include, STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS);
+    assert.equal(result.items.length, 1);
+  } finally {
+    prisma.$transaction = originalTransaction;
+    prisma.cT_PHIEU_NHAP.count = originalCount;
+    prisma.cT_PHIEU_NHAP.findMany = originalFindMany;
+  }
+});
+
+test("stock receipt detail by id query includes receipt and part relations", async () => {
+  const { stockReceiptDetailService, STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS, prisma } = await loadDetailModules();
+  const originalFindUnique = prisma.cT_PHIEU_NHAP.findUnique;
+  let findUniqueArgs = null;
+
+  prisma.cT_PHIEU_NHAP.findUnique = async (args) => {
+    findUniqueArgs = args;
+    return {
+      MaCTPN: 72,
+      MaPhieuNhap: 24,
+      MaVatTu: 12,
+      PhieuNhapKho: {
+        MaPhieuNhap: 24,
+        MaNCC: 6,
+        NgayNhap: new Date("2026-04-01"),
+      },
+      VatTu: {
+        MaVatTu: 12,
+        TenVatTu: "Cau chi va bong den phu",
+        DonViTinh: "Bo",
+      },
+    };
+  };
+
+  try {
+    const result = await stockReceiptDetailService.getStockReceiptDetailById(72);
+
+    assert.deepEqual(findUniqueArgs.include, STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS);
+    assert.equal(result.PhieuNhapKho.MaPhieuNhap, 24);
+    assert.equal(result.VatTu.MaVatTu, 12);
+  } finally {
+    prisma.cT_PHIEU_NHAP.findUnique = originalFindUnique;
+  }
 });
