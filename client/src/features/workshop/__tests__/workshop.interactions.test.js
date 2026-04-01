@@ -16,8 +16,8 @@ describe('Workshop Interactions', () => {
             assert.equal(getWorkshopRouteTarget('view_repair_orders'), '/repair-orders?page=1');
         });
 
-        it('should return /vehicles for view_vehicle with context.id', () => {
-            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/vehicles');
+        it('should return /repair-orders?page=1 for view_vehicle with context.id', () => {
+            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/repair-orders?page=1');
         });
 
         it('should fallback to /repair-orders?page=1 for view_vehicle without context or id', () => {
@@ -42,7 +42,7 @@ describe('Workshop Interactions', () => {
             assert.equal(navigatedTo, '/intake/new');
 
             handleWorkshopAction(mockNavigate, 'view_vehicle', { id: '123' });
-            assert.equal(navigatedTo, '/vehicles');
+            assert.equal(navigatedTo, '/repair-orders?page=1');
 
             handleWorkshopAction(mockNavigate, 'unknown');
             assert.equal(navigatedTo, '/repair-orders?page=1');
