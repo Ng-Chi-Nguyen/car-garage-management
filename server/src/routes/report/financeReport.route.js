@@ -4,8 +4,16 @@ import financeReportController from "../../controllers/report/financeReport.cont
 import authMiddleware from "../../middleware/auth/auth.middleware.js";
 import { validateRequest } from "../../middleware/validation.middleware.js";
 import financeReportSchema from "../../validator/report/financeReport.validator.js";
+import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
+const financeReportRateLimiter = createDashboardRateLimiter({
+  message: {
+    success: false,
+    message:
+      "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tài chính. Vui lòng thử lại sau.",
+  },
+});
 
 const createFinanceReportRoute = ({
   auth = authMiddleware,
@@ -27,6 +35,7 @@ const createFinanceReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getFinanceSummary.query, "query"),
+    financeReportRateLimiter,
     mergedController.getFinanceSummary,
   );
 
@@ -35,6 +44,7 @@ const createFinanceReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getFinanceDebtors.query, "query"),
+    financeReportRateLimiter,
     mergedController.getFinanceDebtors,
   );
 

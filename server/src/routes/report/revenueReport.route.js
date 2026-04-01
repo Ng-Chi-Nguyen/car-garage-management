@@ -4,8 +4,16 @@ import revenueReportController from "../../controllers/report/revenueReport.cont
 import authMiddleware from "../../middleware/auth/auth.middleware.js";
 import { validateRequest } from "../../middleware/validation.middleware.js";
 import revenueReportSchema from "../../validator/report/revenueReport.validator.js";
+import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
+const revenueReportRateLimiter = createDashboardRateLimiter({
+  message: {
+    success: false,
+    message:
+      "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+  },
+});
 
 const createRevenueReportRoute = ({
   auth = authMiddleware,
@@ -27,6 +35,7 @@ const createRevenueReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
+    revenueReportRateLimiter,
     mergedController.getRevenueTimeseries,
   );
 
@@ -35,6 +44,7 @@ const createRevenueReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
+    revenueReportRateLimiter,
     mergedController.getRevenueByCarBrand,
   );
 
@@ -43,6 +53,7 @@ const createRevenueReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
+    revenueReportRateLimiter,
     mergedController.getRevenueByPart,
   );
 
@@ -51,6 +62,7 @@ const createRevenueReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
+    revenueReportRateLimiter,
     mergedController.getRevenueComparison,
   );
 
@@ -59,6 +71,7 @@ const createRevenueReportRoute = ({
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
+    revenueReportRateLimiter,
     mergedController.getRevenueComposition,
   );
 
