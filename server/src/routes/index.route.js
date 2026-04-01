@@ -59,7 +59,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/stock-receipts`, stockReceiptRoute);
   app.use(`${apiPrefixV1}/stock-receipt-details`, stockReceiptDetailRoute);
   app.use(`${apiPrefixV1}/payment-receipts`, paymentReceiptRoute);
-  app.use(`${apiPrefixV1}/reports/finance`, authMiddleware.requireAuth, financeReportRoute);
+  app.use(`${apiPrefixV1}/reports/finance`, ...requireManagementAccess, financeReportRoute);
   // =========================
   // API CẦN đăng nhập
   // =========================
