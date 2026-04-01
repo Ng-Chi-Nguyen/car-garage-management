@@ -129,7 +129,14 @@ const repairOrderDetailService = {
         await syncRepairOrderTotal(tx, nextRepairOrderId);
       }
 
-      return updatedRepairOrderDetail;
+      return {
+        repairOrderDetail: updatedRepairOrderDetail,
+        repairOrder: await tx.pHIEU_SUA_CHUA.findUnique({
+          where: {
+            MaPhieuSC: Number(nextRepairOrderId),
+          },
+        }),
+      };
     }, TRANSACTION_OPTIONS);
   },
   deleteRepairOrderDetail: async (id) => {

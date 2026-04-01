@@ -31,6 +31,32 @@ test("repair order workflow validator chap nhan payload long nhau hop le", () =>
   assert.equal(value.details[0].SoLuong, 2);
 });
 
+test("repair order workflow validator tu choi TongTien tu client", () => {
+  const { error } = repairOrderWorkflowSchema.create.body.validate({
+    repairOrder: {
+      MaXe: 1,
+      MaNV: 2,
+      NgaySC: "2026-03-25",
+      TrangThai: "DangSua",
+      NoiDungLoi: "May khong no",
+      GhiChu: "Kiem tra nhanh",
+      TongTien: 999999,
+    },
+    details: [
+      {
+        MaVatTu: 3,
+        MaTienCong: 4,
+        SoLuong: 2,
+        DonGiaVatTu: 150000,
+        DonGiaTienCong: 50000,
+      },
+    ],
+  });
+
+  assert.ok(error);
+  assert.match(error.message, /TongTien/);
+});
+
 test("stock receipt workflow validator bat buoc it nhat mot detail", () => {
   const { error } = stockReceiptWorkflowSchema.create.body.validate({
     stockReceipt: {

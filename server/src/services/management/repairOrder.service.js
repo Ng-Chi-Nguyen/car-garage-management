@@ -49,7 +49,7 @@ const REPAIR_ORDER_FILTER_FIELDS = {
   NgayCapNhatTo: { type: "dateTo", targetField: "NgayCapNhat" },
 };
 
-const WRITE_FIELDS = ["MaXe", "MaNV", "NgaySC", "TrangThai", "NoiDungLoi", "GhiChu", "TongTien"];
+const WRITE_FIELDS = ["MaXe", "MaNV", "NgaySC", "TrangThai", "NoiDungLoi", "GhiChu"];
 const REPAIR_ORDER_LIST_SELECT = {
   MaPhieuSC: true,
   MaXe: true,
