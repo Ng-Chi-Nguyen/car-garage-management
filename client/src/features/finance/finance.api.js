@@ -13,6 +13,9 @@ export async function fetchReceivables(params = {}) {
 }
 
 export async function fetchFinanceSummary(params = {}) {
+  if (!params.from || !params.to || !params.granularity) {
+    throw new Error("Missing required params: from,to,granularity");
+  }
   const response = await axiosClient.get("/api/v1/reports/finance/summary", {
     params,
   });

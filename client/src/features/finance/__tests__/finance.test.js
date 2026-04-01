@@ -45,3 +45,16 @@ test("ReceivablesForm uses URL for state truth", () => {
   assert.ok(!content.includes('const [selectedVehicle, setSelectedVehicle] = useState(null)'), "Should not use useState for selected vehicle");
   assert.ok(content.includes("ReceiptHistoryPanel"), "Must use ReceiptHistoryPanel component");
 });
+
+
+
+
+test("fetchFinanceSummary guard contract asserts exactly", () => {
+  const apiFile = path.join(__dirname, "../finance.api.js");
+  const apiContent = fs.readFileSync(apiFile, "utf-8");
+  
+  assert.ok(apiContent.includes('!params.from'), "Must check from param");
+  assert.ok(apiContent.includes('!params.to'), "Must check to param");
+  assert.ok(apiContent.includes('!params.granularity'), "Must check granularity param");
+  assert.ok(apiContent.includes('throw new Error("Missing required params: from,to,granularity")'), "Must throw exact error message");
+});
