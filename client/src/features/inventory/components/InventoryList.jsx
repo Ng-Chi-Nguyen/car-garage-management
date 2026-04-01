@@ -83,11 +83,11 @@ export function InventoryList() {
             {data?.data?.map((item) => (
               <tr key={item.id} className="hover:bg-surface-container-low transition-colors group">
                 <td className="px-6 py-4 font-bold text-primary text-sm">
-                  <Link to={`/inventory/${item.id}`} className="hover:underline">{item.id}</Link>
+                  <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.id}</Link>
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-semibold text-on-surface">
-                    <Link to={`/inventory/${item.id}`} className="hover:underline">{item.name}</Link>
+                    <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.name}</Link>
                   </p>
                   <p className="text-[10px] text-on-surface-variant font-medium">
                     Nhóm: {item.group}

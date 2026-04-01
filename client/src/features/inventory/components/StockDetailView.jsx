@@ -1,13 +1,15 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { SectionCard } from "../../../components/ui/section-card";
 import { DataTable } from "../../../components/ui/data-table";
 import { StateShell } from "../../../components/ui/state-shell";
 import { useStockDetailQuery } from "../useInventoryQuery";
 
 export function StockDetailView() {
-  const { id } = useParams();
-  const { data, isLoading, error } = useStockDetailQuery(id || "VT-0012");
+  const [searchParams] = useSearchParams();
+  const idParam = searchParams.get("id");
+  const id = idParam?.trim() ? idParam.trim() : "VT-0012";
+  const { data, isLoading, error } = useStockDetailQuery(id);
 
   return (
     <StateShell isLoading={isLoading} error={error}>
