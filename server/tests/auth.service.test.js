@@ -195,7 +195,7 @@ test("register từ chối số điện thoại đã tồn tại", async () => {
   );
 });
 
-test("login trả access token và user đã sanitize", async () => {
+test("login trả access token và user đã sanitize cho tài khoản nội bộ", async () => {
   const createAuthService = await loadCreateAuthService();
   const customerDelegate = createCustomerDelegate({
     MaKH: 5,
@@ -204,7 +204,7 @@ test("login trả access token và user đã sanitize", async () => {
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "Admin",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: "hashed-reset-token",
   });
@@ -215,7 +215,7 @@ test("login trả access token và user đã sanitize", async () => {
     MatKhau: "Password123!",
   });
 
-  assert.equal(result.accessToken, "token::5::KhachHang");
+  assert.equal(result.accessToken, "token::5::Admin");
   assert.equal(result.user.MaKH, 5);
   assert.equal(result.user.MatKhau, undefined);
   assert.equal(result.user.ResetPasswordToken, undefined);
