@@ -55,3 +55,22 @@ test("buildFinanceSummaryQueryRange returns current date for toDate", () => {
   assert.equal(range.to, "2026-04-15", "To date must be current day of month");
   assert.equal(range.granularity, "day", "Granularity must be day");
 });
+
+test("SettlementPrint uses URL id for repair order semantics", () => {
+  const printFile = path.join(__dirname, "../../../pages/finance/SettlementPrint.jsx");
+  const content = fs.readFileSync(printFile, "utf-8");
+  assert.ok(content.includes('searchParams.get("id")'), "Must read id from URL");
+  assert.ok(content.includes('Number(rawId)'), "Must coerce id to Number");
+  assert.ok(content.includes('<SettlementInvoice id={id} />'), "Must pass id to Invoice");
+  assert.ok(content.includes('PageHeader'), "Must use shared PageHeader primitive");
+});
+
+test("SettlementInvoice complies with AGENTS.md rules", () => {
+  const invoiceFile = path.join(__dirname, "../components/SettlementInvoice.jsx");
+  const content = fs.readFileSync(invoiceFile, "utf-8");
+  assert.ok(content.includes('<form onSubmit={handleConfirm}'), "Must use form onSubmit");
+  assert.ok(content.includes('SoTienThu: Number(grandTotal)'), "Must coerce payload amounts to Number");
+  assert.ok(content.includes('toast.success'), "Must use toast instead of alert");
+  assert.ok(!content.includes('alert('), "Must not use alert");
+  assert.ok(!content.includes('var(--color-primary)'), "Must avoid ad-hoc css vars, use standard Tailwind");
+});
