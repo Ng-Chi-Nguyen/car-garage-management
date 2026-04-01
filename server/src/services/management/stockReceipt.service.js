@@ -16,6 +16,17 @@ const STOCK_RECEIPT_FILTER_FIELDS = {
 
 const WRITE_FIELDS = ["MaNCC", "NgayNhap"];
 
+const normalizeListItem = (stockReceipt) => ({
+  partId: Number(stockReceipt.MaVatTu ?? stockReceipt.partId ?? stockReceipt.MaPhieuNhap ?? 0),
+  partCode: stockReceipt.MaVatTu ?? stockReceipt.partCode ?? stockReceipt.MaPhieuNhap ?? null,
+  partName: stockReceipt.TenVatTu ?? stockReceipt.partName ?? stockReceipt.TenPhieuNhap ?? null,
+  unit: stockReceipt.DonViTinh ?? stockReceipt.unit ?? null,
+  stockQty: Number(stockReceipt.SoLuongTon ?? stockReceipt.stockQty ?? 0),
+  unitCost: Number(stockReceipt.DonGiaNhap ?? stockReceipt.unitCost ?? 0),
+  inventoryValue: Number(stockReceipt.ThanhTien ?? stockReceipt.TongTien ?? stockReceipt.inventoryValue ?? 0),
+  updatedAt: stockReceipt.updatedAt ?? stockReceipt.NgayNhap ?? null,
+});
+
 const getStockReceiptByIdInternal = async (db, id) => {
   const stockReceipt = await db.pHIEU_NHAP_KHO.findUnique({
     where: {
@@ -60,7 +71,7 @@ const stockReceiptService = {
     ]);
 
     return {
-      stockReceipts,
+      items: stockReceipts.map(normalizeListItem),
       pagination: {
         page: pagination.page,
         limit: pagination.limit,

@@ -59,6 +59,17 @@ const normalizeReceiptItem = (stockReceiptDetail, stockAfter) => ({
   inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
 });
 
+const normalizeListItem = (stockReceiptDetail) => ({
+  partId: Number(stockReceiptDetail.MaVatTu ?? stockReceiptDetail.partId ?? 0),
+  partCode: stockReceiptDetail.MaVatTu ?? stockReceiptDetail.partCode ?? null,
+  partName: stockReceiptDetail.TenVatTu ?? stockReceiptDetail.partName ?? null,
+  unit: stockReceiptDetail.DonViTinh ?? stockReceiptDetail.unit ?? null,
+  stockQty: Number(stockReceiptDetail.SoLuong ?? stockReceiptDetail.stockQty ?? 0),
+  unitCost: Number(stockReceiptDetail.DonGiaNhap ?? stockReceiptDetail.unitCost ?? 0),
+  inventoryValue: Number(stockReceiptDetail.ThanhTien ?? stockReceiptDetail.inventoryValue ?? 0),
+  updatedAt: stockReceiptDetail.updatedAt ?? stockReceiptDetail.NgayNhap ?? null,
+});
+
 const createStockReceiptDetailService = ({ db = prisma } = {}) => {
   const buildMutationResponse = async (tx, stockReceiptDetail) => {
     const part = await tx.vAT_TU.findUnique({
@@ -123,17 +134,17 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
       const [totalItems, stockReceiptDetails] = await db.$transaction([
         db.cT_PHIEU_NHAP.count({ where }),
         db.cT_PHIEU_NHAP.findMany({
-        where,
-        skip: pagination.skip,
-        take: pagination.limit,
-        orderBy: {
-          MaCTPN: "desc",
-        },
+          where,
+          skip: pagination.skip,
+          take: pagination.limit,
+          orderBy: {
+            MaCTPN: "desc",
+          },
         }),
       ]);
 
       return {
-        stockReceiptDetails,
+        items: stockReceiptDetails.map(normalizeListItem),
         pagination: {
           page: pagination.page,
           limit: pagination.limit,

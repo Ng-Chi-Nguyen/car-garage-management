@@ -71,7 +71,11 @@ const createDetailDb = (initialState) => {
   return {
     state,
     db: {
-      $transaction: async (callback, options) => callback(tx, options),
+      cT_PHIEU_NHAP: {
+        count: async () => state.details.length,
+        findMany: async ({ skip, take }) => cloneValue(state.details.slice(skip, skip + take)),
+      },
+      $transaction: async (callbackOrOperations) => (Array.isArray(callbackOrOperations) ? Promise.all(callbackOrOperations) : callbackOrOperations(tx)),
     },
   };
 };
@@ -161,4 +165,36 @@ test("stock receipt detail delete rejects stock decrement below zero", async () 
     () => stockReceiptDetailService.deleteStockReceiptDetail(1),
     /Số lượng tồn kho không đủ\./,
   );
+});
+
+test("stock receipt detail list returns Contract B items and pagination", async () => {
+  const createStockReceiptDetailService = await loadCreateDetailService();
+  const fixture = createDetailDb({
+    parts: [{ MaVatTu: 10, SoLuongTon: 12 }],
+    receipts: [{ MaPhieuNhap: 1, MaNCC: 1, NgayNhap: new Date("2026-03-30"), TongTien: 0 }],
+    details: [
+      { MaCTPN: 2, MaPhieuNhap: 1, MaVatTu: 10, SoLuong: 3, DonGiaNhap: 100000, ThanhTien: 300000 },
+      { MaCTPN: 1, MaPhieuNhap: 1, MaVatTu: 10, SoLuong: 2, DonGiaNhap: 90000, ThanhTien: 180000 },
+    ],
+  });
+
+  const service = createStockReceiptDetailService({ db: fixture.db });
+  const result = await service.getStockReceiptDetailList({ page: 1, limit: 10 });
+
+    assert.deepEqual(result.items[0], {
+      partId: 10,
+      partCode: 10,
+      partName: null,
+      unit: null,
+      stockQty: 3,
+      unitCost: 100000,
+      inventoryValue: 300000,
+      updatedAt: null,
+    });
+  assert.deepEqual(result.pagination, {
+    page: 1,
+    limit: 10,
+    totalItems: 2,
+    totalPages: 1,
+  });
 });
