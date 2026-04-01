@@ -25,7 +25,7 @@ export const inventoryApi = {
     
     // Also fetch transaction history if needed, for now just use the part data
     // /api/v1/stock-receipt-details?MaVatTu=id
-    const historyResponse = await axiosClient.get('/api/v1/stock-receipt-details', { params: { MaVatTu: id } }).catch(() => ({ data: { data: { stockReceiptDetails: [] } } }));
+    const historyResponse = await axiosClient.get('/api/v1/stock-receipt-details', { params: { MaVatTu: id } });
     
     return {
       id: part.MaVatTu,
