@@ -7,13 +7,6 @@ import financeReportSchema from "../../validator/report/financeReport.validator.
 import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
-const financeReportRateLimiter = createDashboardRateLimiter({
-  message: {
-    success: false,
-    message:
-      "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tài chính. Vui lòng thử lại sau.",
-  },
-});
 
 const createFinanceReportRoute = ({
   auth = authMiddleware,
@@ -32,19 +25,31 @@ const createFinanceReportRoute = ({
 
   router.get(
     "/summary",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tài chính. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getFinanceSummary.query, "query"),
-    financeReportRateLimiter,
     mergedController.getFinanceSummary,
   );
 
   router.get(
     "/debtors",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tài chính. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getFinanceDebtors.query, "query"),
-    financeReportRateLimiter,
     mergedController.getFinanceDebtors,
   );
 

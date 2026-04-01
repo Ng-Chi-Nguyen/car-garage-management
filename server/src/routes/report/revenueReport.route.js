@@ -7,13 +7,6 @@ import revenueReportSchema from "../../validator/report/revenueReport.validator.
 import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
-const revenueReportRateLimiter = createDashboardRateLimiter({
-  message: {
-    success: false,
-    message:
-      "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-  },
-});
 
 const createRevenueReportRoute = ({
   auth = authMiddleware,
@@ -32,46 +25,76 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/timeseries",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
-    revenueReportRateLimiter,
     mergedController.getRevenueTimeseries,
   );
 
   router.get(
     "/by-car-brand",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
-    revenueReportRateLimiter,
     mergedController.getRevenueByCarBrand,
   );
 
   router.get(
     "/by-part",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
-    revenueReportRateLimiter,
     mergedController.getRevenueByPart,
   );
 
   router.get(
     "/comparison",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
-    revenueReportRateLimiter,
     mergedController.getRevenueComparison,
   );
 
   router.get(
     "/composition",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
-    revenueReportRateLimiter,
     mergedController.getRevenueComposition,
   );
 
