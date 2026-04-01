@@ -45,7 +45,10 @@ test("ReceivablesForm uses URL for state truth", () => {
   assert.ok(content.includes('setSearchParams('), "Must update searchParams on vehicle select");
   assert.ok(!content.includes('const [selectedVehicle, setSelectedVehicle] = useState(null)'), "Should not use useState for selected vehicle");
   assert.ok(content.includes("ReceiptHistoryPanel"), "Must use ReceiptHistoryPanel component");
-  assert.ok(content.includes("prev.delete('vehicleId')"), "Must clear vehicleId on page/search change");
+  assert.ok(content.includes('prev.delete("vehicleId")'), "Must clear vehicleId on page/search change");
+  assert.ok(content.includes('type="date"'), "Must allow editable payment date input");
+  assert.ok(content.includes('NgayThu: paymentDate'), "Must send chosen payment date");
+  assert.ok(content.includes("In phiếu"), "Must expose print action after success");
 });
 
 test("buildFinanceSummaryQueryRange returns current date for toDate", () => {

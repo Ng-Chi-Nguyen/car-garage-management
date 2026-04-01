@@ -3,7 +3,7 @@ import axiosClient from '../../lib/axiosClient';
 export async function fetchReceivables(params = {}) {
   const response = await axiosClient.get("/api/v1/reports/finance/debtors", {
     params: {
-      page: params.page || 1,
+      page: Number(params.page) > 0 ? Number(params.page) : 1,
       limit: params.limit || params.pageSize || 20,
       search: params.q || "",
       groupBy: params.groupBy || "vehicle",

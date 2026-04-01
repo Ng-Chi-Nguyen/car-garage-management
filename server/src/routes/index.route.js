@@ -52,7 +52,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/customers`, customerRoute);
   app.use(`${apiPrefixV1}/car-brands`, carBrandRoute);
   app.use(`${apiPrefixV1}/vehicles`, vehicleRoute);
-  app.use(`${apiPrefixV1}/repair-orders`, repairOrderRoute);
+  app.use(`${apiPrefixV1}/repair-orders`, ...requireManagementAccess, repairOrderRoute);
   app.use(`${apiPrefixV1}/labor-fees`, laborFeeRoute);
   app.use(`${apiPrefixV1}/parts`, partRoute);
   app.use(`${apiPrefixV1}/repair-order-details`, repairOrderDetailRoute);
