@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { calculateReceivablesSummary } from "../finance.utils.js";
 import { StateShell } from "../../../components/ui/state-shell";
-import { useReceivablesQuery } from "../useFinanceQuery";
+import { useReceivablesQuery, useReceiptHistoryQuery } from "../useFinanceQuery";
 import { useCreateReceivableMutation } from "../useFinanceMutation";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
@@ -55,17 +55,72 @@ function FinancePanel({ icon, title, description, children, className = "" }) {
   );
 }
 
+function ReceiptHistoryPanel({ vehicleId }) {
+  const { data, isLoading, isError } = useReceiptHistoryQuery({ vehicleId, limit: 5 });
+  const history = data?.paymentReceipts || [];
+
+  if (!vehicleId) return null;
+
+  return (
+    <FinancePanel
+      icon="🕒"
+      title="Lịch sử thu tiền"
+      description="Các giao dịch thu tiền gần đây của xe này."
+      className="mt-6"
+    >
+      <StateShell isLoading={isLoading} isError={isError} isEmpty={history.length === 0}>
+        <div className="space-y-3">
+          {history.map((receipt) => (
+            <div key={receipt.MaPhieuThu} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Mã phiếu: #{receipt.MaPhieuThu}</p>
+                <p className="text-xs text-slate-500">
+                  {new Date(receipt.NgayThu).toLocaleDateString("vi-VN")}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold text-emerald-600">+{formatCurrency(receipt.SoTienThu)}</p>
+                {receipt.GhiChu && <p className="text-xs text-slate-500">{receipt.GhiChu}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </StateShell>
+    </FinancePanel>
+  );
+}
+
 export function ReceivablesForm() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const q = searchParams.get("q") || "";
+  const vehicleIdParam = searchParams.get("vehicleId");
 
   const { data, isLoading, isError, error } = useReceivablesQuery({ page, limit: 10, q, groupBy: "vehicle" });
   const receivableCustomers = useMemo(() => data?.items || [], [data?.items]);
 
   const createMutation = useCreateReceivableMutation();
 
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const selectedVehicle = useMemo(() => {
+    if (!vehicleIdParam) return null;
+    return receivableCustomers.find(v => v.vehicleId === Number(vehicleIdParam)) || null;
+  }, [vehicleIdParam, receivableCustomers]);
+
+  const handleSelectVehicle = (item) => {
+    setSearchParams(prev => {
+      if (!item) {
+        prev.delete("vehicleId");
+      } else {
+        if (prev.get("vehicleId") === String(item.vehicleId)) {
+          prev.delete("vehicleId");
+        } else {
+          prev.set("vehicleId", String(item.vehicleId));
+        }
+      }
+      return prev;
+    }, { replace: true });
+  };
+
   const [cashGiven, setCashGiven] = useState("");
   const [note, setNote] = useState("");
 
@@ -101,7 +156,7 @@ export function ReceivablesForm() {
     createMutation.mutate(payload, {
       onSuccess: () => {
         toast.success("Tạo phiếu thu thành công");
-        setSelectedVehicle(null);
+        handleSelectVehicle(null);
         setCashGiven("");
         setNote("");
       },
@@ -119,7 +174,7 @@ export function ReceivablesForm() {
       isEmpty={false}
     >
       <form id="receivables-form" onSubmit={handleSubmit} onReset={() => {
-        setSelectedVehicle(null);
+        handleSelectVehicle(null);
         setCashGiven("");
         setNote("");
       }} className="grid gap-6 px-6 py-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)] lg:px-8 lg:py-8">
@@ -221,6 +276,10 @@ export function ReceivablesForm() {
             </div>
           </FinancePanel>
 
+          {selectedVehicle && (
+            <ReceiptHistoryPanel vehicleId={selectedVehicle.vehicleId} />
+          )}
+
           <FinancePanel
             icon="👥"
             title="Danh sách xe còn nợ"
@@ -252,7 +311,7 @@ export function ReceivablesForm() {
               {receivableCustomers.map((item) => (
                 <article
                   key={item.vehicleId}
-                  onClick={() => setSelectedVehicle(item)}
+                  onClick={() => handleSelectVehicle(item)}
                   className={`flex flex-col gap-4 cursor-pointer rounded-[26px] border ${selectedVehicle?.vehicleId === item.vehicleId ? 'border-slate-900 bg-slate-100' : 'border-slate-200 bg-slate-50'} px-5 py-4 transition hover:border-slate-400 lg:flex-row lg:items-center lg:justify-between`}
                 >
                   <div className="flex items-center gap-4">
