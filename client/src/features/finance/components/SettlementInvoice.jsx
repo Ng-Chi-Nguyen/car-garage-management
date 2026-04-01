@@ -57,7 +57,7 @@ export function SettlementInvoice({ id }) {
             <h4 className="font-semibold text-slate-700 mb-2">
               Thông tin khách hàng
             </h4>
-            <p>Tên: {data.Xe?.KhachHang?.TenKH || "Không rõ"}</p>
+            <p>Tên: {data.Xe?.KhachHang?.TenKH || data.Xe?.TenChuXe || 'Không rõ'}</p>
             <p>SĐT: {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
             <p>Ngày in: {invoiceDate}</p>
           </div>
