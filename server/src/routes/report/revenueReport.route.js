@@ -31,11 +31,27 @@ const createRevenueReportRoute = ({
   );
 
   router.get(
+    "/timeseries/export",
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
+    validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
+    mergedController.exportRevenueTimeseries,
+  );
+
+  router.get(
     "/by-car-brand",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
     mergedController.getRevenueByCarBrand,
+  );
+
+  router.get(
+    "/by-car-brand/export",
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
+    validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
+    mergedController.exportRevenueByCarBrand,
   );
 
   router.get(
@@ -47,6 +63,14 @@ const createRevenueReportRoute = ({
   );
 
   router.get(
+    "/by-part/export",
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
+    validateRequest(mergedSchema.getRevenueByPart.query, "query"),
+    mergedController.exportRevenueByPart,
+  );
+
+  router.get(
     "/comparison",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
@@ -55,11 +79,27 @@ const createRevenueReportRoute = ({
   );
 
   router.get(
+    "/comparison/export",
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
+    validateRequest(mergedSchema.getRevenueComparison.query, "query"),
+    mergedController.exportRevenueComparison,
+  );
+
+  router.get(
     "/composition",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
     mergedController.getRevenueComposition,
+  );
+
+  router.get(
+    "/composition/export",
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
+    validateRequest(mergedSchema.getRevenueComposition.query, "query"),
+    mergedController.exportRevenueComposition,
   );
 
   return router;
