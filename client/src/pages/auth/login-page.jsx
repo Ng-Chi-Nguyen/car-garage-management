@@ -123,7 +123,7 @@ export default function LoginPage() {
                 className="text-sm font-semibold text-gray-500 block"
                 htmlFor="username"
               >
-                Email hoặc Tên đăng nhập
+                Email
               </label>
               <div className="relative group">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0040a1] transition-colors">
@@ -133,7 +133,7 @@ export default function LoginPage() {
                   className="w-full pl-12 pr-4 py-4 bg-[#f2f4f6] border-0 rounded-xl text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#0040a1]/20 focus:bg-white transition-all outline-none"
                   id="username"
                   placeholder="nguyen.van@precision.vn"
-                  type="text"
+                  type="email"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={loading}
@@ -151,12 +151,12 @@ export default function LoginPage() {
                 >
                   Mật khẩu
                 </label>
-                <a
+                <Link
                   className="text-xs font-bold text-[#0040a1] hover:underline"
-                  href="#"
+                  to="/forgot-password"
                 >
                   Quên mật khẩu?
-                </a>
+                </Link>
               </div>
               <div className="relative group">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0040a1] transition-colors">
@@ -216,7 +216,7 @@ export default function LoginPage() {
               Bạn gặp sự cố kỹ thuật?
               <a
                 className="font-bold text-[#0040a1] hover:underline ml-1"
-                href="#"
+                href="mailto:support@precision.vn"
               >
                 Liên hệ hỗ trợ
               </a>

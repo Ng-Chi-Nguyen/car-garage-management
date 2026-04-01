@@ -1,9 +1,8 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { authStorage } from '../../features/auth/auth.storage';
 
 export function Sidebar() {
-  const navigate = useNavigate();
   const navItems = [
     { name: 'Tổng quan', path: '/dashboard', icon: 'dashboard' },
     { name: 'Trạng thái xưởng', path: '/workshop', icon: 'build' },

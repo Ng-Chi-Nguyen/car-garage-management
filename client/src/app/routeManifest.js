@@ -14,6 +14,20 @@ export const routeManifest = [
     group: 'auth'
   },
   {
+    exportKey: null,
+    path: '/forgot-password',
+    layout: 'auth',
+    componentPath: 'src/pages/auth/forgot-password-page.jsx',
+    group: 'auth'
+  },
+  {
+    exportKey: null,
+    path: '/reset-password',
+    layout: 'auth',
+    componentPath: 'src/pages/auth/reset-password-page.jsx',
+    group: 'auth'
+  },
+  {
     exportKey: 'dashboard_t_ng_quan_gms',
     path: '/dashboard',
     layout: 'app',
