@@ -128,7 +128,7 @@ const syncStockReceiptTotal = async (tx, maPhieuNhap) => {
   });
 };
 
-// Đồng bộ tiền nợ hiện tại của xe từ tổng phiếu sửa chữa và tổng phiếu thu tiền.
+// Đồng bộ tiền nợ hiện tại của xe từ tổng phiếu sửa chữa và các phiếu thu đã xác nhận.
 const syncVehicleDebt = async (tx, maXe) => {
   const [phieuSuaChuaAggregate, phieuThuTienAggregate] = await Promise.all([
     tx.pHIEU_SUA_CHUA.aggregate({
@@ -143,6 +143,7 @@ const syncVehicleDebt = async (tx, maXe) => {
     tx.pHIEU_THU_TIEN.aggregate({
       where: {
         MaXe: Number(maXe),
+        TrangThai: "DaThu",
       },
       // Yêu cầu tổng trường SoTienThu.
       _sum: {

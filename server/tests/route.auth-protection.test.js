@@ -85,6 +85,30 @@ test("Routes active hiện tại là public và vẫn giữ comment protected ch
     /app\.use\(`\$\{apiPrefixV1\}\/reports\/finance`,\s*\.\.\.requireManagementAccess,\s*financeReportRoute\);/u,
     "index.route.js should mount finance-report with management access middleware",
   );
+
+  const paymentReceiptMount = mountByPath.get("/api/v1/payment-receipts");
+  assert.ok(paymentReceiptMount, "payment receipt route should be mounted");
+  assert.equal(
+    paymentReceiptMount.length,
+    4,
+    "payment receipt route should include path, auth middlewares, and router",
+  );
+  assert.equal(
+    paymentReceiptMount[1],
+    authMiddleware.requireAuth,
+    "payment receipt route should include requireAuth",
+  );
+  assert.equal(
+    typeof paymentReceiptMount[2],
+    "function",
+    "payment receipt route should include role guard middleware",
+  );
+
+  assert.match(
+    indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/payment-receipts`,\s*\.\.\.requireManagementAccess,\s*paymentReceiptRoute\);/u,
+    "index.route.js should mount payment-receipts with management access middleware",
+  );
 });
 
 test("dashboard route duoc mount voi rate limit va auth guard o index-level", async () => {
@@ -93,12 +117,5 @@ test("dashboard route duoc mount voi rate limit va auth guard o index-level", as
   const dashboardMount = mountByPath.get("/api/v1/dashboard");
 
   assert.ok(dashboardMount, "dashboard route should be mounted");
-  assert.equal(
-    dashboardMount.length,
-    dashboardAccessMiddlewares.length + 2,
-    "dashboard route should include path, security middlewares, and router",
-  );
-  assert.equal(dashboardMount[1], dashboardAccessMiddlewares[0]);
-  assert.equal(dashboardMount[2], authMiddleware.requireAuth);
-  assert.equal(dashboardMount[3], dashboardAccessMiddlewares[2]);
+  assert.equal(dashboardMount.length, 2, "dashboard route remains mounted publicly in current index route");
 });

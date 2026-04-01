@@ -70,7 +70,15 @@ test("SettlementInvoice complies with AGENTS.md rules", () => {
   const content = fs.readFileSync(invoiceFile, "utf-8");
   assert.ok(content.includes('<form onSubmit={handleConfirm}'), "Must use form onSubmit");
   assert.ok(content.includes('SoTienThu: Number(grandTotal)'), "Must coerce payload amounts to Number");
+  assert.ok(content.includes('PhuongThucThu: "TienMat"'), "Must set payment method from settlement");
+  assert.ok(content.includes('TrangThai: "DaThu"'), "Must set paid status from settlement");
+  assert.ok(content.includes('TenChuXe'), "Must use TenChuXe contract field");
   assert.ok(content.includes('toast.success'), "Must use toast instead of alert");
   assert.ok(!content.includes('alert('), "Must not use alert");
   assert.ok(!content.includes('var(--color-primary)'), "Must avoid ad-hoc css vars, use standard Tailwind");
+});
+
+test("ReceiptHistorySection is not part of the finance component surface anymore", () => {
+  const historyFile = path.join(__dirname, "../components/ReceiptHistorySection.jsx");
+  assert.ok(!fs.existsSync(historyFile), "ReceiptHistorySection should be removed if unused");
 });
