@@ -1,7 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../features/auth/auth.api";
+import { authStorage } from "../../features/auth/auth.storage";
 
 export default function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const data = await login({ username, password });
+      if (data.token) {
+        authStorage.setToken(data.token);
+      }
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="grid grid-cols-12 grid-rows-1 lg:grid-rows-1 h-screen gap-6 p-6 bg-[#f7f9fb] overflow-hidden relative">
       {/* Left Column: Branding & Visuals (Bento Style) */}
@@ -84,7 +110,12 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-xl">
+                {error}
+              </div>
+            )}
             {/* Input Email/Username */}
             <div className="space-y-2">
               <label
@@ -102,6 +133,10 @@ export default function LoginPage() {
                   id="username"
                   placeholder="nguyen.van@precision.vn"
                   type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={loading}
+                  required
                 />
               </div>
             </div>
@@ -131,6 +166,10 @@ export default function LoginPage() {
                   id="password"
                   placeholder="••••••••"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
                 />
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
@@ -159,13 +198,16 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <Link
-              to="/dashboard"
-              className="w-full py-4 bg-gradient-to-br from-[#0040a1] to-[#0056d2] text-white font-bold rounded-xl shadow-lg shadow-[#0040a1]/20 hover:shadow-xl hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-4 bg-gradient-to-br from-[#0040a1] to-[#0056d2] text-white font-bold rounded-xl shadow-lg shadow-[#0040a1]/20 transition-all flex items-center justify-center gap-2 ${
+                loading ? "opacity-70 cursor-not-allowed" : "hover:shadow-xl hover:scale-[1.01]"
+              }`}
             >
-              <span>Đăng nhập hệ thống</span>
-              <span className="material-symbols-outlined">login</span>
-            </Link>
+              <span>{loading ? "Đang xử lý..." : "Đăng nhập hệ thống"}</span>
+              {!loading && <span className="material-symbols-outlined">login</span>}
+            </button>
           </form>
 
           <div className="mt-12 pt-8 border-t border-gray-200 text-center">
