@@ -4,7 +4,10 @@ export async function login(credentials) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(credentials),
+    body: JSON.stringify({
+      Email: credentials.username,
+      MatKhau: credentials.password
+    }),
   });
 
   const data = await response.json();
