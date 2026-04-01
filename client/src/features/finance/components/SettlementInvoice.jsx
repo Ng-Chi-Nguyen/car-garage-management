@@ -20,7 +20,9 @@ export function SettlementInvoice({ id }) {
   const totalParts = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaVatTu)), 0) || 0;
   const totalLabor = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaTienCong)), 0) || 0;
   const grandTotal = Number(data.TongTien) || (totalParts + totalLabor);
-  const remainingDebt = Number(data.NoConLai ?? data.CongNoConLai ?? data.SoTienConLai ?? grandTotal) || grandTotal;
+  const remainingDebtCandidates = [data.NoConLai, data.CongNoConLai, data.SoTienConLai];
+  const firstDefinedDebt = remainingDebtCandidates.find(v => v !== null && v !== undefined);
+  const remainingDebt = firstDefinedDebt !== undefined ? Number(firstDefinedDebt) : grandTotal;
   const settlementAmount = Math.min(grandTotal, Math.max(remainingDebt, 0));
   const isOverCollect = settlementAmount < grandTotal;
   const invoiceDate = data.NgaySC ? new Date(data.NgaySC).toLocaleDateString("vi-VN") : new Date().toLocaleDateString("vi-VN");
