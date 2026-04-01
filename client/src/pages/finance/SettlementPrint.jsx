@@ -1,7 +1,11 @@
 import React from "react";
 import { SettlementInvoice } from "../../features/finance/components/SettlementInvoice";
+import { useSearchParams } from "react-router-dom";
 
 export default function SettlementPrint() {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -16,6 +20,7 @@ export default function SettlementPrint() {
           <button
             type="button"
             className="flex items-center gap-2 px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50"
+            onClick={() => window.print()}
           >
             <span className="material-symbols-outlined text-sm">print</span>
             In PDF
@@ -24,7 +29,13 @@ export default function SettlementPrint() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <SettlementInvoice id="1" />
+        {id ? (
+          <SettlementInvoice id={id} />
+        ) : (
+          <div className="text-center text-slate-500 py-8">
+            Vui lòng chọn một phiếu sửa chữa để in
+          </div>
+        )}
       </form>
     </div>
   );

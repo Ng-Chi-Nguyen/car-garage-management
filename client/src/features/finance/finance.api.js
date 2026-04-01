@@ -44,6 +44,6 @@ export async function fetchReceiptHistory(params = {}) {
 }
 
 export async function fetchSettlement(id) {
-  const response = await axiosClient.get(`/api/v1/payment-receipts/${id}`);
+  const response = await axiosClient.get(`/api/v1/repair-orders/${id}`);
   return response.data?.data || response.data;
 }
