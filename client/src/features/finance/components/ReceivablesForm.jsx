@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { buildFinanceSummaryQueryRange } from "../finance.utils.js";
@@ -95,6 +95,13 @@ export function ReceivablesForm() {
   const page = Number(searchParams.get("page")) || 1;
   const q = searchParams.get("q") || "";
   const vehicleIdParam = searchParams.get("vehicleId");
+
+  const [localQ, setLocalQ] = useState(q);
+
+  // Sync local input with URL search param
+  useEffect(() => {
+    setLocalQ(q);
+  }, [q]);
 
   const { data, isLoading, isError, error } = useReceivablesQuery({ page, limit: 10, q, groupBy: "vehicle" });
   const receivableCustomers = useMemo(() => data?.items || [], [data?.items]);
@@ -298,12 +305,13 @@ export function ReceivablesForm() {
               <input
                 type="text"
                 placeholder="Tìm biển số, khách hàng... (Enter để tìm)"
-                defaultValue={q}
+                value={localQ}
+                onChange={(e) => setLocalQ(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     setSearchParams(prev => {
-                      if (e.target.value) prev.set('q', e.target.value);
+                      if (localQ) prev.set('q', localQ);
                       else prev.delete('q');
                       prev.set('page', '1');
                       return prev;
@@ -386,7 +394,7 @@ export function ReceivablesForm() {
                   {formatCurrency(totalReceivable)}
                 </p>
                 <p className="mt-2 text-sm text-slate-400">
-                  Cập nhật theo danh sách xe còn nợ trong ngày.
+                  Cập nhật tổng nợ của tất cả khách hàng đến hiện tại.
                 </p>
               </div>
             </div>
