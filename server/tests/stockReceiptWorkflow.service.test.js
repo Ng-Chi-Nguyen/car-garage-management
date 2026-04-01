@@ -1,7 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createStockReceiptWorkflowService } from "../src/services/workflows/stockReceiptWorkflow.service.js";
+const ensureTestDatabaseUrl = () => {
+  process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
+};
+
+const loadCreateWorkflowService = async () => {
+  ensureTestDatabaseUrl();
+  const module = await import("../src/services/workflows/stockReceiptWorkflow.service.js");
+  return module.createStockReceiptWorkflowService;
+};
 
 const cloneValue = (value) => structuredClone(value);
 
@@ -19,6 +27,11 @@ const createWorkflowDb = (initialState) => {
       findMany: async ({ where, select }) => {
         const ids = (where?.MaVatTu?.in ?? []).map(Number);
         return state.parts.filter((item) => ids.includes(Number(item.MaVatTu))).map((item) => select ? Object.fromEntries(Object.keys(select).filter((key) => select[key]).map((key) => [key, cloneValue(item[key])])) : cloneValue(item));
+      },
+      findUnique: async ({ where, select }) => {
+        const record = state.parts.find((item) => item.MaVatTu === Number(where.MaVatTu));
+        if (!record) return null;
+        return select ? Object.fromEntries(Object.keys(select).filter((key) => select[key]).map((key) => [key, cloneValue(record[key])])) : cloneValue(record);
       },
       updateMany: async ({ where, data }) => {
         const part = state.parts.find((item) => item.MaVatTu === Number(where.MaVatTu));
@@ -62,7 +75,8 @@ const createWorkflowDb = (initialState) => {
   };
 };
 
-test("stock receipt workflow returns valuation in mutation response", async () => {
+test("stock receipt workflow returns Contract A shape with item stock after and totals", async () => {
+  const createStockReceiptWorkflowService = await loadCreateWorkflowService();
   const fixture = createWorkflowDb({
     suppliers: [{ MaNCC: 1 }],
     parts: [{ MaVatTu: 10, SoLuongTon: 5 }],
@@ -76,5 +90,11 @@ test("stock receipt workflow returns valuation in mutation response", async () =
     details: [{ MaVatTu: 10, SoLuong: 2, DonGiaNhap: 100000 }],
   });
 
-  assert.ok(Object.hasOwn(result, "inventoryValueAfter"));
+  assert.deepEqual(Object.keys(result).sort(), ["items", "receipt", "totals"]);
+  assert.equal(result.receipt.MaPhieuNhap, 1);
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].stockAfter, 7);
+  assert.equal(result.items[0].inventoryValueAfter, 200000);
+  assert.equal(result.totals.totalQuantity, 2);
+  assert.equal(result.totals.inventoryValueAfter, 200000);
 });
