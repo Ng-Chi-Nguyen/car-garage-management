@@ -3,9 +3,17 @@ import { Sidebar } from '../components/layout/sidebar';
 import { Topbar } from '../components/layout/topbar';
 import { Outlet, Navigate } from 'react-router-dom';
 import { authStorage } from '../features/auth/auth.storage';
+import { parseAccessTokenRole } from '../features/auth/auth.session';
+
+const ALLOWED_ROLES = ['Admin', 'NhanVien'];
 
 export function AppShell({ children }) {
-  if (!authStorage.getToken()) {
+  const token = authStorage.getToken();
+  const role = parseAccessTokenRole(token);
+  const isAllowed = token && role && ALLOWED_ROLES.includes(role);
+
+  if (!isAllowed) {
+    authStorage.clearToken();
     return <Navigate to="/login" replace />;
   }
 
