@@ -7,11 +7,7 @@ export const getWorkshopRouteTarget = (action, context = {}) => {
     case "view_repair_orders":
       return "/repair-orders?page=1";
     case "view_vehicle":
-      // "fallback when row lacks target id/data -> /repair-orders?page=1"
-      if (!context || !context.id) {
-        return "/repair-orders?page=1";
-      }
-      return "/vehicles"; // Spec says view_vehicle -> /vehicles literally. Wait, maybe `/vehicles/${context.id}`? Spec just says: "row action view_vehicle -> /vehicles"
+      return "/repair-orders?page=1";
     default:
       return "/repair-orders?page=1";
   }
