@@ -1,7 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { authStorage } from '../../features/auth/auth.storage';
 
 export function Sidebar() {
+  const navigate = useNavigate();
   const navItems = [
     { name: 'Tổng quan', path: '/dashboard', icon: 'dashboard' },
     { name: 'Trạng thái xưởng', path: '/workshop', icon: 'build' },
@@ -12,6 +14,12 @@ export function Sidebar() {
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
     { name: 'Cài đặt', path: '/settings', icon: 'settings' },
   ];
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    authStorage.clearToken();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="w-64 bg-slate-900 text-white flex flex-col h-screen fixed top-0 left-0">
@@ -38,13 +46,14 @@ export function Sidebar() {
         ))}
       </nav>
       <div className="p-4 border-t border-slate-800">
-        <NavLink
-          to="/login"
-          className="flex items-center gap-3 px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white rounded-md transition-colors"
+        <a
+          href="/login"
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white rounded-md transition-colors cursor-pointer"
         >
           <span className="material-symbols-outlined text-xl">logout</span>
           <span className="font-medium text-sm">Đăng xuất</span>
-        </NavLink>
+        </a>
       </div>
     </div>
   );
