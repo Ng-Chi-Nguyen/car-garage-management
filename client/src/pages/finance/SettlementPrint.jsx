@@ -4,11 +4,8 @@ import { useSearchParams } from "react-router-dom";
 
 export default function SettlementPrint() {
   const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  const rawId = searchParams.get("id");
+  const id = rawId ? Number(rawId) : null;
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto w-full">
@@ -28,15 +25,13 @@ export default function SettlementPrint() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        {id ? (
-          <SettlementInvoice id={id} />
-        ) : (
-          <div className="text-center text-slate-500 py-8">
-            Vui lòng chọn một phiếu sửa chữa để in
-          </div>
-        )}
-      </form>
+      {id && !isNaN(id) ? (
+        <SettlementInvoice id={id} />
+      ) : (
+        <div className="text-center text-slate-500 py-8">
+          Vui lòng chọn một phiếu sửa chữa hợp lệ để in
+        </div>
+      )}
     </div>
   );
 }

@@ -22,11 +22,13 @@ export function SettlementInvoice({ id }) {
   const grandTotal = Number(data.TongTien) || (totalParts + totalLabor);
   const invoiceDate = data.NgaySC ? new Date(data.NgaySC).toLocaleDateString("vi-VN") : new Date().toLocaleDateString("vi-VN");
 
-  const handleConfirm = () => {
+  const handleConfirm = (e) => {
+    e.preventDefault();
     createPayment.mutate(
       {
-        MaXe: data.MaXe,
-        SoTienThu: grandTotal,
+        MaXe: Number(data.MaXe),
+        NgayThu: new Date().toISOString(),
+        SoTienThu: Number(grandTotal),
       },
       {
         onSuccess: () => {
@@ -42,7 +44,7 @@ export function SettlementInvoice({ id }) {
 
   return (
     <StateShell isLoading={isLoading} isError={isError} error={error}>
-      <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+      <form onSubmit={handleConfirm} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 block">
         <div className="text-center mb-8 border-b pb-6">
           <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">
             Hóa Đơn Sửa Chữa
@@ -136,15 +138,14 @@ export function SettlementInvoice({ id }) {
 
         <div className="flex justify-end">
           <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={createPayment.isLoading}
+            type="submit"
+            disabled={createPayment.isPending}
             className="px-8 py-3 rounded-xl bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] font-bold hover:opacity-90 disabled:opacity-50"
           >
-            {createPayment.isLoading ? "Đang xử lý..." : "Xác nhận thanh toán"}
+            {createPayment.isPending ? "Đang xử lý..." : "Xác nhận thanh toán"}
           </button>
         </div>
-      </section>
+      </form>
     </StateShell>
   );
 }
