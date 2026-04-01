@@ -1,35 +1,30 @@
-const mockReceivables = [
-  {
-    plate: "51G-123.45",
-    customer: "Nguyễn Văn An",
-    tier: "Hạng Vàng",
-    debt: 12500000,
-    updatedAt: "Hôm nay",
-  },
-  {
-    plate: "60A-987.12",
-    customer: "Trần Thị Bích",
-    tier: "Hạng Bạc",
-    debt: 3200000,
-    updatedAt: "2 ngày trước",
-  },
-  {
-    plate: "51K-555.21",
-    customer: "Garage Auto-X",
-    tier: "Đối tác",
-    debt: 45000000,
-    updatedAt: "15 ngày trước",
-  },
-];
+import axiosClient from '../../lib/axiosClient';
 
-export async function fetchReceivables() {
-  return [...mockReceivables];
+export async function fetchReceivables(params = {}) {
+  const response = await axiosClient.get("/api/v1/reports/finance/debtors", {
+    params: {
+      page: params.page || 1,
+      limit: params.pageSize || 20,
+      search: params.q || "",
+      groupBy: params.groupBy || "vehicle",
+    },
+  });
+  return response.data?.data || response.data;
+}
+
+export async function fetchFinanceSummary(params = {}) {
+  const response = await axiosClient.get("/api/v1/reports/finance/summary", {
+    params,
+  });
+  return response.data?.data || response.data;
 }
 
 export async function createReceivable(data) {
-  return { id: "REC-" + Date.now(), ...data };
+  const response = await axiosClient.post("/api/v1/management/payment-receipts", data);
+  return response.data?.data || response.data;
 }
 
 export async function fetchSettlement(id) {
-  return { id, status: "completed" };
+  const response = await axiosClient.get(`/api/v1/management/payment-receipts/${id}`);
+  return response.data?.data || response.data;
 }
