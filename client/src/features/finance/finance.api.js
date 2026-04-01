@@ -34,7 +34,7 @@ export async function fetchReceiptHistory(params = {}) {
   
   // Strip out undefined values
   const cleanParams = Object.fromEntries(
-    Object.entries(allowedParams).filter(([_, v]) => v !== undefined)
+    Object.entries(allowedParams).filter(([, v]) => v !== undefined)
   );
 
   const response = await axiosClient.get("/api/v1/payment-receipts", {
