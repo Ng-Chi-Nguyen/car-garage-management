@@ -18,3 +18,45 @@ export async function login(credentials) {
 
   return data;
 }
+
+export async function forgotPassword(email) {
+  const response = await fetch("/api/v1/auth/forgot-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      Email: email,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Gửi yêu cầu thất bại");
+  }
+
+  return data;
+}
+
+export async function resetPassword({ token, newPassword, confirmPassword }) {
+  const response = await fetch("/api/v1/auth/reset-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      Token: token,
+      MatKhauMoi: newPassword,
+      XacNhanMatKhauMoi: confirmPassword,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Đặt lại mật khẩu thất bại");
+  }
+
+  return data;
+}
