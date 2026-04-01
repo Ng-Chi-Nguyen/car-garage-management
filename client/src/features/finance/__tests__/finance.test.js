@@ -13,6 +13,20 @@ test("Finance feature defines keys and mutations correctly", () => {
   
   assert.ok(content.includes("FINANCE_KEYS"), "Must use FINANCE_KEYS for invalidation");
   assert.ok(content.includes("queryClient.invalidateQueries"), "Must call invalidateQueries");
+  assert.ok(content.includes("FINANCE_KEYS.history()"), "Must invalidate history key");
+});
+
+test("Finance query keys include history correctly", async () => {
+  const keysFile = path.join(__dirname, "../finance.queryKeys.js");
+  const content = fs.readFileSync(keysFile, "utf-8");
+  assert.ok(content.includes("history: (filters) =>"), "Must have history key helper");
+});
+
+test("Finance api includes hardened fetchReceiptHistory", async () => {
+  const apiFile = path.join(__dirname, "../finance.api.js");
+  const content = fs.readFileSync(apiFile, "utf-8");
+  assert.ok(content.includes("fetchReceiptHistory"), "Must export fetchReceiptHistory");
+  assert.ok(content.includes("allowedParams"), "Must harden params by whitelisting");
 });
 
 test("Finance components exist", () => {
@@ -21,4 +35,13 @@ test("Finance components exist", () => {
 
   const invoiceFile = path.join(__dirname, "../components/SettlementInvoice.jsx");
   assert.ok(fs.existsSync(invoiceFile), "SettlementInvoice should exist");
+});
+
+test("ReceivablesForm uses URL for state truth", () => {
+  const formFile = path.join(__dirname, "../components/ReceivablesForm.jsx");
+  const content = fs.readFileSync(formFile, "utf-8");
+  assert.ok(content.includes('searchParams.get("vehicleId")'), "Must read vehicleId from URL");
+  assert.ok(content.includes('setSearchParams('), "Must update searchParams on vehicle select");
+  assert.ok(!content.includes('const [selectedVehicle, setSelectedVehicle] = useState(null)'), "Should not use useState for selected vehicle");
+  assert.ok(content.includes("ReceiptHistoryPanel"), "Must use ReceiptHistoryPanel component");
 });

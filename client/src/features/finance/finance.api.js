@@ -24,6 +24,25 @@ export async function createReceivable(data) {
   return response.data?.data || response.data;
 }
 
+export async function fetchReceiptHistory(params = {}) {
+  // Harden params: whitelist allowed query params and prevent accidental override/unknown keys.
+  const allowedParams = {
+    MaXe: params.vehicleId ? Number(params.vehicleId) : undefined,
+    page: params.page ? Number(params.page) : 1,
+    limit: params.limit ? Number(params.limit) : 10,
+  };
+  
+  // Strip out undefined values
+  const cleanParams = Object.fromEntries(
+    Object.entries(allowedParams).filter(([_, v]) => v !== undefined)
+  );
+
+  const response = await axiosClient.get("/api/v1/payment-receipts", {
+    params: cleanParams,
+  });
+  return response.data?.data || response.data;
+}
+
 export async function fetchSettlement(id) {
   const response = await axiosClient.get(`/api/v1/payment-receipts/${id}`);
   return response.data?.data || response.data;
