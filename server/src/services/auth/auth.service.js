@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
 
-import prisma from "../../db/prisma.js";
 import { buildServiceError } from "../../shared/crud/crud.helpers.js";
 import { signAccessToken } from "../../utils/auth/jwt.util.js";
 import { sendResetPasswordEmail, sendWelcomeEmail } from "../../utils/auth/mail.util.js";
@@ -52,8 +51,10 @@ const ensureActiveCustomer = (customer, message = "Tài khoản hiện không th
   }
 };
 
+const allowedDemoRoles = ["Admin", "NhanVien"];
+
 const createAuthService = ({
-  customerDelegate = prisma.kHACH_HANG,
+  customerDelegate,
   hashPassword: hashPasswordFn = hashPassword,
   comparePassword: comparePasswordFn = comparePassword,
   signAccessToken: signAccessTokenFn = signAccessToken,
@@ -66,9 +67,20 @@ const createAuthService = ({
   reportMailFailure = console.error,
   now = () => new Date(),
 } = {}) => {
+  const resolveCustomerDelegate = async () => {
+    if (customerDelegate) {
+      return customerDelegate;
+    }
+
+    const { default: prisma } = await import("../../db/prisma.js");
+
+    return prisma.kHACH_HANG;
+  };
+
   const register = async ({ Email, MatKhau, TenChuXe, DienThoai, DiaChi }) => {
+    const customerDb = await resolveCustomerDelegate();
     const normalizedEmail = normalizeEmail(Email);
-    const existingCustomer = await customerDelegate.findUnique({
+    const existingCustomer = await customerDb.findUnique({
       where: { Email: normalizedEmail },
     });
 
@@ -76,7 +88,7 @@ const createAuthService = ({
       throw buildServiceError(409, "Email đã tồn tại.");
     }
 
-    const existingCustomerByPhone = await customerDelegate.findUnique({
+    const existingCustomerByPhone = await customerDb.findUnique({
       where: { DienThoai },
     });
 
@@ -84,7 +96,7 @@ const createAuthService = ({
       throw buildServiceError(409, "Số điện thoại đã tồn tại.");
     }
 
-    const createdCustomer = await customerDelegate.create({
+    const createdCustomer = await customerDb.create({
       data: {
         Email: normalizedEmail,
         MatKhau: await hashPasswordFn(MatKhau),
@@ -111,7 +123,8 @@ const createAuthService = ({
   };
 
   const login = async ({ Email, MatKhau }) => {
-    const customer = await customerDelegate.findUnique({
+    const customerDb = await resolveCustomerDelegate();
+    const customer = await customerDb.findUnique({
       where: { Email: normalizeEmail(Email) },
     });
 
@@ -128,6 +141,10 @@ const createAuthService = ({
       throw buildServiceError(400, "Email hoặc mật khẩu không đúng.");
     }
 
+    if (!allowedDemoRoles.includes(customer.ChucVu)) {
+      throw buildServiceError(403, "Tài khoản không có quyền truy cập hệ thống nội bộ");
+    }
+
     return {
       accessToken: signAccessTokenFn({ MaKH: customer.MaKH, ChucVu: customer.ChucVu }),
       user: sanitizeCustomer(customer),
@@ -135,7 +152,8 @@ const createAuthService = ({
   };
 
   const forgotPassword = async ({ Email }) => {
-    const customer = await customerDelegate.findUnique({
+    const customerDb = await resolveCustomerDelegate();
+    const customer = await customerDb.findUnique({
       where: { Email: normalizeEmail(Email) },
     });
 
@@ -143,7 +161,7 @@ const createAuthService = ({
       const resolvedResetPasswordUrl = resetPasswordUrl ?? getResetPasswordUrlFn();
       const { rawToken, hashedToken, expiresAt } = createResetToken();
 
-      await customerDelegate.update({
+      await customerDb.update({
         where: { MaKH: customer.MaKH },
         data: {
           TokenDatLaiMatKhau: hashedToken,
@@ -165,7 +183,8 @@ const createAuthService = ({
   };
 
   const resetPassword = async ({ Token, MatKhauMoi }) => {
-    const customer = await customerDelegate.findFirst({
+    const customerDb = await resolveCustomerDelegate();
+    const customer = await customerDb.findFirst({
       where: {
         TokenDatLaiMatKhau: hashResetToken(Token),
         TokenDatLaiMatKhauDaDungLuc: null,
@@ -187,7 +206,7 @@ const createAuthService = ({
 
     const newHashedPassword = await hashPasswordFn(MatKhauMoi);
 
-    await customerDelegate.update({
+    await customerDb.update({
       where: { MaKH: customer.MaKH },
       data: {
         MatKhau: newHashedPassword,
@@ -203,7 +222,8 @@ const createAuthService = ({
   };
 
   const changePassword = async (customerId, { MatKhauHienTai, MatKhauMoi }) => {
-    const customer = await customerDelegate.findUnique({
+    const customerDb = await resolveCustomerDelegate();
+    const customer = await customerDb.findUnique({
       where: { MaKH: Number(customerId) },
     });
 
@@ -228,7 +248,7 @@ const createAuthService = ({
 
     const newHashedPassword = await hashPasswordFn(MatKhauMoi);
 
-    await customerDelegate.update({
+    await customerDb.update({
       where: { MaKH: customer.MaKH },
       data: {
         MatKhau: newHashedPassword,
@@ -252,7 +272,5 @@ const createAuthService = ({
   };
 };
 
-const authService = createAuthService();
-
 export { createAuthService };
-export default authService;
+export default createAuthService();
