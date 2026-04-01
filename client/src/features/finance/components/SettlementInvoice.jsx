@@ -129,7 +129,7 @@ export function SettlementInvoice({ id }) {
               <span>Tổng tiền công:</span>
               <span>{totalLabor.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between text-lg font-bold text-[color:var(--color-primary)] pt-2 border-t">
+            <div className="flex justify-between text-lg font-bold text-slate-900 pt-2 border-t">
               <span>Tổng cộng:</span>
               <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
@@ -140,7 +140,7 @@ export function SettlementInvoice({ id }) {
           <button
             type="submit"
             disabled={createPayment.isPending}
-            className="px-8 py-3 rounded-xl bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] font-bold hover:opacity-90 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-2xl bg-slate-950 px-8 py-3 font-semibold text-white shadow-lg shadow-slate-950/15 transition hover:bg-slate-800 disabled:opacity-50"
           >
             {createPayment.isPending ? "Đang xử lý..." : "Xác nhận thanh toán"}
           </button>
