@@ -25,9 +25,21 @@ const createFinanceReportRoute = ({
   );
 
   router.get(
+    "/summary/export",
+    validateRequest(mergedSchema.getFinanceSummary.query, "query"),
+    mergedController.exportFinanceSummary,
+  );
+
+  router.get(
     "/debtors",
     validateRequest(mergedSchema.getFinanceDebtors.query, "query"),
     mergedController.getFinanceDebtors,
+  );
+
+  router.get(
+    "/debtors/export",
+    validateRequest(mergedSchema.getFinanceDebtors.query, "query"),
+    mergedController.exportFinanceDebtors,
   );
 
   return router;
