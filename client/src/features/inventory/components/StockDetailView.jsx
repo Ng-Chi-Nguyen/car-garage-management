@@ -56,7 +56,7 @@ export function StockDetailView() {
         </SectionCard>
 
         <SectionCard title="Lịch sử giao dịch" noPadding>
-          <DataTable headers={["Ngày", "Loại", "Số lượng", "Tồn cuối", "Ghi chú"]}>
+          <DataTable headers={["Ngày", "Loại", "Số lượng", "Ghi chú"]}>
             {data?.history?.map((historyItem, index) => (
               <tr key={index} className="hover:bg-surface-container-low transition-colors group">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
@@ -69,10 +69,6 @@ export function StockDetailView() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">
                   +{historyItem.SoLuong}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface">
-                  {/* Cannot calculate exact ending stock trivially without chronological order, show - for now */}
-                  -
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
                   Nhập hàng
                 </td>
@@ -80,7 +76,7 @@ export function StockDetailView() {
             ))}
             {(!data?.history || data.history.length === 0) && (
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-sm text-on-surface-variant">
+                <td colSpan={4} className="px-6 py-4 text-center text-sm text-on-surface-variant">
                   Chưa có lịch sử giao dịch
                 </td>
               </tr>
