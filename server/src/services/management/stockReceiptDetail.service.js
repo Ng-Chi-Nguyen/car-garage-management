@@ -43,18 +43,17 @@ const getStockReceiptDetailByIdInternal = async (db, id) => {
 };
 
 const normalizeReceipt = (stockReceiptDetail) => ({
-  receiptId: Number(stockReceiptDetail.MaPhieuNhap),
-  supplierId: null,
-  receivedAt: null,
+  id: Number(stockReceiptDetail.MaPhieuNhap),
+  supplierId: stockReceiptDetail.supplierId,
+  importedAt: stockReceiptDetail.importedAt,
   totalAmount: Number(stockReceiptDetail.receiptTotalAmount ?? stockReceiptDetail.TongTien ?? 0),
 });
 
 const normalizeReceiptItem = (stockReceiptDetail, stockAfter) => ({
-  detailId: Number(stockReceiptDetail.MaCTPN),
-  receiptId: Number(stockReceiptDetail.MaPhieuNhap),
+  receiptDetailId: Number(stockReceiptDetail.MaCTPN),
   partId: Number(stockReceiptDetail.MaVatTu),
   quantity: Number(stockReceiptDetail.SoLuong),
-  importPrice: Number(stockReceiptDetail.DonGiaNhap),
+  unitPrice: Number(stockReceiptDetail.DonGiaNhap),
   lineTotal: Number(stockReceiptDetail.ThanhTien ?? 0),
   stockAfter: Number(stockAfter ?? 0),
   inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
@@ -76,16 +75,23 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
         MaPhieuNhap: Number(stockReceiptDetail.MaPhieuNhap),
       },
       select: {
+        MaNCC: true,
+        NgayNhap: true,
         TongTien: true,
       },
     });
 
     return {
-      receipt: normalizeReceipt({ ...stockReceiptDetail, TongTien: stockReceipt?.TongTien }),
+      receipt: normalizeReceipt({
+        ...stockReceiptDetail,
+        supplierId: stockReceipt?.MaNCC,
+        importedAt: stockReceipt?.NgayNhap,
+        TongTien: stockReceipt?.TongTien,
+      }),
       items: [normalizeReceiptItem(stockReceiptDetail, part?.SoLuongTon)],
       totals: {
-        totalQuantity: Number(stockReceiptDetail.SoLuong ?? 0),
-        inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
+        receiptQuantity: Number(stockReceiptDetail.SoLuong ?? 0),
+        receiptAmount: Number(stockReceiptDetail.ThanhTien ?? 0),
       },
     };
   };
