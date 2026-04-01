@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { FINANCE_KEYS } from "./finance.queryKeys";
-import { fetchReceivables, fetchSettlement, fetchReceiptHistory } from "./finance.api";
+import { fetchReceivables, fetchSettlement, fetchReceiptHistory, fetchFinanceSummary } from "./finance.api";
+
+export function useFinanceSummary(params = {}) {
+  return useQuery({
+    queryKey: FINANCE_KEYS.summary(params),
+    queryFn: () => fetchFinanceSummary(params),
+  });
+}
 
 export function useReceivablesQuery(params = {}) {
   return useQuery({

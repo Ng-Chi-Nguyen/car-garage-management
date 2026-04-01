@@ -78,3 +78,34 @@ test("crud controller getById và update ưu tiên req.validatedParams", async (
 
   assert.deepEqual(received, [["getById", 12], ["update", 34], ["remove", 56]]);
 });
+
+test("crud controller trả thêm errorCode va details khi service ném lỗi nghiệp vụ", async () => {
+  const controller = createCrudController({
+    service: {
+      create: async () => {
+        const error = new Error("Số tiền thu không được vượt quá số tiền nợ hiện tại.");
+        error.status = 400;
+        error.errorCode = "PAYMENT_RECEIPT_OVERPAYMENT";
+        error.details = { debt: 100000, requestedAmount: 120000 };
+        throw error;
+      },
+      getAll: async () => ({ items: [] }),
+      getById: async () => ({}),
+      update: async () => ({}),
+      remove: async () => ({}),
+    },
+    entityKey: "item",
+    messages,
+  });
+
+  const res = createMockRes();
+  await controller.create({ body: {} }, res);
+
+  assert.equal(res.statusCode, 400);
+  assert.deepEqual(res.body, {
+    success: false,
+    message: "Số tiền thu không được vượt quá số tiền nợ hiện tại.",
+    errorCode: "PAYMENT_RECEIPT_OVERPAYMENT",
+    details: { debt: 100000, requestedAmount: 120000 },
+  });
+});

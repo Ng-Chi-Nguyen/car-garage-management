@@ -1,6 +1,6 @@
 import authRoute from "./auth/auth.route.js";
-import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import dashboardRoute from "./report/dashboard.route.js";
+import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import customerReportRoute from "./report/customerReport.route.js";
 import financeReportRoute from "./report/financeReport.route.js";
 import inventoryReportRoute from "./report/inventoryReport.route.js";
@@ -44,7 +44,6 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/auth`, authRoute);
   app.use(`${apiPrefixV1}/reports`, reportExportRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
-  // app.use(`${apiPrefixV1}/reports/customer-report`, ...requireManagementAccess, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
   app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
@@ -67,25 +66,6 @@ const Routes = (app) => {
   // =========================
   // API CẦN đăng nhập
   // =========================
-  // app.use(`${apiPrefixV1}/reports/finance`, ...requireManagementAccess, financeReportRoute);
-  // app.use(`${apiPrefixV1}/auth`, authRoute);
-  // app.use(`${apiPrefixV1}/dashboard`, ...requireManagementAccess, dashboardRoute);
-  // app.use(`${apiPrefixV1}/reports/revenue`, ...requireManagementAccess, revenueReportRoute);
-  // app.use(`${apiPrefixV1}/reports/repair-report`, ...requireManagementAccess, repairReportRoute);
-  // app.use(`${apiPrefixV1}/workflows/repair-orders`,...requireManagementAccess,repairOrderWorkflowRoute,);
-  // app.use(`${apiPrefixV1}/workflows/stock-receipts`,...requireManagementAccess,stockReceiptWorkflowRoute,);
-  // app.use(`${apiPrefixV1}/workflows/payment-receipts`,...requireManagementAccess,paymentReceiptWorkflowRoute,);
-  // app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute);
-  // app.use(`${apiPrefixV1}/car-brands`, ...requireManagementAccess, carBrandRoute);
-  // app.use(`${apiPrefixV1}/vehicles`, ...requireManagementAccess, vehicleRoute);
-  // app.use(`${apiPrefixV1}/repair-orders`, ...requireManagementAccess, repairOrderRoute);
-  // app.use(`${apiPrefixV1}/labor-fees`, ...requireManagementAccess, laborFeeRoute);
-  // app.use(`${apiPrefixV1}/parts`, ...requireManagementAccess, partRoute);
-  // app.use(`${apiPrefixV1}/repair-order-details`,...requireManagementAccess,repairOrderDetailRoute,);
-  // app.use(`${apiPrefixV1}/suppliers`, ...requireManagementAccess, supplierRoute);
-  // app.use(`${apiPrefixV1}/stock-receipts`, ...requireManagementAccess, stockReceiptRoute);
-  // app.use(`${apiPrefixV1}/stock-receipt-details`,...requireManagementAccess,stockReceiptDetailRoute,);
-  // app.use(`${apiPrefixV1}/payment-receipts`,...requireManagementAccess,paymentReceiptRoute,);
 };
 
 export default Routes;

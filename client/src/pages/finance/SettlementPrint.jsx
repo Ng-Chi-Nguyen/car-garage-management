@@ -1,11 +1,11 @@
 import React from "react";
 import { SettlementInvoice } from "../../features/finance/components/SettlementInvoice";
 import { useSearchParams, Link } from "react-router-dom";
+import { PageHeader } from "../../components/ui/page-header";
 
 export default function SettlementPrint() {
   const [searchParams] = useSearchParams();
   const rawId = searchParams.get("id");
-  
   const isMissing = rawId === null || rawId.trim() === '';
   const isInvalid = Number.isNaN(Number(rawId)) || Number(rawId) <= 0;
   const hasError = isMissing || isInvalid;
@@ -13,22 +13,21 @@ export default function SettlementPrint() {
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto w-full">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-slate-800">
-          Quyết toán / In hóa đơn
-        </h2>
-        <div className="flex gap-2">
+      <PageHeader
+        title="Quyết toán / In hóa đơn"
+        description="Thanh toán phiếu sửa chữa và xuất biên lai"
+        actions={
           <button
             type="button"
-            className="flex items-center gap-2 px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-[13px] font-semibold text-slate-700 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.35)] ring-1 ring-inset ring-slate-200/70 transition-all hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 active:scale-[0.98]"
             onClick={() => window.print()}
             disabled={hasError}
           >
-            <span className="material-symbols-outlined text-sm">print</span>
+            <span className="material-symbols-outlined text-[18px]">print</span>
             In PDF
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {!hasError ? (
         <SettlementInvoice id={id} />
@@ -37,7 +36,7 @@ export default function SettlementPrint() {
           <p>Vui lòng chọn một phiếu sửa chữa hợp lệ để in</p>
           <Link
             to="/finance/receivables"
-            className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-container)]"
           >
             Quay lại Thu tiền
           </Link>
