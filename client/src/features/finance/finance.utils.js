@@ -7,13 +7,14 @@ export function calculateReceivablesSummary(receivableCustomers) {
   return { totalDebtVehicles, totalReceivable };
 }
 
-export function buildFinanceSummaryQueryRange() {
-  const now = new Date();
+export function buildFinanceSummaryQueryRange(baseDate) {
+  const now = baseDate || new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
+  const date = now.getDate();
   
   const fromDate = new Date(year, month, 1);
-  const toDate = new Date(year, month + 1, 0);
+  const toDate = new Date(year, month, date);
   
   const formatDate = (date) => {
     const yyyy = date.getFullYear();
