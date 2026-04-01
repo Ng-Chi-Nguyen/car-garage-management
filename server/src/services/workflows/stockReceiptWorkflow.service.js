@@ -32,6 +32,16 @@ const buildStockReceiptDetailCreateData = (maPhieuNhap, details) => {
   }));
 };
 
+const buildStockReceiptMutationResponse = (stockReceipt, stockReceiptDetails) => {
+  return {
+    stockReceipt,
+    stockReceiptDetails,
+    inventoryValueAfter: stockReceiptDetails.reduce((total, detail) => {
+      return total + Number(detail.ThanhTien ?? 0);
+    }, 0),
+  };
+};
+
 // Pre-check nha cung cap va vat tu ton tai truoc khi tao phieu nhap.
 const validateStockReceiptReferences = async (tx, stockReceipt, details) => {
   ensureRecordExists(
@@ -93,18 +103,18 @@ const createStockReceiptWorkflowService = ({
         // B5: tinh lai TongTien tu detail da luu de tranh lech tong.
         await businessHelpers.syncStockReceiptTotal(tx, stockReceipt.MaPhieuNhap);
 
-        return {
-          stockReceipt: await tx.pHIEU_NHAP_KHO.findUnique({
-            where: {
-              MaPhieuNhap: stockReceipt.MaPhieuNhap,
-            },
-          }),
-          stockReceiptDetails: await tx.cT_PHIEU_NHAP.findMany({
-            where: {
-              MaPhieuNhap: stockReceipt.MaPhieuNhap,
-            },
-          }),
-        };
+        const createdStockReceipt = await tx.pHIEU_NHAP_KHO.findUnique({
+          where: {
+            MaPhieuNhap: stockReceipt.MaPhieuNhap,
+          },
+        });
+        const createdStockReceiptDetails = await tx.cT_PHIEU_NHAP.findMany({
+          where: {
+            MaPhieuNhap: stockReceipt.MaPhieuNhap,
+          },
+        });
+
+        return buildStockReceiptMutationResponse(createdStockReceipt, createdStockReceiptDetails);
       }, TRANSACTION_OPTIONS);
     },
   };
