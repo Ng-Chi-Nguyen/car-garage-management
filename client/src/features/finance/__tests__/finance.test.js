@@ -59,3 +59,13 @@ test("Receivables form emits search deterministically", () => {
   assert.ok(content.includes("prev.set('search', e.target.value)"), "Must emit search to URL");
   assert.ok(content.includes("prev.delete('q')"), "Must cleanup q from URL");
 });
+
+test("fetchFinanceSummary guard contract asserts exactly", () => {
+  const apiFile = path.join(__dirname, "../finance.api.js");
+  const apiContent = fs.readFileSync(apiFile, "utf-8");
+  
+  assert.ok(apiContent.includes('!params.from'), "Must check from param");
+  assert.ok(apiContent.includes('!params.to'), "Must check to param");
+  assert.ok(apiContent.includes('!params.granularity'), "Must check granularity param");
+  assert.ok(apiContent.includes('throw new Error("Missing required params: from,to,granularity")'), "Must throw exact error message");
+});
