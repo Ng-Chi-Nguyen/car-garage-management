@@ -34,8 +34,7 @@ const Routes = (app) => {
   // =========================
   // API dashboard nội bộ cần đăng nhập + rate limit
   // =========================
-  app.use(`${apiPrefixV1}/dashboard`, dashboardRoute);
-  // app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
+  app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
 
   // =========================
   // API KHÔNG cần đăng nhập
@@ -60,7 +59,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/stock-receipts`, stockReceiptRoute);
   app.use(`${apiPrefixV1}/stock-receipt-details`, stockReceiptDetailRoute);
   app.use(`${apiPrefixV1}/payment-receipts`, paymentReceiptRoute);
-  app.use(`${apiPrefixV1}/reports/finance`, financeReportRoute);
+  app.use(`${apiPrefixV1}/reports/finance`, authMiddleware.requireAuth, financeReportRoute);
   // =========================
   // API CẦN đăng nhập
   // =========================
