@@ -128,7 +128,7 @@ const syncStockReceiptTotal = async (tx, maPhieuNhap) => {
   });
 };
 
-// Đồng bộ tiền nợ hiện tại của xe từ tổng phiếu sửa chữa và tổng phiếu thu tiền.
+// Đồng bộ tiền nợ hiện tại của xe từ tổng phiếu sửa chữa và các phiếu thu đã xác nhận.
 const syncVehicleDebt = async (tx, maXe) => {
   const [phieuSuaChuaAggregate, phieuThuTienAggregate] = await Promise.all([
     tx.pHIEU_SUA_CHUA.aggregate({
@@ -143,6 +143,7 @@ const syncVehicleDebt = async (tx, maXe) => {
     tx.pHIEU_THU_TIEN.aggregate({
       where: {
         MaXe: Number(maXe),
+        TrangThai: "DaThu",
       },
       // Yêu cầu tổng trường SoTienThu.
       _sum: {
@@ -208,6 +209,7 @@ const syncRepairOrderTotal = async (tx, maPhieuSC) => {
 const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) => {
   const paymentWhere = {
     MaXe: Number(maXe),
+    TrangThai: "DaThu",
   };
 
   // Khi cập nhật phiếu thu hiện có, loại trừ chính phiếu đó khỏi phép cộng tổng đã thu.
@@ -250,7 +252,14 @@ const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) =>
 
   if (toNumberValue(soTienThu) > availableDebt) {
     // Trả lỗi 400 để báo dữ liệu đầu vào không hợp lệ theo quy tắc nghiệp vụ.
-    throw buildServiceError(400, "Số tiền thu không được vượt quá số tiền nợ hiện tại.");
+    throw buildServiceError(400, "Số tiền thu không được vượt quá số tiền nợ hiện tại.", {
+      errorCode: "PAYMENT_RECEIPT_OVERPAYMENT",
+      details: {
+        MaXe: Number(maXe),
+        availableDebt,
+        requestedAmount: toNumberValue(soTienThu),
+      },
+    });
   }
 };
 

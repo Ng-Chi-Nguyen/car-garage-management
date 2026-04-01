@@ -4,6 +4,7 @@ import revenueReportController from "../../controllers/report/revenueReport.cont
 import authMiddleware from "../../middleware/auth/auth.middleware.js";
 import { validateRequest } from "../../middleware/validation.middleware.js";
 import revenueReportSchema from "../../validator/report/revenueReport.validator.js";
+import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
 
@@ -24,8 +25,15 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/timeseries",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
     mergedController.getRevenueTimeseries,
   );
@@ -40,8 +48,15 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/by-car-brand",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
     mergedController.getRevenueByCarBrand,
   );
@@ -56,8 +71,15 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/by-part",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
     mergedController.getRevenueByPart,
   );
@@ -72,8 +94,15 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/comparison",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
     mergedController.getRevenueComparison,
   );
@@ -88,8 +117,15 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/composition",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
     mergedController.getRevenueComposition,
   );

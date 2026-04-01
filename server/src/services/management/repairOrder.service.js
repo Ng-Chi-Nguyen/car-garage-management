@@ -95,11 +95,29 @@ const getUpdateEndDate = (existingRepairOrder, writeData, nowProvider) => {
   return undefined;
 };
 
-const getRepairOrderByIdInternal = async (db, id) => {
+const getRepairOrderByIdInternal = async (db, id, { includeDetails = false } = {}) => {
+  const include = includeDetails
+    ? {
+      Xe: {
+        include: {
+          KhachHang: true,
+          HieuXe: true,
+        },
+      },
+      ChiTietSuaChua: {
+        include: {
+          VatTu: true,
+          TienCong: true,
+        },
+      },
+    }
+    : undefined;
+
   const repairOrder = await db.pHIEU_SUA_CHUA.findUnique({
     where: {
       MaPhieuSC: Number(id),
     },
+    ...(include ? { include } : {}),
   });
 
   if (!repairOrder) {
@@ -169,7 +187,7 @@ const createRepairOrderService = ({
         },
       };
     },
-    getRepairOrderById: async (id) => getRepairOrderByIdInternal(db, id),
+    getRepairOrderById: async (id) => getRepairOrderByIdInternal(db, id, { includeDetails: true }),
     updateRepairOrder: async (id, payload) => {
       return db.$transaction(async (tx) => {
         const existingRepairOrder = await getRepairOrderByIdInternal(tx, id);

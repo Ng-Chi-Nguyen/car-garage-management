@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createReceivable } from "./finance.api.js";
 import { FINANCE_KEYS } from "./finance.queryKeys.js";
 
-export const INVALIDATES_KEYS = [FINANCE_KEYS.receivables()];
+export const INVALIDATES_KEYS = [FINANCE_KEYS.receivables(), FINANCE_KEYS.summary(), FINANCE_KEYS.history(), FINANCE_KEYS.settlements()];
 
 export function useCreateReceivableMutation() {
   const queryClient = useQueryClient();
