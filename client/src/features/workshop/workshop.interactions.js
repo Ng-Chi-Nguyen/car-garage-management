@@ -1,4 +1,4 @@
-export const getWorkshopRouteTarget = (action, context = {}) => {
+export const getWorkshopRouteTarget = (action) => {
   switch (action) {
     case "create_intake":
       return "/intake/new";
@@ -13,7 +13,7 @@ export const getWorkshopRouteTarget = (action, context = {}) => {
   }
 };
 
-export const handleWorkshopAction = (navigate, action, context = {}) => {
-  const target = getWorkshopRouteTarget(action, context);
+export const handleWorkshopAction = (navigate, action) => {
+  const target = getWorkshopRouteTarget(action);
   navigate(target);
 };
