@@ -15,7 +15,7 @@ export function parseAccessTokenRole(token) {
     
     const payload = JSON.parse(jsonPayload);
     return payload.ChucVu || null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
