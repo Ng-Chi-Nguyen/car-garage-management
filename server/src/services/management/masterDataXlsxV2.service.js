@@ -703,7 +703,7 @@ const getEntityService = (entity) => {
   const service = ENTITY_CONFIGS[entity];
 
   if (!service) {
-    throw buildServiceError(404, "Khong ho tro entity import/export .xlsx nay.");
+    throw buildServiceError(404, "Không hỗ trợ entity import/export .xlsx này.");
   }
 
   return service;
@@ -714,7 +714,7 @@ const masterDataXlsxService = {
     const service = getEntityService(entity);
     return {
       fileBaseName: service.fileBaseName,
-      buffer: await service.exportDataBuffer(),
+      buffer: await service.createTemplateBuffer(),
     };
   },
   exportData: async (entity) => {

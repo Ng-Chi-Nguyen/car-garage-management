@@ -295,8 +295,8 @@ const applyWorksheetStyle = (worksheet, rowCount) => {
   }
 };
 
-const applyWorksheetValidations = (worksheet, columns, rowCount) => {
-  const maxRow = Math.max(rowCount, TEMPLATE_VALIDATION_MAX_ROW);
+const applyWorksheetValidations = (worksheet, columns) => {
+  const maxRow = TEMPLATE_VALIDATION_MAX_ROW;
 
   columns.forEach((column, index) => {
     if (!column.validation?.type) {
@@ -325,7 +325,13 @@ const applyWorksheetValidations = (worksheet, columns, rowCount) => {
   });
 };
 
-const createWorkbookBuffer = async ({ sheetName, columns, rows = [], prepareWorkbook }) => {
+const createWorkbookBuffer = async ({
+  sheetName,
+  columns,
+  rows = [],
+  prepareWorkbook,
+  includeValidations = true,
+}) => {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Codex";
   workbook.created = new Date();
@@ -363,7 +369,10 @@ const createWorkbookBuffer = async ({ sheetName, columns, rows = [], prepareWork
   });
 
   applyWorksheetStyle(worksheet, rows.length + 1);
-  applyWorksheetValidations(worksheet, columns, rows.length + 1);
+
+  if (includeValidations) {
+    applyWorksheetValidations(worksheet, columns);
+  }
 
   if (prepareWorkbook) {
     await prepareWorkbook({
@@ -435,6 +444,7 @@ const createXlsxService = ({
       sheetName,
       columns,
       prepareWorkbook,
+      includeValidations: true,
     });
 
   const exportDataBuffer = async () => {
@@ -451,6 +461,7 @@ const createXlsxService = ({
       columns,
       rows: exportRows(rows),
       prepareWorkbook,
+      includeValidations: false,
     });
   };
 
