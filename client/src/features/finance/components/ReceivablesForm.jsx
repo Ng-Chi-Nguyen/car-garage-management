@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { buildFinanceSummaryQueryRange } from "../finance.utils.js";
+import { SectionCard } from "../../../components/ui/section-card";
 import { StateShell } from "../../../components/ui/state-shell";
 import { useReceivablesQuery, useReceiptHistoryQuery, useFinanceSummary } from "../useFinanceQuery";
 import { useCreateReceivableMutation } from "../useFinanceMutation";
@@ -36,22 +37,22 @@ function FinanceField({ label, icon, value, onChange, placeholder, readOnly }) {
 
 function FinancePanel({ icon, title, description, children, className = "" }) {
   return (
-      <section
-      className={`rounded-[28px] bg-white p-6 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.55)] ring-1 ring-inset ring-slate-200/70 ${className}`}
-    >
-      <div className="mb-5 flex items-start gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-lg">
-          {icon}
+    <SectionCard className={className} noPadding>
+      <div className="p-6 md:p-7">
+        <div className="mb-5 flex items-start gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-lg">
+            {icon}
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+            {description ? (
+              <p className="text-sm text-slate-500">{description}</p>
+            ) : null}
+          </div>
         </div>
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          {description ? (
-            <p className="text-sm text-slate-500">{description}</p>
-          ) : null}
-        </div>
+        {children}
       </div>
-      {children}
-    </section>
+    </SectionCard>
   );
 }
 
