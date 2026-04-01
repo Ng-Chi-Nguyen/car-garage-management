@@ -91,6 +91,70 @@ function ReceiptHistoryPanel({ vehicleId }) {
   );
 }
 
+function PrintableReceipt({ data }) {
+  if (!data) return null;
+  const { receiptId, paymentDate, vehicle, cashGiven, collectedAmount, changeAmount, note } = data;
+
+  return (
+    <div className="hidden print:block print:fixed print:inset-0 print:bg-white print:p-8 print:z-50 text-black">
+      <div className="max-w-md mx-auto font-sans">
+        <div className="text-center mb-6 border-b border-gray-300 pb-4">
+          <h1 className="text-2xl font-bold uppercase">Phiếu Thu Tiền</h1>
+          <p className="text-sm text-gray-500 mt-1">Mã phiếu: #{receiptId}</p>
+          <p className="text-sm text-gray-500">Ngày thu: {new Date(paymentDate).toLocaleDateString("vi-VN")}</p>
+        </div>
+
+        <div className="space-y-3 mb-6 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-600">Khách hàng:</span>
+            <span className="font-semibold">{vehicle.customerName || "Khách lẻ"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Điện thoại:</span>
+            <span className="font-semibold">{vehicle.phoneNumber || "--"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Biển số xe:</span>
+            <span className="font-semibold">{vehicle.licensePlate}</span>
+          </div>
+          {note && (
+            <div className="flex justify-between gap-4">
+              <span className="text-gray-600 whitespace-nowrap">Ghi chú:</span>
+              <span className="font-semibold text-right">{note}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-gray-300 pt-4 space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-600">Khách đưa:</span>
+            <span>{formatCurrency(cashGiven)}</span>
+          </div>
+          <div className="flex justify-between text-base font-bold">
+            <span>Thực thu:</span>
+            <span>{formatCurrency(collectedAmount)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Tiền thối:</span>
+            <span>{formatCurrency(changeAmount)}</span>
+          </div>
+        </div>
+
+        <div className="mt-12 flex justify-between text-center text-sm">
+          <div>
+            <p className="font-semibold mb-16">Người nộp tiền</p>
+            <p className="text-gray-500 italic">(Ký, ghi rõ họ tên)</p>
+          </div>
+          <div>
+            <p className="font-semibold mb-16">Người thu tiền</p>
+            <p className="text-gray-500 italic">(Ký, ghi rõ họ tên)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ReceivablesForm() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
@@ -135,7 +199,7 @@ export function ReceivablesForm() {
   const [cashGiven, setCashGiven] = useState("");
   const [paymentDate, setPaymentDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [note, setNote] = useState("");
-  const [createdReceiptId, setCreatedReceiptId] = useState(null);
+  const [lastReceiptData, setLastReceiptData] = useState(null);
   const [isCheckingDebt, setIsCheckingDebt] = useState(false);
 
   const currentDebt = selectedVehicle ? selectedVehicle.outstandingDebt : 0;
@@ -184,10 +248,18 @@ export function ReceivablesForm() {
       createMutation.mutate(payload, {
         onSuccess: (data) => {
           toast.success("Tạo phiếu thu thành công");
+          setLastReceiptData({
+            receiptId: data?.MaPhieuThu ?? data?.paymentReceipt?.MaPhieuThu ?? null,
+            vehicle: selectedVehicle,
+            cashGiven: cashGivenNumber,
+            collectedAmount: actualCollectedAmount,
+            changeAmount: Math.max(cashGivenNumber - actualCollectedAmount, 0),
+            note: note,
+            paymentDate: paymentDate,
+          });
           handleSelectVehicle(null);
           setCashGiven("");
           setNote("");
-          setCreatedReceiptId(data?.MaPhieuThu ?? data?.paymentReceipt?.MaPhieuThu ?? null);
         },
         onError: (err) => {
           const msg = err.response?.data?.message || err.message || "Lỗi khi tạo phiếu thu";
@@ -223,19 +295,21 @@ export function ReceivablesForm() {
   };
 
   return (
-    <StateShell
-      isLoading={isLoading}
-      isError={isError}
-      error={error}
-      isEmpty={false}
-    >
-      <form id="receivables-form" onSubmit={handleSubmit} onReset={() => {
-        handleSelectVehicle(null);
-        setCashGiven("");
-        setNote("");
-        setPaymentDate(new Date().toISOString().split("T")[0]);
-        setCreatedReceiptId(null);
-      }} className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
+    <>
+      <div className="print:hidden">
+        <StateShell
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          isEmpty={false}
+        >
+          <form id="receivables-form" onSubmit={handleSubmit} onReset={() => {
+            handleSelectVehicle(null);
+            setCashGiven("");
+            setNote("");
+            setPaymentDate(new Date().toISOString().split("T")[0]);
+            setLastReceiptData(null);
+          }} className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
         <div className="space-y-8">
           <FinancePanel
             title="Thông tin Phiếu thu"
@@ -298,7 +372,7 @@ export function ReceivablesForm() {
               </label>
             </div>
 
-            {createdReceiptId ? (
+            {lastReceiptData?.receiptId ? (
               <div className="mt-8 flex items-center justify-between rounded-xl bg-[var(--color-surface-container)] px-4 py-3">
                 <p className="text-[0.875rem] font-semibold text-[var(--color-on-surface)]">Đã tạo phiếu thu thành công.</p>
                 <button type="button" className="rounded-xl bg-[var(--color-surface-container-highest)] px-4 py-2 text-[0.875rem] font-semibold text-[var(--color-on-surface)] transition hover:bg-[var(--color-outline-variant)]" onClick={() => window.print()}>
@@ -456,54 +530,11 @@ export function ReceivablesForm() {
             )}
           </FinancePanel>
 
-          <section className="rounded-xl bg-[var(--color-surface-container-low)] p-8">
-            <h2 className="text-[1.125rem] font-semibold text-[var(--color-on-surface)]">
-              Xác nhận thu tiền?
-            </h2>
-            <p className="mt-1 text-[0.875rem] text-[var(--color-on-surface-variant)]">
-              Kiểm tra kỹ thông tin trước khi xác nhận.
-            </p>
-
-            <dl className="mt-6 space-y-4 text-[0.875rem] text-[var(--color-on-surface)]">
-              <div className="flex items-start justify-between gap-4 border-b border-[var(--color-outline-variant)] pb-4">
-                <dt className="text-[var(--color-on-surface-variant)]">Khách hàng</dt>
-                <dd className="text-right font-semibold">
-                  {selectedVehicle?.customerName || "--"}
-                  {selectedVehicle?.phoneNumber ? <div className="text-[0.75rem] font-normal text-[var(--color-on-surface-variant)] mt-1">{selectedVehicle.phoneNumber}</div> : null}
-                </dd>
-              </div>
-              <div className="flex items-start justify-between gap-4 border-b border-[var(--color-outline-variant)] pb-4">
-                <dt className="text-[var(--color-on-surface-variant)]">Biển số</dt>
-                <dd className="text-right font-semibold">
-                  {selectedVehicle?.licensePlate || "--"}
-                </dd>
-              </div>
-              <div className="flex items-start justify-between gap-4">
-                <dt className="text-[var(--color-on-surface-variant)]">Số tiền thu</dt>
-                <dd className="text-right font-semibold">
-                  {formatCurrency(collectedAmount)}
-                </dd>
-              </div>
-            </dl>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="reset"
-                className="inline-flex w-full items-center justify-center rounded-xl bg-[var(--color-surface-container)] px-4 py-3 text-[0.875rem] font-semibold text-[var(--color-on-surface)] transition hover:bg-[var(--color-surface-container-highest)]"
-              >
-                Hủy
-              </button>
-              <button
-                type="submit"
-                disabled={isInvalid || createMutation.isPending || isCheckingDebt}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] px-4 py-3 text-[0.875rem] font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {createMutation.isPending || isCheckingDebt ? "Đang xử lý..." : "Xác nhận ngay"}
-              </button>
-            </div>
-          </section>
         </div>
       </form>
     </StateShell>
+      </div>
+      <PrintableReceipt data={lastReceiptData} />
+    </>
   );
 }
