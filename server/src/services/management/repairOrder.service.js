@@ -100,6 +100,20 @@ const getRepairOrderByIdInternal = async (db, id) => {
     where: {
       MaPhieuSC: Number(id),
     },
+    include: {
+      Xe: {
+        include: {
+          KhachHang: true,
+          HieuXe: true,
+        },
+      },
+      ChiTietSuaChua: {
+        include: {
+          VatTu: true,
+          TienCong: true,
+        },
+      },
+    },
   });
 
   if (!repairOrder) {

@@ -1,9 +1,44 @@
 import React from "react";
 import { useSettlementQuery } from "../useFinanceQuery";
+import { useCreateReceivableMutation } from "../useFinanceMutation";
 import { StateShell } from "../../../components/ui/state-shell";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-export function SettlementInvoice({ id = "1" }) {
-  const { isLoading, isError, error } = useSettlementQuery(id);
+export function SettlementInvoice({ id }) {
+  const { isLoading, isError, error, data } = useSettlementQuery(id);
+  const createPayment = useCreateReceivableMutation();
+  const navigate = useNavigate();
+
+  if (isLoading || isError || !data) {
+    return (
+      <StateShell isLoading={isLoading} isError={isError} error={error} isEmpty={!data} />
+    );
+  }
+
+  // Calculate parts and labor totals
+  const totalParts = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaVatTu)), 0) || 0;
+  const totalLabor = data.ChiTietSuaChua?.reduce((acc, item) => acc + (Number(item.SoLuong) * Number(item.DonGiaTienCong)), 0) || 0;
+  const grandTotal = Number(data.TongTien) || (totalParts + totalLabor);
+  const invoiceDate = data.NgaySC ? new Date(data.NgaySC).toLocaleDateString("vi-VN") : new Date().toLocaleDateString("vi-VN");
+
+  const handleConfirm = () => {
+    createPayment.mutate(
+      {
+        MaXe: data.MaXe,
+        SoTienThu: grandTotal,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Tạo phiếu thu thành công!");
+          navigate("/finance/receivables");
+        },
+        onError: (err) => {
+          toast.error(err.response?.data?.message || "Lỗi khi tạo phiếu thu");
+        },
+      }
+    );
+  };
 
   return (
     <StateShell isLoading={isLoading} isError={isError} error={error}>
@@ -12,7 +47,7 @@ export function SettlementInvoice({ id = "1" }) {
           <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">
             Hóa Đơn Sửa Chữa
           </h1>
-          <p className="text-slate-500 mt-2">Mã phiếu: #QT-2024-001</p>
+          <p className="text-slate-500 mt-2">Mã phiếu: #QT-{new Date(data.NgaySC || new Date()).getFullYear()}-{String(data.MaPhieuSC).padStart(3, '0')}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
@@ -20,14 +55,14 @@ export function SettlementInvoice({ id = "1" }) {
             <h4 className="font-semibold text-slate-700 mb-2">
               Thông tin khách hàng
             </h4>
-            <p>Tên: Nguyễn Văn A</p>
-            <p>SĐT: 0909.123.456</p>
-            <p>Ngày in: 24/05/2024</p>
+            <p>Tên: {data.Xe?.KhachHang?.TenKH || "Không rõ"}</p>
+            <p>SĐT: {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
+            <p>Ngày in: {invoiceDate}</p>
           </div>
           <div className="text-right">
             <h4 className="font-semibold text-slate-700 mb-2">Thông tin xe</h4>
-            <p>Biển số: 51H-123.45</p>
-            <p>Hiệu xe: Toyota Vios</p>
+            <p>Biển số: {data.Xe?.BienSo || "Không rõ"}</p>
+            <p>Hiệu xe: {data.Xe?.HieuXe?.TenHieuXe || "Không rõ"}</p>
           </div>
         </div>
 
@@ -47,24 +82,38 @@ export function SettlementInvoice({ id = "1" }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            <tr>
-              <td className="py-3">Lọc dầu động cơ</td>
-              <td className="py-3 text-center">1</td>
-              <td className="py-3 text-right">250.000</td>
-              <td className="py-3 text-right">250.000</td>
-            </tr>
-            <tr>
-              <td className="py-3">Tiền công (thay lọc dầu)</td>
-              <td className="py-3 text-center">1</td>
-              <td className="py-3 text-right">50.000</td>
-              <td className="py-3 text-right">50.000</td>
-            </tr>
-            <tr>
-              <td className="py-3">Nhớt máy Castrol</td>
-              <td className="py-3 text-center">4</td>
-              <td className="py-3 text-right">120.000</td>
-              <td className="py-3 text-right">480.000</td>
-            </tr>
+            {data.ChiTietSuaChua?.length > 0 ? data.ChiTietSuaChua.map((item) => {
+              const rowPartsTotal = Number(item.SoLuong) * Number(item.DonGiaVatTu);
+              const rowLaborTotal = Number(item.SoLuong) * Number(item.DonGiaTienCong);
+              
+              // Only render if there's actual content
+              const renderRows = [];
+              if (item.VatTu && rowPartsTotal > 0) {
+                renderRows.push(
+                  <tr key={`${item.MaCTSC}-vattu`}>
+                    <td className="py-3">{item.VatTu.TenVatTu}</td>
+                    <td className="py-3 text-center">{item.SoLuong}</td>
+                    <td className="py-3 text-right">{Number(item.DonGiaVatTu).toLocaleString("vi-VN")}</td>
+                    <td className="py-3 text-right">{rowPartsTotal.toLocaleString("vi-VN")}</td>
+                  </tr>
+                );
+              }
+              if (item.TienCong && rowLaborTotal > 0) {
+                renderRows.push(
+                  <tr key={`${item.MaCTSC}-tiencong`}>
+                    <td className="py-3">{item.TienCong.NoiDung}</td>
+                    <td className="py-3 text-center">{item.SoLuong}</td>
+                    <td className="py-3 text-right">{Number(item.DonGiaTienCong).toLocaleString("vi-VN")}</td>
+                    <td className="py-3 text-right">{rowLaborTotal.toLocaleString("vi-VN")}</td>
+                  </tr>
+                );
+              }
+              return renderRows;
+            }) : (
+              <tr>
+                <td colSpan="4" className="py-4 text-center text-slate-500">Chưa có chi tiết sửa chữa</td>
+              </tr>
+            )}
           </tbody>
         </table>
 
@@ -72,25 +121,27 @@ export function SettlementInvoice({ id = "1" }) {
           <div className="w-64 space-y-2 text-sm">
             <div className="flex justify-between font-semibold">
               <span>Tổng tiền vật tư:</span>
-              <span>730.000 ₫</span>
+              <span>{totalParts.toLocaleString("vi-VN")} ₫</span>
             </div>
             <div className="flex justify-between font-semibold">
               <span>Tổng tiền công:</span>
-              <span>50.000 ₫</span>
+              <span>{totalLabor.toLocaleString("vi-VN")} ₫</span>
             </div>
             <div className="flex justify-between text-lg font-bold text-[color:var(--color-primary)] pt-2 border-t">
               <span>Tổng cộng:</span>
-              <span>780.000 ₫</span>
+              <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
           </div>
         </div>
 
         <div className="flex justify-end">
           <button
-            type="submit"
-            className="px-8 py-3 rounded-xl bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] font-bold hover:opacity-90"
+            type="button"
+            onClick={handleConfirm}
+            disabled={createPayment.isLoading}
+            className="px-8 py-3 rounded-xl bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] font-bold hover:opacity-90 disabled:opacity-50"
           >
-            Xác nhận thanh toán
+            {createPayment.isLoading ? "Đang xử lý..." : "Xác nhận thanh toán"}
           </button>
         </div>
       </section>
