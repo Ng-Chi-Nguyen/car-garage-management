@@ -10,6 +10,7 @@ import { INVENTORY_KEYS } from '../inventory/inventory.queryKeys.js';
 
 export const INVALIDATES_KEYS = [
   repairOrdersKeys.lists(),
+  repairOrdersKeys.details(),
   FINANCE_KEYS.all,
   dashboardKeys.all,
   CUSTOMERS_KEYS.all,

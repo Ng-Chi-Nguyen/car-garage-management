@@ -8,6 +8,12 @@ export function RepairOrderForm() {
   const navigate = useNavigate();
   const { mutateAsync: createRepairOrder, isPending } = useCreateRepairOrderMutation();
 
+  const [header, setHeader] = useState({
+    MaXe: "",
+    NoiDungLoi: "",
+    GhiChu: ""
+  });
+
   const [rows, setRows] = useState([
     { id: 1, MaVatTu: 1, MaTienCong: 1, SoLuong: 1, DonGiaVatTu: 250000, DonGiaTienCong: 50000 },
     { id: 2, MaVatTu: 2, MaTienCong: 2, SoLuong: 4, DonGiaVatTu: 120000, DonGiaTienCong: 0 }
@@ -30,12 +36,12 @@ export function RepairOrderForm() {
     try {
       const payload = {
         repairOrder: {
-          MaXe: 1, // Hardcoded for demo
+          MaXe: Number(header.MaXe),
           MaNV: null,
           NgaySC: new Date().toISOString(),
           TrangThai: "TiepNhan",
-          NoiDungLoi: "Khám định kỳ",
-          GhiChu: "Demo"
+          NoiDungLoi: header.NoiDungLoi,
+          GhiChu: header.GhiChu
         },
         details: rows.map(row => ({
           MaVatTu: Number(row.MaVatTu),
@@ -58,6 +64,39 @@ export function RepairOrderForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <SectionCard title="Thông tin chung">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground block">Mã xe</label>
+            <input
+              type="number"
+              className="w-full border border-border rounded-lg p-2 bg-surface text-foreground"
+              value={header.MaXe}
+              onChange={(e) => setHeader({ ...header, MaXe: e.target.value })}
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground block">Nội dung lỗi</label>
+            <input
+              type="text"
+              className="w-full border border-border rounded-lg p-2 bg-surface text-foreground"
+              value={header.NoiDungLoi}
+              onChange={(e) => setHeader({ ...header, NoiDungLoi: e.target.value })}
+            />
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <label className="text-sm font-medium text-foreground block">Ghi chú</label>
+            <input
+              type="text"
+              className="w-full border border-border rounded-lg p-2 bg-surface text-foreground"
+              value={header.GhiChu}
+              onChange={(e) => setHeader({ ...header, GhiChu: e.target.value })}
+            />
+          </div>
+        </div>
+      </SectionCard>
+
       <SectionCard title="Chi tiết vật tư & phụ tùng">
         <div className="flex justify-end mb-4 -mt-10">
           <button
