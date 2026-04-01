@@ -17,12 +17,21 @@ const PART_FILTER_FIELDS = {
 };
 
 const WRITE_FIELDS = ["TenVatTu", "DonViTinh", "GiaVon", "DonGiaBan", "MaNCC"];
+const PART_INCLUDE_SUPPLIER = {
+  NhaCungCap: {
+    select: {
+      MaNCC: true,
+      TenNCC: true,
+    },
+  },
+};
 
 const getPartByIdInternal = async (db, id) => {
   const part = await db.vAT_TU.findUnique({
     where: {
       MaVatTu: Number(id),
     },
+    include: PART_INCLUDE_SUPPLIER,
   });
 
   if (!part) {
@@ -56,6 +65,7 @@ const partService = {
         where,
         skip: pagination.skip,
         take: pagination.limit,
+        include: PART_INCLUDE_SUPPLIER,
         orderBy: {
           MaVatTu: "desc",
         },
@@ -94,4 +104,5 @@ const partService = {
   },
 };
 
+export { PART_INCLUDE_SUPPLIER };
 export default partService;
