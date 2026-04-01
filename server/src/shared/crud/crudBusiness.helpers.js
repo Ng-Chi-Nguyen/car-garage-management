@@ -252,7 +252,14 @@ const ensurePaymentWithinDebt = async (tx, maXe, soTienThu, excludePaymentId) =>
 
   if (toNumberValue(soTienThu) > availableDebt) {
     // Trả lỗi 400 để báo dữ liệu đầu vào không hợp lệ theo quy tắc nghiệp vụ.
-    throw buildServiceError(400, "Số tiền thu không được vượt quá số tiền nợ hiện tại.");
+    throw buildServiceError(400, "Số tiền thu không được vượt quá số tiền nợ hiện tại.", {
+      errorCode: "PAYMENT_RECEIPT_OVERPAYMENT",
+      details: {
+        MaXe: Number(maXe),
+        availableDebt,
+        requestedAmount: toNumberValue(soTienThu),
+      },
+    });
   }
 };
 

@@ -10,6 +10,6 @@ test("finance report route requires auth before validation", async () => {
 
   assert.match(source, /import authMiddleware from "\.\.\/\.\.\/middleware\/auth\/auth\.middleware\.js";/u);
   assert.match(source, /const managementRoles = \["Admin", "NhanVien"\];/u);
-  assert.match(source, /router\.get\(\s*"\/summary",\s*auth\.requireAuth,\s*auth\.requireRoles\(managementRoles\),\s*validateRequest\(/su);
-  assert.match(source, /router\.get\(\s*"\/debtors",\s*auth\.requireAuth,\s*auth\.requireRoles\(managementRoles\),\s*validateRequest\(/su);
+  assert.match(source, /router\.get\(\s*"\/summary",[^]*?auth\.requireAuth,\s*auth\.requireRoles\(managementRoles\),\s*validateRequest\(/su);
+  assert.match(source, /router\.get\(\s*"\/debtors",[^]*?auth\.requireAuth,\s*auth\.requireRoles\(managementRoles\),\s*validateRequest\(/su);
 });

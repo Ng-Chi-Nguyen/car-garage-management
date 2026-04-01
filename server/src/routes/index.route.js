@@ -1,5 +1,6 @@
 import authRoute from "./auth/auth.route.js";
 import dashboardRoute from "./report/dashboard.route.js";
+import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import customerReportRoute from "./report/customerReport.route.js";
 import financeReportRoute from "./report/financeReport.route.js";
 import inventoryReportRoute from "./report/inventoryReport.route.js";
@@ -30,7 +31,7 @@ const Routes = (app) => {
   // =========================
   // API dashboard nội bộ cần đăng nhập + rate limit
   // =========================
-  app.use(`${apiPrefixV1}/dashboard`, dashboardRoute);
+  app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
 
   // =========================
   // API KHÔNG cần đăng nhập

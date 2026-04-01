@@ -59,6 +59,7 @@ const createPaymentReceiptDb = (initialState) => {
       },
     },
     xE: {
+      findUnique: async ({ where }) => cloneValue(state.vehicles.find((item) => item.MaXe === Number(where.MaXe)) ?? null),
       update: async ({ where, data }) => {
         calls.vehicleUpdate.push([Number(where.MaXe), cloneValue(data)]);
         const vehicle = state.vehicles.find((item) => item.MaXe === Number(where.MaXe));
@@ -156,6 +157,80 @@ test("deletePaymentReceipt resyncs the source vehicle after removing the payment
     assert.equal(result.MaPhieuThu, 1);
     assert.deepEqual(fixture.calls.delete, [1]);
     assert.deepEqual(fixture.calls.vehicleUpdate, [[1, { TienNoHienTai: 500000 }]]);
+  } finally {
+    Object.assign(prisma, original);
+  }
+});
+
+test("createPaymentReceipt accepts nested paymentReceipt payload and creates the record", async () => {
+  const fixture = createPaymentReceiptDb({
+    nextPaymentId: 4,
+    repairTotals: new Map([[7, 300000]]),
+    vehicles: [{ MaXe: 7, TienNoHienTai: 300000 }],
+    payments: [],
+  });
+  const service = await loadService();
+  const prisma = await loadPrisma();
+  const original = {
+    $transaction: prisma.$transaction,
+    pHIEU_SUA_CHUA: prisma.pHIEU_SUA_CHUA,
+    pHIEU_THU_TIEN: prisma.pHIEU_THU_TIEN,
+    xE: prisma.xE,
+  };
+
+  Object.assign(prisma, fixture.fakePrisma);
+
+  try {
+    const result = await service.createPaymentReceipt({
+      paymentReceipt: {
+        MaXe: "7",
+        MaNV: null,
+        NgayThu: new Date("2026-04-01"),
+        SoTienThu: "120000",
+        PhuongThucThu: "TienMat",
+        TrangThai: "DaThu",
+        GhiChu: "Thanh toan",
+      },
+    });
+
+    assert.equal(result.MaPhieuThu, 4);
+    assert.equal(fixture.state.payments.length, 1);
+    assert.equal(fixture.state.payments[0].MaXe, 7);
+    assert.equal(fixture.state.payments[0].SoTienThu, 120000);
+  } finally {
+    Object.assign(prisma, original);
+  }
+});
+
+test("createPaymentReceipt rejects malformed payload with 400 instead of 500", async () => {
+  const fixture = createPaymentReceiptDb({
+    nextPaymentId: 1,
+    repairTotals: new Map(),
+    vehicles: [],
+    payments: [],
+  });
+  const service = await loadService();
+  const prisma = await loadPrisma();
+  const original = {
+    $transaction: prisma.$transaction,
+    pHIEU_SUA_CHUA: prisma.pHIEU_SUA_CHUA,
+    pHIEU_THU_TIEN: prisma.pHIEU_THU_TIEN,
+    xE: prisma.xE,
+  };
+
+  Object.assign(prisma, fixture.fakePrisma);
+
+  try {
+    await assert.rejects(
+      service.createPaymentReceipt({
+        paymentReceipt: {
+          MaXe: 7,
+          NgayThu: new Date("2026-04-01"),
+          SoTienThu: -1,
+        },
+      }),
+      (error) => error.status === 400 && error.message === "Dữ liệu phiếu thu tiền không hợp lệ.",
+    );
   } finally {
     Object.assign(prisma, original);
   }

@@ -12,9 +12,19 @@ export function SettlementInvoice({ id }) {
   const createPayment = useCreateReceivableMutation();
   const navigate = useNavigate();
 
-  if (isLoading || isError || !data) {
+  if (isLoading || isError) {
     return (
-      <StateShell isLoading={isLoading} isError={isError} error={error} isEmpty={!data} />
+      <StateShell isLoading={isLoading} isError={isError} error={error} />
+    );
+  }
+
+  if (!data) {
+    return (
+      <StateShell>
+        <div className="rounded-xl bg-[var(--color-surface-container-low)] p-6 text-[0.875rem] text-[var(--color-on-surface-variant)]">
+          Không tìm thấy dữ liệu hóa đơn.
+        </div>
+      </StateShell>
     );
   }
 
@@ -62,114 +72,114 @@ export function SettlementInvoice({ id }) {
 
   return (
     <StateShell isLoading={isLoading} isError={isError} error={error}>
-      <form onSubmit={handleConfirm} className="bg-white p-8 rounded-2xl shadow-[0_24px_60px_-48px_rgba(15,23,42,0.35)] block">
-        <div className="text-center mb-8 pb-6 relative after:absolute after:inset-x-24 after:bottom-0 after:h-px after:bg-slate-100/80">
-          <h1 className="text-2xl font-bold uppercase tracking-wider text-slate-800">
+      <form onSubmit={handleConfirm} className="bg-[var(--color-surface-container-lowest)] p-8 rounded-xl shadow-[0_4px_6px_-1px_rgba(0,64,161,0.04),0_10px_15px_-3px_rgba(0,64,161,0.06)] block">
+        <div className="text-center mb-10 pb-8 relative after:absolute after:inset-x-24 after:bottom-0 after:h-px after:bg-[var(--color-outline-variant)]">
+          <h1 className="text-[1.5rem] font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">
             Hóa Đơn Sửa Chữa
           </h1>
-          <p className="text-slate-500 mt-2">Mã phiếu: #QT-{new Date(data.NgaySC || new Date()).getFullYear()}-{String(data.MaPhieuSC).padStart(3, '0')}</p>
+          <p className="text-[0.875rem] text-[var(--color-on-surface-variant)] mt-2">Mã phiếu: #QT-{new Date(data.NgaySC || new Date()).getFullYear()}-{String(data.MaPhieuSC).padStart(3, '0')}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
-          <div>
-            <h4 className="font-semibold text-slate-700 mb-2">
+        <div className="grid grid-cols-2 gap-8 mb-10 text-[0.875rem]">
+          <div className="space-y-2">
+            <h4 className="font-semibold text-[var(--color-on-surface)] uppercase tracking-wider text-[0.75rem] mb-3">
               Thông tin khách hàng
             </h4>
-            <p>Tên: {data.Xe?.KhachHang?.TenChuXe || "Không rõ"}</p>
-            <p>SĐT: {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
-            <p>Ngày in: {invoiceDate}</p>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Tên:</span> {data.Xe?.KhachHang?.TenChuXe || "Không rõ"}</p>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">SĐT:</span> {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Ngày in:</span> {invoiceDate}</p>
           </div>
-          <div className="text-right">
-            <h4 className="font-semibold text-slate-700 mb-2">Thông tin xe</h4>
-            <p>Biển số: {data.Xe?.BienSo || "Không rõ"}</p>
-            <p>Hiệu xe: {data.Xe?.HieuXe?.TenHieuXe || "Không rõ"}</p>
+          <div className="text-right space-y-2">
+            <h4 className="font-semibold text-[var(--color-on-surface)] uppercase tracking-wider text-[0.75rem] mb-3">Thông tin xe</h4>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Biển số:</span> {data.Xe?.BienSo || "Không rõ"}</p>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Hiệu xe:</span> {data.Xe?.HieuXe?.TenHieuXe || "Không rõ"}</p>
           </div>
         </div>
 
-        <table className="w-full text-left text-sm mb-8 border-separate border-spacing-0">
+        <table className="w-full text-left text-[0.875rem] mb-10">
           <thead>
             <tr>
-              <th className="py-3 font-semibold text-slate-600">Nội dung</th>
-              <th className="py-3 font-semibold text-slate-600 text-center">
+              <th className="py-4 font-semibold text-[0.75rem] text-[var(--color-on-surface-variant)] uppercase tracking-wider">Nội dung</th>
+              <th className="py-4 font-semibold text-[0.75rem] text-[var(--color-on-surface-variant)] uppercase tracking-wider text-center">
                 SL
               </th>
-              <th className="py-3 font-semibold text-slate-600 text-right">
+              <th className="py-4 font-semibold text-[0.75rem] text-[var(--color-on-surface-variant)] uppercase tracking-wider text-right">
                 Đơn giá
               </th>
-              <th className="py-3 font-semibold text-slate-600 text-right">
+              <th className="py-4 font-semibold text-[0.75rem] text-[var(--color-on-surface-variant)] uppercase tracking-wider text-right">
                 Thành tiền
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-transparent hover:[&>tr]:bg-[var(--color-surface-container-low)]">
             {lineItems.length > 0 ? lineItems.map(({ item, partsTotal, laborTotal, lineTotal }) => {
               const renderRows = [];
               if (item.VatTu && partsTotal > 0) {
                 renderRows.push(
-                  <tr key={`${item.MaCTSC}-vattu`}>
-                    <td className="py-3">{item.VatTu.TenVatTu}</td>
-                    <td className="py-3 text-center">{item.SoLuong}</td>
-                    <td className="py-3 text-right">{Number(item.DonGiaVatTu).toLocaleString("vi-VN")}</td>
-                    <td className="py-3 text-right">{partsTotal.toLocaleString("vi-VN")}</td>
+                  <tr key={`${item.MaCTSC}-vattu`} className="transition-colors">
+                    <td className="py-4 px-2 text-[var(--color-on-surface)]">{item.VatTu.TenVatTu}</td>
+                    <td className="py-4 px-2 text-center text-[var(--color-on-surface-variant)]">{item.SoLuong}</td>
+                    <td className="py-4 px-2 text-right text-[var(--color-on-surface-variant)]">{Number(item.DonGiaVatTu).toLocaleString("vi-VN")}</td>
+                    <td className="py-4 px-2 text-right font-medium text-[var(--color-on-surface)]">{partsTotal.toLocaleString("vi-VN")}</td>
                   </tr>
                 );
               }
               if (item.TienCong && laborTotal > 0) {
                 renderRows.push(
-                  <tr key={`${item.MaCTSC}-tiencong`}>
-                    <td className="py-3">{item.TienCong.NoiDung}</td>
-                    <td className="py-3 text-center">{item.SoLuong}</td>
-                    <td className="py-3 text-right">{Number(item.DonGiaTienCong).toLocaleString("vi-VN")}</td>
-                    <td className="py-3 text-right">{laborTotal.toLocaleString("vi-VN")}</td>
+                  <tr key={`${item.MaCTSC}-tiencong`} className="transition-colors">
+                    <td className="py-4 px-2 text-[var(--color-on-surface)]">{item.TienCong.NoiDung}</td>
+                    <td className="py-4 px-2 text-center text-[var(--color-on-surface-variant)]">{item.SoLuong}</td>
+                    <td className="py-4 px-2 text-right text-[var(--color-on-surface-variant)]">{Number(item.DonGiaTienCong).toLocaleString("vi-VN")}</td>
+                    <td className="py-4 px-2 text-right font-medium text-[var(--color-on-surface)]">{laborTotal.toLocaleString("vi-VN")}</td>
                   </tr>
                 );
               }
               if (renderRows.length > 0) {
                 renderRows.push(
-                  <tr key={`${item.MaCTSC}-total`}>
-                    <td className="py-3 font-semibold text-slate-700" colSpan="3">Tổng dòng</td>
-                    <td className="py-3 text-right font-semibold text-slate-900">{lineTotal.toLocaleString("vi-VN")}</td>
+                  <tr key={`${item.MaCTSC}-total`} className="bg-[var(--color-surface-container)]">
+                    <td className="py-3 px-2 font-semibold text-[0.75rem] uppercase tracking-wider text-[var(--color-on-surface-variant)]" colSpan="3">Tổng dòng</td>
+                    <td className="py-3 px-2 text-right font-semibold text-[var(--color-on-surface)]">{lineTotal.toLocaleString("vi-VN")}</td>
                   </tr>
                 );
               }
               return renderRows;
             }) : (
               <tr>
-                <td colSpan="4" className="py-4 text-center text-slate-500">Chưa có chi tiết sửa chữa</td>
+                <td colSpan="4" className="py-8 text-center text-[var(--color-on-surface-variant)]">Chưa có chi tiết sửa chữa</td>
               </tr>
             )}
           </tbody>
         </table>
 
-        <div className="flex justify-end mb-8">
-          <div className="w-64 space-y-2 text-sm">
-            <div className="flex justify-between font-semibold">
+        <div className="flex justify-end mb-10">
+          <div className="w-72 space-y-4 text-[0.875rem]">
+            <div className="flex justify-between text-[var(--color-on-surface-variant)]">
               <span>Tổng tiền vật tư:</span>
-              <span>{totalParts.toLocaleString("vi-VN")} ₫</span>
+              <span className="font-medium text-[var(--color-on-surface)]">{totalParts.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between font-semibold">
+            <div className="flex justify-between text-[var(--color-on-surface-variant)]">
               <span>Tổng tiền công:</span>
-              <span>{totalLabor.toLocaleString("vi-VN")} ₫</span>
+              <span className="font-medium text-[var(--color-on-surface)]">{totalLabor.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between text-lg font-bold text-slate-900 pt-2 relative before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-slate-100/80">
+            <div className="flex justify-between text-[1.125rem] font-bold text-[var(--color-on-surface)] pt-4 relative before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-[var(--color-outline-variant)]">
               <span>Tổng cộng:</span>
               <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between font-semibold text-emerald-700">
+            <div className="flex justify-between font-semibold text-[var(--color-primary)] bg-[var(--color-primary-container)] px-4 py-3 rounded-xl mt-4">
               <span>Thực thu:</span>
               <span>{settlementAmount.toLocaleString("vi-VN")} ₫</span>
             </div>
             {isOverCollect ? (
-              <p className="text-right text-xs text-amber-700">Số thu đã được giới hạn theo công nợ còn lại.</p>
+              <p className="text-right text-[0.75rem] text-[var(--color-on-surface-variant)]">Số thu đã được giới hạn theo công nợ còn lại.</p>
             ) : null}
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-6 relative before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-[var(--color-outline-variant)]">
           <button
             type="submit"
             disabled={createPayment.isPending}
-            className="inline-flex items-center justify-center rounded-2xl bg-slate-950 px-8 py-3 font-semibold text-white shadow-lg shadow-slate-950/15 transition hover:bg-slate-800 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] px-8 py-3 text-[0.875rem] font-semibold text-white transition hover:opacity-90 disabled:opacity-50 shadow-[0_4px_6px_-1px_rgba(0,64,161,0.04)]"
           >
             {createPayment.isPending ? "Đang xử lý..." : "Xác nhận thanh toán"}
           </button>

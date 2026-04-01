@@ -69,6 +69,34 @@ const WRITE_FIELDS = ["MaXe", "MaNV", "NgayThu", "SoTienThu", "PhuongThucThu", "
 const TRANSACTION_OPTIONS = {
   isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
 };
+const normalizePaymentReceiptPayload = (payload) => {
+  return payload?.paymentReceipt ?? payload;
+};
+
+const ensureValidPaymentReceiptCreatePayload = (payload) => {
+  const paymentReceipt = normalizePaymentReceiptPayload(payload);
+
+  if (!paymentReceipt || paymentReceipt.MaXe === undefined || paymentReceipt.SoTienThu === undefined || paymentReceipt.NgayThu === undefined) {
+    throw buildServiceError(400, "Dữ liệu phiếu thu tiền không hợp lệ.");
+  }
+
+  const maXe = Number(paymentReceipt.MaXe);
+  const soTienThu = Number(paymentReceipt.SoTienThu);
+
+  if (!Number.isInteger(maXe) || maXe <= 0 || !Number.isFinite(soTienThu) || soTienThu <= 0) {
+    throw buildServiceError(400, "Dữ liệu phiếu thu tiền không hợp lệ.");
+  }
+
+  return {
+    ...paymentReceipt,
+    MaXe: maXe,
+    MaNV:
+      paymentReceipt.MaNV === null || paymentReceipt.MaNV === undefined
+        ? paymentReceipt.MaNV
+        : Number(paymentReceipt.MaNV),
+    SoTienThu: soTienThu,
+  };
+};
 const getPaymentReceiptByIdInternal = async (db, id) => {
   const paymentReceipt = await db.pHIEU_THU_TIEN.findUnique({
     where: {
@@ -85,11 +113,22 @@ const getPaymentReceiptByIdInternal = async (db, id) => {
 
 const paymentReceiptService = {
   createPaymentReceipt: async (payload) => {
+    const createPayload = ensureValidPaymentReceiptCreatePayload(payload);
+
     return prisma.$transaction(async (tx) => {
-      await ensurePaymentWithinDebt(tx, payload.MaXe, payload.SoTienThu);
+      const existingVehicle = await tx.xE.findUnique({
+        where: { MaXe: createPayload.MaXe },
+        select: { MaXe: true },
+      });
+
+      if (!existingVehicle) {
+        throw buildServiceError(404, "Không tìm thấy xe.");
+      }
+
+      await ensurePaymentWithinDebt(tx, createPayload.MaXe, createPayload.SoTienThu);
 
       const paymentReceipt = await tx.pHIEU_THU_TIEN.create({
-        data: buildWriteData(payload, WRITE_FIELDS),
+        data: buildWriteData(createPayload, WRITE_FIELDS),
       });
 
       await syncVehicleDebt(tx, paymentReceipt.MaXe);

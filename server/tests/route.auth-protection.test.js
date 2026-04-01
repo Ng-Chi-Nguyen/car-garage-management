@@ -10,6 +10,12 @@ test("index route protects repair-orders, finance reports, and payment receipts"
 
   assert.match(
     indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/dashboard`,\s*\.\.\.dashboardAccessMiddlewares,\s*dashboardRoute\);/u,
+    "dashboard route should be protected by dashboardAccessMiddlewares",
+  );
+
+  assert.match(
+    indexRouteSource,
     /app\.use\(`\$\{apiPrefixV1\}\/repair-orders`,\s*\.\.\.requireManagementAccess,\s*repairOrderRoute\);/u,
     "repair-orders route should be protected",
   );
