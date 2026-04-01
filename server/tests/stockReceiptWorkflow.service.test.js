@@ -5,6 +5,8 @@ const ensureTestDatabaseUrl = () => {
   process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
 };
 
+ensureTestDatabaseUrl();
+
 const loadCreateWorkflowService = async () => {
   ensureTestDatabaseUrl();
   const module = await import("../src/services/workflows/stockReceiptWorkflow.service.js");
@@ -91,10 +93,23 @@ test("stock receipt workflow returns Contract A shape with item stock after and 
   });
 
   assert.deepEqual(Object.keys(result).sort(), ["items", "receipt", "totals"]);
-  assert.equal(result.receipt.MaPhieuNhap, 1);
+  assert.deepEqual(result.receipt, {
+    receiptId: 1,
+    supplierId: 1,
+    receivedAt: new Date("2026-03-30"),
+    totalAmount: 200000,
+  });
   assert.equal(result.items.length, 1);
-  assert.equal(result.items[0].stockAfter, 7);
-  assert.equal(result.items[0].inventoryValueAfter, 200000);
+  assert.deepEqual(result.items[0], {
+    detailId: 1,
+    receiptId: 1,
+    partId: 10,
+    quantity: 2,
+    importPrice: 100000,
+    lineTotal: 200000,
+    stockAfter: 7,
+    inventoryValueAfter: 200000,
+  });
   assert.equal(result.totals.totalQuantity, 2);
   assert.equal(result.totals.inventoryValueAfter, 200000);
 });

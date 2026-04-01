@@ -5,6 +5,8 @@ const ensureTestDatabaseUrl = () => {
   process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
 };
 
+ensureTestDatabaseUrl();
+
 const loadCreateDetailService = async () => {
   ensureTestDatabaseUrl();
   const module = await import("../src/services/management/stockReceiptDetail.service.js");
@@ -53,6 +55,11 @@ const createDetailDb = (initialState) => {
       },
     },
     pHIEU_NHAP_KHO: {
+      findUnique: async ({ where, select }) => {
+        const record = state.receipts.find((item) => item.MaPhieuNhap === Number(where.MaPhieuNhap));
+        if (!record) return null;
+        return select ? Object.fromEntries(Object.keys(select).filter((key) => select[key]).map((key) => [key, cloneValue(record[key])])) : cloneValue(record);
+      },
       update: async ({ where, data }) => {
         const record = state.receipts.find((item) => item.MaPhieuNhap === Number(where.MaPhieuNhap));
         record.TongTien = Number(data.TongTien);
@@ -80,20 +87,62 @@ test("stock receipt detail create update delete preserve quantity transitions an
   const service = createStockReceiptDetailService({ db: fixture.db });
 
   const created = await service.createStockReceiptDetail({ MaPhieuNhap: 1, MaVatTu: 10, SoLuong: 3, DonGiaNhap: 100000 });
-  assert.deepEqual(Object.keys(created).sort(), ["DonGiaNhap", "MaCTPN", "MaPhieuNhap", "MaVatTu", "SoLuong", "ThanhTien", "inventoryValueAfter", "stockAfter"]);
-  assert.equal(created.SoLuong, 3);
-  assert.equal(created.stockAfter, 13);
-  assert.equal(created.inventoryValueAfter, 300000);
+  assert.deepEqual(Object.keys(created).sort(), ["items", "receipt", "totals"]);
+  assert.deepEqual(created.receipt, {
+    receiptId: 1,
+    supplierId: null,
+    receivedAt: null,
+    totalAmount: 500000,
+  });
+  assert.deepEqual(created.items[0], {
+    detailId: 2,
+    receiptId: 1,
+    partId: 10,
+    quantity: 3,
+    importPrice: 100000,
+    lineTotal: 300000,
+    stockAfter: 13,
+    inventoryValueAfter: 300000,
+  });
+  assert.deepEqual(created.totals, { totalQuantity: 3, inventoryValueAfter: 300000 });
 
   const updated = await service.updateStockReceiptDetail(1, { SoLuong: 5, DonGiaNhap: 120000 });
-  assert.equal(updated.SoLuong, 5);
-  assert.equal(updated.stockAfter, 16);
-  assert.equal(updated.inventoryValueAfter, 600000);
+  assert.deepEqual(updated.items[0], {
+    detailId: 1,
+    receiptId: 1,
+    partId: 10,
+    quantity: 5,
+    importPrice: 120000,
+    lineTotal: 600000,
+    stockAfter: 16,
+    inventoryValueAfter: 600000,
+  });
+  assert.deepEqual(updated.receipt, {
+    receiptId: 1,
+    supplierId: null,
+    receivedAt: null,
+    totalAmount: 900000,
+  });
+  assert.deepEqual(updated.totals, { totalQuantity: 5, inventoryValueAfter: 600000 });
 
-  const deleted = await service.deleteStockReceiptDetail(created.MaCTPN);
-  assert.equal(deleted.MaCTPN, created.MaCTPN);
-  assert.equal(deleted.stockAfter, 13);
-  assert.equal(deleted.inventoryValueAfter, 300000);
+  const deleted = await service.deleteStockReceiptDetail(created.items[0].detailId);
+  assert.deepEqual(deleted.items[0], {
+    detailId: 2,
+    receiptId: 1,
+    partId: 10,
+    quantity: 3,
+    importPrice: 100000,
+    lineTotal: 300000,
+    stockAfter: 13,
+    inventoryValueAfter: 300000,
+  });
+  assert.deepEqual(deleted.receipt, {
+    receiptId: 1,
+    supplierId: null,
+    receivedAt: null,
+    totalAmount: 600000,
+  });
+  assert.deepEqual(deleted.totals, { totalQuantity: 3, inventoryValueAfter: 300000 });
 });
 
 test("stock receipt detail delete rejects stock decrement below zero", async () => {

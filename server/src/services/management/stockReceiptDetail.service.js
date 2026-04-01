@@ -42,6 +42,24 @@ const getStockReceiptDetailByIdInternal = async (db, id) => {
   return stockReceiptDetail;
 };
 
+const normalizeReceipt = (stockReceiptDetail) => ({
+  receiptId: Number(stockReceiptDetail.MaPhieuNhap),
+  supplierId: null,
+  receivedAt: null,
+  totalAmount: Number(stockReceiptDetail.receiptTotalAmount ?? stockReceiptDetail.TongTien ?? 0),
+});
+
+const normalizeReceiptItem = (stockReceiptDetail, stockAfter) => ({
+  detailId: Number(stockReceiptDetail.MaCTPN),
+  receiptId: Number(stockReceiptDetail.MaPhieuNhap),
+  partId: Number(stockReceiptDetail.MaVatTu),
+  quantity: Number(stockReceiptDetail.SoLuong),
+  importPrice: Number(stockReceiptDetail.DonGiaNhap),
+  lineTotal: Number(stockReceiptDetail.ThanhTien ?? 0),
+  stockAfter: Number(stockAfter ?? 0),
+  inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
+});
+
 const createStockReceiptDetailService = ({ db = prisma } = {}) => {
   const buildMutationResponse = async (tx, stockReceiptDetail) => {
     const part = await tx.vAT_TU.findUnique({
@@ -53,10 +71,22 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
       },
     });
 
+    const stockReceipt = await tx.pHIEU_NHAP_KHO.findUnique({
+      where: {
+        MaPhieuNhap: Number(stockReceiptDetail.MaPhieuNhap),
+      },
+      select: {
+        TongTien: true,
+      },
+    });
+
     return {
-      ...stockReceiptDetail,
-      stockAfter: Number(part?.SoLuongTon ?? 0),
-      inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
+      receipt: normalizeReceipt({ ...stockReceiptDetail, TongTien: stockReceipt?.TongTien }),
+      items: [normalizeReceiptItem(stockReceiptDetail, part?.SoLuongTon)],
+      totals: {
+        totalQuantity: Number(stockReceiptDetail.SoLuong ?? 0),
+        inventoryValueAfter: Number(stockReceiptDetail.ThanhTien ?? 0),
+      },
     };
   };
 
