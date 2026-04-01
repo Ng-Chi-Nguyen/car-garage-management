@@ -1,13 +1,15 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { SectionCard } from "../../../components/ui/section-card";
 import { DataTable } from "../../../components/ui/data-table";
 import { StateShell } from "../../../components/ui/state-shell";
 import { useCustomerDetailQuery } from "../useCustomersQuery";
 
 export function CustomerDetailView() {
-  const { id } = useParams();
-  const { data, isLoading, error } = useCustomerDetailQuery(id || "KH001");
+  const [searchParams] = useSearchParams();
+  const rawId = searchParams.get("id");
+  const id = rawId && rawId.trim() !== "" ? rawId : "KH001";
+  const { data, isLoading, error } = useCustomerDetailQuery(id);
 
   return (
     <StateShell isLoading={isLoading} error={error}>
