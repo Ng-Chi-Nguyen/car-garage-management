@@ -23,4 +23,14 @@ test("index route protects repair-orders, finance reports, and payment receipts"
     /app\.use\(`\$\{apiPrefixV1\}\/reports\/finance`,\s*\.\.\.requireManagementAccess,\s*financeReportRoute\);/u,
     "finance reports route should be protected",
   );
+  assert.doesNotMatch(
+    indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/workflows\/payment-receipts`/u,
+    "workflow payment-receipts route should not be mounted in the canonical route table",
+  );
+  assert.doesNotMatch(
+    indexRouteSource,
+    /\/\/ app\.use\(`\$\{apiPrefixV1\}\/workflows\/payment-receipts`/u,
+    "dead workflow payment-receipts route comments should be removed",
+  );
 });
