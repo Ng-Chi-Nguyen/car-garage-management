@@ -1,14 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { VehicleIntakeForm } from "../../features/intake/components/VehicleIntakeForm";
 
 export default function IntakeModalPage() {
-  const handleCancel = () => {
-    // Close logic here
-  };
-
-  const handleSuccess = () => {
-    // Close logic here
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
@@ -17,12 +12,12 @@ export default function IntakeModalPage() {
           <h2 className="text-xl font-bold text-slate-800">
             Lập phiếu tiếp nhận mới
           </h2>
-          <button type="button" onClick={handleCancel} className="text-slate-400 hover:text-slate-600">
+          <button type="button" onClick={() => navigate('/intake')} className="text-slate-400 hover:text-slate-600">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        <VehicleIntakeForm variant="modal" onCancel={handleCancel} onSuccess={handleSuccess} />
+        <VehicleIntakeForm variant="modal" onCancel={() => navigate('/intake')} onSuccess={() => navigate('/intake')} />
       </div>
     </div>
   );
