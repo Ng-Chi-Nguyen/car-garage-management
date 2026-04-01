@@ -314,6 +314,7 @@ export function ReceivablesForm() {
                       if (localQ) prev.set('q', localQ);
                       else prev.delete('q');
                       prev.set('page', '1');
+                      prev.delete('vehicleId');
                       return prev;
                     });
                   }
@@ -359,7 +360,7 @@ export function ReceivablesForm() {
                 <button
                   type="button"
                   disabled={page <= 1}
-                  onClick={() => setSearchParams(prev => { prev.set('page', String(page - 1)); return prev; })}
+                  onClick={() => setSearchParams(prev => { prev.set('page', String(page - 1)); prev.delete('vehicleId'); return prev; })}
                   className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
                 >
                   Trước
@@ -370,7 +371,7 @@ export function ReceivablesForm() {
                 <button
                   type="button"
                   disabled={page >= pagination.totalPages}
-                  onClick={() => setSearchParams(prev => { prev.set('page', String(page + 1)); return prev; })}
+                  onClick={() => setSearchParams(prev => { prev.set('page', String(page + 1)); prev.delete('vehicleId'); return prev; })}
                   className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
                 >
                   Sau

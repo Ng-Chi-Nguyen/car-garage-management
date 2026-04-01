@@ -3,6 +3,7 @@ import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildFinanceSummaryQueryRange } from "../finance.utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,4 +45,13 @@ test("ReceivablesForm uses URL for state truth", () => {
   assert.ok(content.includes('setSearchParams('), "Must update searchParams on vehicle select");
   assert.ok(!content.includes('const [selectedVehicle, setSelectedVehicle] = useState(null)'), "Should not use useState for selected vehicle");
   assert.ok(content.includes("ReceiptHistoryPanel"), "Must use ReceiptHistoryPanel component");
+  assert.ok(content.includes("prev.delete('vehicleId')"), "Must clear vehicleId on page/search change");
+});
+
+test("buildFinanceSummaryQueryRange returns current date for toDate", () => {
+  const baseDate = new Date(2026, 3, 15); // April 15, 2026
+  const range = buildFinanceSummaryQueryRange(baseDate);
+  assert.equal(range.from, "2026-04-01", "From date must be first day of month");
+  assert.equal(range.to, "2026-04-15", "To date must be current day of month");
+  assert.equal(range.granularity, "day", "Granularity must be day");
 });
