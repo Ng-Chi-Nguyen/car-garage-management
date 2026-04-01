@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { calculateReceivablesSummary } from "../finance.utils.js";
+import { buildFinanceSummaryQueryRange } from "../finance.utils.js";
 import { StateShell } from "../../../components/ui/state-shell";
-import { useReceivablesQuery, useReceiptHistoryQuery } from "../useFinanceQuery";
+import { useReceivablesQuery, useReceiptHistoryQuery, useFinanceSummary } from "../useFinanceQuery";
 import { useCreateReceivableMutation } from "../useFinanceMutation";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
@@ -98,6 +98,10 @@ export function ReceivablesForm() {
 
   const { data, isLoading, isError, error } = useReceivablesQuery({ page, limit: 10, q, groupBy: "vehicle" });
   const receivableCustomers = useMemo(() => data?.items || [], [data?.items]);
+  const pagination = data?.pagination;
+
+  const summaryParams = useMemo(() => buildFinanceSummaryQueryRange(), []);
+  const { data: summaryData } = useFinanceSummary(summaryParams);
 
   const createMutation = useCreateReceivableMutation();
 
@@ -131,7 +135,8 @@ export function ReceivablesForm() {
   const collectedAmount = Math.min(cashGivenNumber, currentDebt);
   const changeAmount = Math.max(cashGivenNumber - collectedAmount, 0);
 
-  const { totalDebtVehicles, totalReceivable } = useMemo(() => calculateReceivablesSummary(receivableCustomers), [receivableCustomers]);
+  const totalDebtVehicles = pagination?.totalItems || 0;
+  const totalReceivable = summaryData?.totalOutstandingDebt || 0;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -341,6 +346,29 @@ export function ReceivablesForm() {
                 </article>
               ))}
             </div>
+            {pagination && pagination.totalPages > 1 && (
+              <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setSearchParams(prev => { prev.set('page', String(page - 1)); return prev; })}
+                  className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Trước
+                </button>
+                <span className="text-sm text-slate-500">
+                  Trang {page} / {pagination.totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page >= pagination.totalPages}
+                  onClick={() => setSearchParams(prev => { prev.set('page', String(page + 1)); return prev; })}
+                  className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Sau
+                </button>
+              </div>
+            )}
           </FinancePanel>
         </div>
 
