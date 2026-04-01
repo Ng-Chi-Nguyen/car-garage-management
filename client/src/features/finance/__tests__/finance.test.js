@@ -45,3 +45,17 @@ test("ReceivablesForm uses URL for state truth", () => {
   assert.ok(!content.includes('const [selectedVehicle, setSelectedVehicle] = useState(null)'), "Should not use useState for selected vehicle");
   assert.ok(content.includes("ReceiptHistoryPanel"), "Must use ReceiptHistoryPanel component");
 });
+
+test("Receivables query compatibility prefers search and falls back to q", () => {
+  const apiFile = path.join(__dirname, "../finance.api.js");
+  const content = fs.readFileSync(apiFile, "utf-8");
+  assert.ok(content.includes("search: params.search || params.q ||"), "Must prefer params.search over params.q");
+});
+
+test("Receivables form emits search deterministically", () => {
+  const formFile = path.join(__dirname, "../components/ReceivablesForm.jsx");
+  const content = fs.readFileSync(formFile, "utf-8");
+  assert.ok(content.includes("searchParams.get(\"search\") || searchParams.get(\"q\")"), "Must read both search and q");
+  assert.ok(content.includes("prev.set('search', e.target.value)"), "Must emit search to URL");
+  assert.ok(content.includes("prev.delete('q')"), "Must cleanup q from URL");
+});

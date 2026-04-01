@@ -5,7 +5,7 @@ export async function fetchReceivables(params = {}) {
     params: {
       page: params.page || 1,
       limit: params.limit || params.pageSize || 20,
-      search: params.q || "",
+      search: params.search || params.q || "",
       groupBy: params.groupBy || "vehicle",
     },
   });
