@@ -193,7 +193,7 @@ export function RepairOrderForm() {
             >
               <option value="">Chọn xe</option>
               {vehicles.map(v => (
-                <option key={v.MaXe} value={v.MaXe}>{v.BienSo} - {v.HieuXe?.TenHieuXe || (typeof v.HieuXe === 'string' ? v.HieuXe : '')}</option>
+                <option key={v.MaXe} value={v.MaXe}>{v.BienSo} - {v.TenHieuXe}</option>
               ))}
             </select>
           </div>

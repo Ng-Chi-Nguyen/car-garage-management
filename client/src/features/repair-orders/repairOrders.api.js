@@ -30,7 +30,20 @@ export const createRepairOrder = async (payload) => {
 
 export const fetchVehicles = async () => {
   const response = await axiosClient.get(`/api/v1/vehicles`);
-  return response.data;
+  const data = response.data;
+  
+  if (data?.data?.vehicles) {
+    data.data.vehicles = data.data.vehicles.map(v => {
+      // Robust flattening/mapping for vehicle brand to avoid React object render crashes
+      const brand = v.HieuXe?.TenHieuXe || (typeof v.HieuXe === 'string' ? v.HieuXe : '') || v.TenHieuXe || '';
+      return {
+        ...v,
+        TenHieuXe: brand
+      };
+    });
+  }
+  
+  return data;
 };
 
 export const fetchParts = async () => {
