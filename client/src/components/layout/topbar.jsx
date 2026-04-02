@@ -75,13 +75,13 @@ export function Topbar() {
   const showSearchResults = openSearchResults && searchTerm.trim().length >= 2;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/70 bg-white/75 px-6 py-4 backdrop-blur-xl md:px-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-6 py-3 backdrop-blur-md h-16 flex items-center">
+      <div className="flex w-full items-center justify-between gap-4">
         <div
           ref={searchRef}
-          className="relative flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/90 px-4 py-3 shadow-sm lg:min-w-[360px]"
+          className="relative flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 shadow-sm lg:min-w-[320px] focus-within:border-blue-400 focus-within:bg-white focus-within:ring-1 focus-within:ring-blue-400 transition-all"
         >
-          <span className="material-symbols-outlined text-slate-400">search</span>
+          <span className="material-symbols-outlined text-[20px] text-slate-400">search</span>
           <input
             type="text"
             value={searchTerm}
@@ -90,7 +90,7 @@ export function Topbar() {
               setOpenSearchResults(true);
             }}
             onFocus={() => setOpenSearchResults(true)}
-            placeholder="Tìm kiếm khách hàng, biển số, lệnh sửa..."
+            placeholder="Tìm kiếm nhật ký..."
             className="w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
           />
 
@@ -125,24 +125,48 @@ export function Topbar() {
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between gap-3 lg:justify-end">
+        <div className="flex items-center gap-4 lg:gap-6">
+          {/* Action icons */}
+          <div className="flex items-center gap-3 text-slate-500">
+            <button
+              type="button"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[22px]">notifications</span>
+              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+            </button>
+            <button
+              type="button"
+              className="flex h-9 items-center gap-1 rounded-full px-3 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[22px]">help</span>
+              <span className="text-xs font-bold rounded-full bg-slate-200 px-1.5 text-slate-700">3</span>
+            </button>
+          </div>
+
+          <div className="h-6 w-px bg-slate-200"></div>
+
+          {/* User profile dropdown */}
           <div ref={menuRef} className="relative">
             <button
               type="button"
               onClick={() => setOpenMenu((prev) => !prev)}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-3 py-2 shadow-sm transition-colors hover:border-slate-300"
+              className="flex items-center gap-3 rounded-full hover:bg-slate-50 p-1 pr-3 transition-colors group"
             >
-              <div className="text-right">
-                <p className="text-sm font-semibold text-slate-900">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-500 text-sm font-bold text-white shadow-sm ring-2 ring-white group-hover:shadow-md transition-all">
+                {initials}
+              </div>
+              <div className="text-left hidden sm:block">
+                <p className="text-sm font-semibold text-slate-800 leading-none">
                   {displayName}
                 </p>
-                <p className="text-xs font-medium text-slate-400">
+                <p className="text-[11px] font-medium text-slate-500 mt-1">
                   {roleLabel}
                 </p>
               </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 text-sm font-bold text-white shadow-lg shadow-blue-500/25">
-                {initials}
-              </div>
+              <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 transition-colors hidden sm:block">
+                expand_more
+              </span>
             </button>
 
             {openMenu ? (
