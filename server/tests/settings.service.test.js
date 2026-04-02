@@ -53,3 +53,33 @@ test("settingsService updateSystemParameters lưu cấu hình mới", async () =
     materialProfitMargin: 25,
   });
 });
+
+test("settingsService getCarBrands dùng số lượng xe từ relation count", async () => {
+  const calls = { findMany: null };
+  const service = createSettingsService({
+    carBrandDelegate: {
+      findMany: async (args) => {
+        calls.findMany = args;
+        return [
+          {
+            MaHieuXe: 5,
+            TenHieuXe: "Toyota",
+            _count: { Xe: 4 },
+            Xe: [{}, {}],
+          },
+        ];
+      },
+    },
+  });
+
+  const result = await service.getCarBrands();
+
+  assert.deepEqual(calls.findMany.include, {
+    _count: {
+      select: {
+        Xe: true,
+      },
+    },
+  });
+  assert.equal(result[0].modelCount, 4);
+});

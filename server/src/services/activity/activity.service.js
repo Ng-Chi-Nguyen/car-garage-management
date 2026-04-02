@@ -13,10 +13,27 @@ const formatActivityTime = (date) => {
   return date.toISOString();
 };
 
+const buildInitials = (value) => {
+  const parts = String(value ?? "")
+    .trim()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return "?";
+  }
+
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("") || "?";
+};
+
 const toActivityLog = ({ id, time, user, role, actionType, details, status }) => ({
   id: String(id),
   time,
   user,
+  initials: buildInitials(user),
   role,
   actionType,
   details,

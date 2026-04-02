@@ -99,7 +99,7 @@ export function ActivityLogList() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
-                      {log.initials}
+                      {log.initials || log.user}
                     </div>
                     <span className="text-sm font-semibold text-on-surface">
                       {log.user}

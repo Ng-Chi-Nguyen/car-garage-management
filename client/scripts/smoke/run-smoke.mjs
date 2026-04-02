@@ -15,6 +15,16 @@ const { values } = parseArgs({ options, strict: false });
 
 async function runSmoke() {
   const flowsDir = path.join(__dirname, 'flows');
+
+  const runFlowModule = async (flowName, flowPath) => {
+    const module = await import(flowPath);
+
+    if (typeof module.default !== 'function') {
+      throw new Error(`Flow '${flowName}' must export a default function.`);
+    }
+
+    await module.default();
+  };
   
   if (values.flow) {
     const flowPath = path.join(flowsDir, `${values.flow}.mjs`);
@@ -25,14 +35,8 @@ async function runSmoke() {
     
     console.log(`Running smoke flow: ${values.flow}`);
     try {
-      const module = await import(flowPath);
-      if (module.default) {
-        await module.default();
-        console.log(`✅ Flow '${values.flow}' completed successfully.`);
-      } else {
-        console.error(`Error: Flow '${values.flow}' does not export a default function.`);
-        process.exit(1);
-      }
+      await runFlowModule(values.flow, flowPath);
+      console.log(`✅ Flow '${values.flow}' completed successfully.`);
     } catch (err) {
       console.error(`❌ Flow '${values.flow}' failed:`, err);
       process.exit(1);
@@ -47,11 +51,8 @@ async function runSmoke() {
       const flowName = path.basename(file, '.mjs');
       console.log(`\n--- Flow: ${flowName} ---`);
       try {
-        const module = await import(path.join(flowsDir, file));
-        if (module.default) {
-          await module.default();
-          console.log(`✅ Flow '${flowName}' completed successfully.`);
-        }
+        await runFlowModule(flowName, path.join(flowsDir, file));
+        console.log(`✅ Flow '${flowName}' completed successfully.`);
       } catch (err) {
         console.error(`❌ Flow '${flowName}' failed:`, err);
         hasError = true;

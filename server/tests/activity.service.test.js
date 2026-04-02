@@ -24,6 +24,7 @@ test("activityService builds real logs from domain records", async () => {
   assert.equal(logs[0].id, "repair-7");
   assert.equal(logs[0].status, "success");
   assert.match(logs[0].actionType, /Phiếu sửa chữa/);
+  assert.ok(logs[0].initials);
 });
 
 test("activityService derives stats from generated logs", async () => {

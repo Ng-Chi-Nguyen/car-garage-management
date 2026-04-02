@@ -61,13 +61,20 @@ export const createSettingsService = ({ settingsDelegate, laborFeeDelegate, carB
     const prisma = carBrandDelegate ? null : await loadPrisma();
     const delegate = carBrandDelegate ?? prisma.hIEU_XE;
     const carBrands = await delegate.findMany({
+      include: {
+        _count: {
+          select: {
+            Xe: true,
+          },
+        },
+      },
       orderBy: { MaHieuXe: "asc" },
     });
 
     return carBrands.map((carBrand) => ({
       id: carBrand.MaHieuXe,
       name: carBrand.TenHieuXe,
-      modelCount: carBrand.Xe?.length ?? carBrand.modelCount ?? 0,
+      modelCount: carBrand._count?.Xe ?? carBrand.Xe?.length ?? 0,
       description: carBrand.description ?? carBrand.GhiChu ?? carBrand.TenHieuXe,
     }));
   },
