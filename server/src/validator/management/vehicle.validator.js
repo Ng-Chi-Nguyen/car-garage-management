@@ -13,11 +13,13 @@ const VEHICLE_FILTER_FIELDS = {
 const vehicleSchema = createCrudValidator({
   createBodySchema: Joi.object({
     BienSo: Joi.string().trim().max(20).required(),
+    MauXe: Joi.string().trim().max(50).allow(null),
     MaHieuXe: Joi.number().integer().positive().required(),
     MaKH: Joi.number().integer().positive().required(),
   }).unknown(false),
   updateBodySchema: Joi.object({
     BienSo: Joi.string().trim().max(20),
+    MauXe: Joi.string().trim().max(50).allow(null),
     MaHieuXe: Joi.number().integer().positive(),
     MaKH: Joi.number().integer().positive(),
   })
