@@ -18,7 +18,7 @@ export function Sidebar() {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    authStorage.clearToken();
+    authStorage.clearSession();
     // Use hard reload for robust state clearing without needing queryClient.clear()
     window.location.replace('/login');
   };

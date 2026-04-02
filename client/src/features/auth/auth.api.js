@@ -1,5 +1,19 @@
 import { authStorage } from "./auth.storage";
 
+async function readJsonSafe(response) {
+  const rawBody = await response.text();
+
+  if (!rawBody) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawBody);
+  } catch {
+    throw new Error("Máy chủ trả về phản hồi không hợp lệ. Vui lòng thử lại.");
+  }
+}
+
 export async function login(credentials) {
   const response = await fetch("/api/v1/auth/login", {
     method: "POST",
@@ -12,7 +26,7 @@ export async function login(credentials) {
     }),
   });
 
-  const data = await response.json();
+  const data = await readJsonSafe(response);
 
   if (!response.ok) {
     throw new Error(data.message || "Đăng nhập thất bại");
@@ -32,7 +46,7 @@ export async function forgotPassword(email) {
     }),
   });
 
-  const data = await response.json();
+  const data = await readJsonSafe(response);
 
   if (!response.ok) {
     throw new Error(data.message || "Gửi yêu cầu thất bại");
@@ -52,7 +66,7 @@ export async function changePassword(payload) {
     body: JSON.stringify(payload),
   });
 
-  const data = await response.json();
+  const data = await readJsonSafe(response);
 
   if (!response.ok) {
     throw new Error(data.message || "Đổi mật khẩu thất bại");
@@ -74,7 +88,7 @@ export async function resetPassword({ token, newPassword, confirmPassword }) {
     }),
   });
 
-  const data = await response.json();
+  const data = await readJsonSafe(response);
 
   if (!response.ok) {
     throw new Error(data.message || "Đặt lại mật khẩu thất bại");

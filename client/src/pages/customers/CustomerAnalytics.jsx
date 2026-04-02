@@ -11,7 +11,7 @@ export default function CustomerAnalytics() {
         subtitle="Thống kê và phân tích dữ liệu khách hàng"
         breadcrumbs={[
           { label: "CRM", path: "/customers" },
-          { label: "Khách hàng", path: "/customers" },
+          { label: "Khách hàng" },
           { label: "Báo cáo chuyên sâu" },
         ]}
       />

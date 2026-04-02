@@ -18,8 +18,13 @@ export default function LoginPage() {
     try {
       const responseData = await login({ username, password });
       const token = responseData?.data?.accessToken;
+      const user = responseData?.data?.user;
+
       if (token) {
         authStorage.setToken(token);
+      }
+      if (user) {
+        authStorage.setUser(user);
       }
       navigate("/dashboard", { replace: true });
     } catch (err) {
