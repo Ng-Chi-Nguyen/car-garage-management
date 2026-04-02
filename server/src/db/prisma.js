@@ -16,11 +16,11 @@ const buildDatabaseUrlWithSafePoolParams = (rawUrl) => {
   const parsed = new URL(rawUrl);
 
   if (!parsed.searchParams.has("connectTimeout")) {
-    parsed.searchParams.set("connectTimeout", "60000");
+    parsed.searchParams.set("connectTimeout", "5000");
   }
 
   if (!parsed.searchParams.has("acquireTimeout")) {
-    parsed.searchParams.set("acquireTimeout", "60000");
+    parsed.searchParams.set("acquireTimeout", "5000");
   }
 
   if (!parsed.searchParams.has("connectionLimit")) {

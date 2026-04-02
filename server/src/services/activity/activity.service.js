@@ -1,4 +1,17 @@
 const ACTIVITY_LIMIT = 20;
+const DB_TIMEOUT_MESSAGE = "Hệ thống đang quá tải hoặc không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.";
+
+const wrapDbError = (error) => {
+  const message = String(error?.message ?? "").toLowerCase();
+
+  if (message.includes("pool timeout") || message.includes("unable to start a transaction in the given time")) {
+    const wrappedError = new Error(DB_TIMEOUT_MESSAGE);
+    wrappedError.status = 503;
+    return wrappedError;
+  }
+
+  return error;
+};
 
 const loadPrisma = async () => {
   const { default: prisma } = await import("../../db/prisma.js");
@@ -102,12 +115,21 @@ export const createActivityService = ({ repairOrderDelegate, paymentReceiptDeleg
     const paymentReceiptRepo = paymentReceiptDelegate ?? prisma.pHIEU_THU_TIEN;
     const stockReceiptRepo = stockReceiptDelegate ?? prisma.pHIEU_NHAP_KHO;
     const customerRepo = customerDelegate ?? prisma.kHACH_HANG;
-    const [repairOrders, paymentReceipts, stockReceipts, customers] = await Promise.all([
-      repairOrderRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
-      paymentReceiptRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
-      stockReceiptRepo.findMany({ orderBy: { NgayNhap: "desc" }, take: ACTIVITY_LIMIT }),
-      customerRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
-    ]);
+    let repairOrders;
+    let paymentReceipts;
+    let stockReceipts;
+    let customers;
+
+    try {
+      [repairOrders, paymentReceipts, stockReceipts, customers] = await Promise.all([
+        repairOrderRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
+        paymentReceiptRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
+        stockReceiptRepo.findMany({ orderBy: { NgayNhap: "desc" }, take: ACTIVITY_LIMIT }),
+        customerRepo.findMany({ orderBy: { NgayCapNhat: "desc" }, take: ACTIVITY_LIMIT }),
+      ]);
+    } catch (error) {
+      throw wrapDbError(error);
+    }
 
     return buildActivityLogs({ repairOrders, paymentReceipts, stockReceipts, customers });
   },

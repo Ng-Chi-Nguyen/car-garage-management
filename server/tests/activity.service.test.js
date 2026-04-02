@@ -45,3 +45,21 @@ test("activityService derives stats from generated logs", async () => {
     successRate: "0%",
   });
 });
+
+test("activityService trả lỗi rõ ràng khi delegate Prisma bị timeout", async () => {
+  const service = createActivityService({
+    repairOrderDelegate: {
+      findMany: async () => {
+        throw new Error("Prisma MariaDB pool timeout (active=0 idle=0 limit=10)");
+      },
+    },
+    paymentReceiptDelegate: { findMany: async () => ([] ) },
+    stockReceiptDelegate: { findMany: async () => ([] ) },
+    customerDelegate: { findMany: async () => ([] ) },
+  });
+
+  await assert.rejects(
+    service.getActivityLogs(),
+    (error) => error.status === 503 && error.message === "Hệ thống đang quá tải hoặc không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.",
+  );
+});

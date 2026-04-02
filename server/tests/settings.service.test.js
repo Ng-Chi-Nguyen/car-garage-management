@@ -83,3 +83,50 @@ test("settingsService getCarBrands dùng số lượng xe từ relation count", 
   });
   assert.equal(result[0].modelCount, 4);
 });
+
+test("settingsService dùng delegate Prisma thay thế khi tên model khác", async () => {
+  const service = createSettingsService({
+    prisma: {
+      cauHinhHeThong: {
+        findUnique: async () => ({
+          MaCauHinh: 1,
+          SoXeToiDaMoiNgay: 18,
+          TyLeLoiNhuanPhuTung: 12,
+        }),
+      },
+    },
+  });
+
+  const result = await service.getSystemParameters();
+
+  assert.deepEqual(result, {
+    maxCarsPerDay: 18,
+    materialProfitMargin: 12,
+  });
+});
+
+test("settingsService trả lỗi rõ ràng khi không tìm thấy model cấu hình", async () => {
+  const service = createSettingsService({
+    prisma: {},
+  });
+
+  await assert.rejects(
+    service.getSystemParameters(),
+    (error) => error.status === 500 && error.message === "Không tìm thấy model cấu hình hệ thống trong Prisma client.",
+  );
+});
+
+test("settingsService bọc lỗi timeout DB bằng thông báo ngắn gọn", async () => {
+  const service = createSettingsService({
+    settingsDelegate: {
+      findUnique: async () => {
+        throw new Error("Prisma MariaDB pool timeout (active=0 idle=0 limit=10)");
+      },
+    },
+  });
+
+  await assert.rejects(
+    service.getSystemParameters(),
+    (error) => error.status === 503 && error.message === "Hệ thống đang quá tải hoặc không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.",
+  );
+});
