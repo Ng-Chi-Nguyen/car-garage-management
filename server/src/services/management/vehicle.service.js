@@ -16,12 +16,28 @@ const VEHICLE_FILTER_FIELDS = {
 };
 
 const WRITE_FIELDS = ["BienSo", "MaHieuXe", "MaKH"];
+const VEHICLE_INCLUDE_RELATIONS = {
+  HieuXe: {
+    select: {
+      MaHieuXe: true,
+      TenHieuXe: true,
+    },
+  },
+  KhachHang: {
+    select: {
+      MaKH: true,
+      TenChuXe: true,
+      DienThoai: true,
+    },
+  },
+};
 
 const getVehicleByIdInternal = async (db, id) => {
   const vehicle = await db.xE.findUnique({
     where: {
       MaXe: Number(id),
     },
+    include: VEHICLE_INCLUDE_RELATIONS,
   });
 
   if (!vehicle) {
@@ -55,6 +71,7 @@ const vehicleService = {
         where,
         skip: pagination.skip,
         take: pagination.limit,
+        include: VEHICLE_INCLUDE_RELATIONS,
         orderBy: {
           MaXe: "desc",
         },
@@ -93,4 +110,5 @@ const vehicleService = {
   },
 };
 
+export { VEHICLE_INCLUDE_RELATIONS };
 export default vehicleService;

@@ -1,11 +1,11 @@
-import axiosClient from '../../lib/axiosClient.js';
+import axiosClient from '../../lib/axiosClient';
 
 export async function fetchReceivables(params = {}) {
   const response = await axiosClient.get("/api/v1/reports/finance/debtors", {
     params: {
-      page: params.page || 1,
+      page: Number(params.page) > 0 ? Number(params.page) : 1,
       limit: params.limit || params.pageSize || 20,
-      search: params.search || params.q || "",
+      search: params.q || "",
       groupBy: params.groupBy || "vehicle",
     },
   });
@@ -13,9 +13,6 @@ export async function fetchReceivables(params = {}) {
 }
 
 export async function fetchFinanceSummary(params = {}) {
-  if (!params.from || !params.to || !params.granularity) {
-    throw new Error("Missing required params: from,to,granularity");
-  }
   const response = await axiosClient.get("/api/v1/reports/finance/summary", {
     params,
   });
@@ -33,6 +30,7 @@ export async function fetchReceiptHistory(params = {}) {
     MaXe: params.vehicleId ? Number(params.vehicleId) : undefined,
     page: params.page ? Number(params.page) : 1,
     limit: params.limit ? Number(params.limit) : 10,
+    TrangThai: params.status || "DaThu",
   };
   
   // Strip out undefined values
@@ -46,7 +44,17 @@ export async function fetchReceiptHistory(params = {}) {
   return response.data?.data || response.data;
 }
 
+export async function fetchVehicleDebt(vehicleId) {
+  const response = await axiosClient.get(`/api/v1/vehicles/${vehicleId}`);
+  const rawDebt =
+    response.data?.data?.vehicle?.TienNoHienTai
+    ?? response.data?.data?.TienNoHienTai
+    ?? response.data?.TienNoHienTai
+    ?? 0;
+  return Number(rawDebt) || 0;
+}
+
 export async function fetchSettlement(id) {
   const response = await axiosClient.get(`/api/v1/repair-orders/${id}`);
-  return response.data?.data || response.data;
+  return response.data?.data?.repairOrder || response.data?.data || response.data;
 }

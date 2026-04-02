@@ -1,4 +1,6 @@
 import revenueReportService from "../../services/report/revenueReport.service.js";
+import reportExportService from "../../services/report/reportExport.service.js";
+import { sendXlsxBuffer } from "../../shared/xlsx/xlsxDownload.response.js";
 
 const createHandler = (service, serviceMethodName, successMessage) => async (req, res) => {
   try {
@@ -16,18 +18,40 @@ const createHandler = (service, serviceMethodName, successMessage) => async (req
     return res.status(status).json({
       success: false,
       message: isBusinessError
-        ? error?.message || "Đã xảy ra lỗi trong quá trình xử lý yêu cầu."
-        : "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.",
+        ? error?.message || "Da xay ra loi trong qua trinh xu ly yeu cau."
+        : "Da xay ra loi trong qua trinh xu ly yeu cau.",
+    });
+  }
+};
+
+const createExportHandler = (exportMethodName) => async (req, res) => {
+  try {
+    const reportFile = await reportExportService[exportMethodName](req.validatedQuery);
+    return sendXlsxBuffer(res, reportFile);
+  } catch (error) {
+    const status = Number.isInteger(error?.status) ? error.status : 500;
+    const isBusinessError = status >= 400 && status < 500;
+
+    return res.status(status).json({
+      success: false,
+      message: isBusinessError
+        ? error?.message || "Da xay ra loi trong qua trinh xu ly yeu cau."
+        : "Da xay ra loi trong qua trinh xu ly yeu cau.",
     });
   }
 };
 
 const createRevenueReportController = (service = revenueReportService) => ({
-  getRevenueTimeseries: createHandler(service, "getRevenueTimeseries", "Lấy báo cáo doanh thu theo thời gian thành công."),
-  getRevenueByCarBrand: createHandler(service, "getRevenueByCarBrand", "Lấy báo cáo doanh thu theo hiệu xe thành công."),
-  getRevenueByPart: createHandler(service, "getRevenueByPart", "Lấy báo cáo doanh thu theo phụ tùng thành công."),
-  getRevenueComparison: createHandler(service, "getRevenueComparison", "Lấy báo cáo so sánh doanh thu thành công."),
-  getRevenueComposition: createHandler(service, "getRevenueComposition", "Lấy báo cáo tỷ trọng doanh thu thành công."),
+  getRevenueTimeseries: createHandler(service, "getRevenueTimeseries", "Lay bao cao doanh thu theo thoi gian thanh cong."),
+  getRevenueByCarBrand: createHandler(service, "getRevenueByCarBrand", "Lay bao cao doanh thu theo hieu xe thanh cong."),
+  getRevenueByPart: createHandler(service, "getRevenueByPart", "Lay bao cao doanh thu theo phu tung thanh cong."),
+  getRevenueComparison: createHandler(service, "getRevenueComparison", "Lay bao cao so sanh doanh thu thanh cong."),
+  getRevenueComposition: createHandler(service, "getRevenueComposition", "Lay bao cao ty trong doanh thu thanh cong."),
+  exportRevenueTimeseries: createExportHandler("exportRevenueTimeseries"),
+  exportRevenueByCarBrand: createExportHandler("exportRevenueByCarBrand"),
+  exportRevenueByPart: createExportHandler("exportRevenueByPart"),
+  exportRevenueComparison: createExportHandler("exportRevenueComparison"),
+  exportRevenueComposition: createExportHandler("exportRevenueComposition"),
 });
 
 const revenueReportController = createRevenueReportController();
