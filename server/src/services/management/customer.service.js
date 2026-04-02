@@ -95,11 +95,6 @@ const createCustomerService = ({
         orderBy: {
           MaKH: "desc",
         },
-        include: {
-          Xe: {
-            include: { PhieuSuaChua: true }
-          }
-        }
       }),
     ]));
 
