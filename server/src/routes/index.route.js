@@ -16,6 +16,7 @@ import masterDataXlsxRoute from "./management/masterDataXlsx.route.js";
 import authMiddleware from "../middleware/auth/auth.middleware.js";
 import partRoute from "./management/part.route.js";
 import paymentReceiptRoute from "./management/paymentReceipt.route.js";
+import intakeWorkflowRoute from "./workflows/intakeWorkflow.route.js";
 import repairOrderDetailRoute from "./management/repairOrderDetail.route.js";
 import repairOrderRoute from "./management/repairOrder.route.js";
 import repairOrderWorkflowRoute from "./workflows/repairOrderWorkflow.route.js";
@@ -50,6 +51,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
+  app.use(`${apiPrefixV1}/workflows/intakes`, intakeWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
   app.use(`${apiPrefixV1}/master-data/xlsx`, ...requireManagementAccess, masterDataXlsxRoute);
   app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute);
