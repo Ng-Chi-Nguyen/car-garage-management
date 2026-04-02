@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { SectionCard } from "../../../components/ui/section-card";
 import { useCreateRepairOrderMutation } from "../useCreateRepairOrderMutation";
-import { fetchVehicles, fetchParts, fetchLaborFees } from "../repairOrders.api";
+import { fetchVehicles, fetchParts, fetchLaborFees, createRepairOrderDetail, updateRepairOrderDetail, deleteRepairOrderDetail } from "../repairOrders.api";
 
 export function RepairOrderForm() {
   const navigate = useNavigate();
@@ -68,10 +68,37 @@ export function RepairOrderForm() {
   };
 
   const saveRow = async (row) => {
-    if (!header.MaPBS) return; // Cannot save row if repair order not created yet
+    let currentMaPBS = header.MaPBS;
+
+    if (!currentMaPBS) {
+      if (!header.MaXe) {
+        toast.error("Vui lòng chọn xe trước khi lưu chi tiết");
+        return;
+      }
+      try {
+        const payload = {
+          repairOrder: {
+            MaXe: Number(header.MaXe),
+            MaNV: null,
+            NgaySC: new Date().toISOString(),
+            TrangThai: "TiepNhan",
+            NoiDungLoi: header.NoiDungLoi,
+            GhiChu: header.GhiChu
+          },
+          details: []
+        };
+        const res = await createRepairOrder(payload);
+        currentMaPBS = res.data?.repairOrder?.MaPhieuSC || res.data?.MaPhieuSC;
+        setHeader(prev => ({ ...prev, MaPBS: currentMaPBS }));
+      } catch (error) {
+        toast.error("Lỗi khi tạo phiếu tự động: " + (error.response?.data?.message || error.message));
+        return;
+      }
+    }
+
     try {
       const payload = {
-        MaPhieuSC: header.MaPBS,
+        MaPhieuSC: currentMaPBS,
         MaVatTu: Number(row.MaVatTu),
         MaTienCong: Number(row.MaTienCong),
         SoLuong: Number(row.SoLuong),
@@ -81,12 +108,12 @@ export function RepairOrderForm() {
       if (row.serverId) {
         await updateRepairOrderDetail(row.serverId, payload);
         toast.success("Cập nhật chi tiết thành công");
-        setRows(rows.map(r => r.id === row.id ? { ...r, mode: 'saved' } : r));
+        setRows(prevRows => prevRows.map(r => r.id === row.id ? { ...r, mode: 'saved' } : r));
       } else {
         const res = await createRepairOrderDetail(payload);
         toast.success("Thêm chi tiết thành công");
-        const serverId = res.data?.repairOrderDetail?.repairOrderDetail?.MaCTSC || res.data?.repairOrderDetail?.MaCTSC || res.data?.MaCTSC;
-        setRows(rows.map(r => r.id === row.id ? { ...r, mode: 'saved', serverId } : r));
+        const serverId = res.data?.repairOrderDetail?.MaCTSC || res.data?.MaCTSC;
+        setRows(prevRows => prevRows.map(r => r.id === row.id ? { ...r, mode: 'saved', serverId } : r));
       }
     } catch (error) {
       toast.error("Lỗi khi lưu chi tiết: " + (error.response?.data?.message || error.message));
@@ -114,6 +141,16 @@ export function RepairOrderForm() {
       return;
     }
     try {
+      if (header.MaPBS) {
+        const unsavedRows = rows.filter(r => r.mode !== 'saved');
+        for (const row of unsavedRows) {
+           await saveRow(row);
+        }
+        toast.success("Hoàn tất phiếu sửa chữa thành công!");
+        navigate("/repair-orders");
+        return;
+      }
+
       const payload = {
         repairOrder: {
           MaXe: Number(header.MaXe),

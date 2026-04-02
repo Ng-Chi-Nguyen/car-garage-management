@@ -47,6 +47,12 @@ describe('Repair Orders UI Contracts', () => {
             assert.ok(content.includes('deleteRepairOrderDetail'), 'Should have delete API call');
             assert.ok(content.match(/mode:\s*('|")new('|")|('|")saved('|")|('|")editing('|")/), 'Should track row modes');
             assert.ok(content.includes('createRepairOrderDetail'), 'Should have create API call for detail');
+            
+            // Behavior-level persisted lifecycle checks
+            assert.ok(content.includes('!currentMaPBS'), 'Should auto-create repair order if ID is missing on saveRow');
+            assert.ok(content.includes('createRepairOrder('), 'Should call createRepairOrder to derive authoritative ID');
+            assert.ok(content.includes('setHeader('), 'Should set derived MaPBS into header state');
+            assert.ok(content.includes('row.serverId'), 'Should branch detail creation vs update using serverId');
         });
     });
 });
