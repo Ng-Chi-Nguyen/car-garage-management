@@ -30,3 +30,18 @@ export const fetchLaborFees = async () => {
   const response = await axiosClient.get(`/api/v1/labor-fees`);
   return response.data;
 };
+
+export const createRepairOrderDetail = async (payload) => {
+  const response = await axiosClient.post(`/api/v1/repair-order-details`, payload);
+  return response.data;
+};
+
+export const updateRepairOrderDetail = async (detailId, payload) => {
+  const response = await axiosClient.put(`/api/v1/repair-order-details/${detailId}`, payload);
+  return response.data;
+};
+
+export const deleteRepairOrderDetail = async (detailId) => {
+  const response = await axiosClient.delete(`/api/v1/repair-order-details/${detailId}`);
+  return response.data;
+};
