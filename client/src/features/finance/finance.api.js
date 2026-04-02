@@ -61,3 +61,14 @@ export async function fetchSettlement(id) {
   const response = await axiosClient.get(`/api/v1/repair-orders/${id}`);
   return response.data?.data?.repairOrder || response.data?.data || response.data;
 }
+
+export async function exportFinanceDebtors(params = {}) {
+  const response = await axiosClient.get("/api/v1/reports/finance/debtors/export", {
+    params: {
+      search: params.search || params.q || "",
+      groupBy: params.groupBy || "vehicle",
+    },
+    responseType: 'blob'
+  });
+  return response.data;
+}
