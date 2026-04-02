@@ -1,6 +1,3 @@
-import { Prisma } from "@prisma/client";
-
-import prisma from "../../db/prisma.js";
 import {
   buildListWhere,
   buildPagination,
@@ -25,7 +22,7 @@ const STOCK_RECEIPT_DETAIL_FILTER_FIELDS = {
 
 const WRITE_FIELDS = ["MaPhieuNhap", "MaVatTu", "SoLuong", "DonGiaNhap"];
 const TRANSACTION_OPTIONS = {
-  isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+  isolationLevel: "Serializable",
 };
 
 export const STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS = {
@@ -44,6 +41,8 @@ export const STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS = {
     },
   },
 };
+
+const resolveDb = async (db) => db ?? (await import("../../db/prisma.js")).default;
 
 const getStockReceiptDetailByIdInternal = async (db, id) => {
   const stockReceiptDetail = await db.cT_PHIEU_NHAP.findUnique({
@@ -88,7 +87,9 @@ const normalizeListItem = (stockReceiptDetail) => ({
   updatedAt: stockReceiptDetail.updatedAt ?? stockReceiptDetail.NgayNhap ?? null,
 });
 
-const createStockReceiptDetailService = ({ db = prisma } = {}) => {
+const createStockReceiptDetailService = ({ db } = {}) => {
+  const resolveClient = async () => resolveDb(db);
+
   const buildMutationResponse = async (tx, stockReceiptDetail) => {
     const part = await tx.vAT_TU.findUnique({
       where: {
@@ -127,7 +128,8 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
 
   return {
     createStockReceiptDetail: async (payload) => {
-      return db.$transaction(async (tx) => {
+      const client = await resolveClient();
+      return client.$transaction(async (tx) => {
         const stockReceiptDetail = await tx.cT_PHIEU_NHAP.create({
           data: {
             ...buildWriteData(payload, WRITE_FIELDS),
@@ -142,6 +144,7 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
       }, TRANSACTION_OPTIONS);
     },
     getStockReceiptDetailList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
+      const client = await resolveClient();
       const pagination = buildPagination({ page, limit });
       const where = buildListWhere({
         search,
@@ -149,9 +152,9 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
         filterFields: STOCK_RECEIPT_DETAIL_FILTER_FIELDS,
       });
 
-      const [totalItems, stockReceiptDetails] = await db.$transaction([
-        db.cT_PHIEU_NHAP.count({ where }),
-        db.cT_PHIEU_NHAP.findMany({
+      const [totalItems, stockReceiptDetails] = await client.$transaction([
+        client.cT_PHIEU_NHAP.count({ where }),
+        client.cT_PHIEU_NHAP.findMany({
           where,
           skip: pagination.skip,
           take: pagination.limit,
@@ -172,9 +175,10 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
         },
       };
     },
-    getStockReceiptDetailById: async (id) => getStockReceiptDetailByIdInternal(db, id),
+    getStockReceiptDetailById: async (id) => getStockReceiptDetailByIdInternal(await resolveClient(), id),
     updateStockReceiptDetail: async (id, payload) => {
-      return db.$transaction(async (tx) => {
+      const client = await resolveClient();
+      return client.$transaction(async (tx) => {
         const existingStockReceiptDetail = await getStockReceiptDetailByIdInternal(tx, id);
         const updateData = buildWriteData(payload, WRITE_FIELDS);
         const nextPartId = updateData.MaVatTu ?? existingStockReceiptDetail.MaVatTu;
@@ -213,7 +217,8 @@ const createStockReceiptDetailService = ({ db = prisma } = {}) => {
       }, TRANSACTION_OPTIONS);
     },
     deleteStockReceiptDetail: async (id) => {
-      return db.$transaction(async (tx) => {
+      const client = await resolveClient();
+      return client.$transaction(async (tx) => {
         const existingStockReceiptDetail = await getStockReceiptDetailByIdInternal(tx, id);
         const deletedStockReceiptDetail = await tx.cT_PHIEU_NHAP.delete({
           where: {

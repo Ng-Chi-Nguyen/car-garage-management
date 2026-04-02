@@ -1,4 +1,3 @@
-import prisma from "../../db/prisma.js";
 import {
   buildListWhere,
   buildPagination,
@@ -26,6 +25,8 @@ export const STOCK_RECEIPT_INCLUDE_SUPPLIER = {
   },
 };
 
+const resolvePrisma = async (db) => db ?? (await import("../../db/prisma.js")).default;
+
 const normalizeListItem = (stockReceipt) => ({
   partId: Number(stockReceipt.MaVatTu ?? stockReceipt.partId ?? stockReceipt.MaPhieuNhap ?? 0),
   partCode: stockReceipt.MaVatTu ?? stockReceipt.partCode ?? stockReceipt.MaPhieuNhap ?? null,
@@ -52,66 +53,77 @@ const getStockReceiptByIdInternal = async (db, id) => {
   return stockReceipt;
 };
 
-const stockReceiptService = {
-  createStockReceipt: async (payload) => {
-    return prisma.pHIEU_NHAP_KHO.create({
-      data: {
-        ...buildWriteData(payload, WRITE_FIELDS),
-        TongTien: 0,
-      },
-    });
-  },
-  getStockReceiptList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
-    const pagination = buildPagination({ page, limit });
-    const where = buildListWhere({
-      search,
-      filters,
-      filterFields: STOCK_RECEIPT_FILTER_FIELDS,
-    });
+const createStockReceiptService = ({ db } = {}) => {
+  const resolveClient = async () => resolvePrisma(db);
 
-    const [totalItems, stockReceipts] = await prisma.$transaction([
-      prisma.pHIEU_NHAP_KHO.count({ where }),
-      prisma.pHIEU_NHAP_KHO.findMany({
-        where,
-        skip: pagination.skip,
-        take: pagination.limit,
-        include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
-        orderBy: {
-          MaPhieuNhap: "desc",
+  return {
+    createStockReceipt: async (payload) => {
+      const prisma = await resolveClient();
+      return prisma.pHIEU_NHAP_KHO.create({
+        data: {
+          ...buildWriteData(payload, WRITE_FIELDS),
+          TongTien: 0,
         },
-      }),
-    ]);
+      });
+    },
+    getStockReceiptList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
+      const prisma = await resolveClient();
+      const pagination = buildPagination({ page, limit });
+      const where = buildListWhere({
+        search,
+        filters,
+        filterFields: STOCK_RECEIPT_FILTER_FIELDS,
+      });
 
-    return {
-      items: stockReceipts.map(normalizeListItem),
-      pagination: {
-        page: pagination.page,
-        limit: pagination.limit,
-        totalItems,
-        totalPages: totalItems === 0 ? 0 : Math.ceil(totalItems / pagination.limit),
-      },
-    };
-  },
-  getStockReceiptById: async (id) => getStockReceiptByIdInternal(prisma, id),
-  updateStockReceipt: async (id, payload) => {
-    await getStockReceiptByIdInternal(prisma, id);
+      const [totalItems, stockReceipts] = await prisma.$transaction([
+        prisma.pHIEU_NHAP_KHO.count({ where }),
+        prisma.pHIEU_NHAP_KHO.findMany({
+          where,
+          skip: pagination.skip,
+          take: pagination.limit,
+          include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
+          orderBy: {
+            MaPhieuNhap: "desc",
+          },
+        }),
+      ]);
 
-    return prisma.pHIEU_NHAP_KHO.update({
-      where: {
-        MaPhieuNhap: Number(id),
-      },
-      data: buildWriteData(payload, WRITE_FIELDS),
-    });
-  },
-  deleteStockReceipt: async (id) => {
-    await getStockReceiptByIdInternal(prisma, id);
+      return {
+        items: stockReceipts.map(normalizeListItem),
+        pagination: {
+          page: pagination.page,
+          limit: pagination.limit,
+          totalItems,
+          totalPages: totalItems === 0 ? 0 : Math.ceil(totalItems / pagination.limit),
+        },
+      };
+    },
+    getStockReceiptById: async (id) => getStockReceiptByIdInternal(await resolveClient(), id),
+    updateStockReceipt: async (id, payload) => {
+      const prisma = await resolveClient();
+      await getStockReceiptByIdInternal(prisma, id);
 
-    return prisma.pHIEU_NHAP_KHO.delete({
-      where: {
-        MaPhieuNhap: Number(id),
-      },
-    });
-  },
+      return prisma.pHIEU_NHAP_KHO.update({
+        where: {
+          MaPhieuNhap: Number(id),
+        },
+        data: buildWriteData(payload, WRITE_FIELDS),
+      });
+    },
+    deleteStockReceipt: async (id) => {
+      const prisma = await resolveClient();
+      await getStockReceiptByIdInternal(prisma, id);
+
+      return prisma.pHIEU_NHAP_KHO.delete({
+        where: {
+          MaPhieuNhap: Number(id),
+        },
+      });
+    },
+  };
 };
 
+const stockReceiptService = createStockReceiptService();
+
+export { createStockReceiptService };
 export default stockReceiptService;

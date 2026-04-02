@@ -14,51 +14,47 @@ const loadModules = async () => {
     import("../src/db/prisma.js"),
   ]);
   return {
+    createStockReceiptService: serviceModule.createStockReceiptService,
     stockReceiptService: serviceModule.default,
     STOCK_RECEIPT_INCLUDE_SUPPLIER: serviceModule.STOCK_RECEIPT_INCLUDE_SUPPLIER,
     prisma: prismaModule.default,
   };
 };
 
-test("stock receipt list returns Contract B items and pagination", async () => {
-  const { stockReceiptService, prisma } = await loadModules();
-  const originalTransaction = prisma.$transaction;
-  const originalDelegate = prisma.pHIEU_NHAP_KHO;
+const createReceiptDb = (receipts) => ({
+  pHIEU_NHAP_KHO: {
+    count: async () => receipts.length,
+    findMany: async () => receipts,
+  },
+  $transaction: async (operations) => Promise.all(operations),
+});
 
+test("stock receipt list returns Contract B items and pagination", async () => {
   const receipts = [
     { MaPhieuNhap: 2, MaNCC: 5, TongTien: 450000, NgayNhap: new Date("2026-03-31") },
     { MaPhieuNhap: 1, MaNCC: 7, TongTien: 200000, NgayNhap: new Date("2026-03-30") },
   ];
 
-  prisma.$transaction = async (operations) => Promise.all(operations);
-  prisma.pHIEU_NHAP_KHO = {
-    count: async () => receipts.length,
-    findMany: async () => receipts,
-  };
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({ db: createReceiptDb(receipts) });
+  const result = await stockReceiptService.getStockReceiptList({ page: 1, limit: 10 });
 
-  try {
-    const result = await stockReceiptService.getStockReceiptList({ page: 1, limit: 10 });
-
-    assert.deepEqual(result.items[0], {
-      partId: 2,
-      partCode: 2,
-      partName: null,
-      unit: null,
-      stockQty: 0,
-      unitCost: 0,
-      inventoryValue: 450000,
-      updatedAt: new Date("2026-03-31"),
-    });
-    assert.deepEqual(result.pagination, {
-      page: 1,
-      limit: 10,
-      totalItems: 2,
-      totalPages: 1,
-    });
-  } finally {
-    prisma.$transaction = originalTransaction;
-    prisma.pHIEU_NHAP_KHO = originalDelegate;
-  }
+  assert.deepEqual(result.items[0], {
+    partId: 2,
+    partCode: 2,
+    partName: null,
+    unit: null,
+    stockQty: 0,
+    unitCost: 0,
+    inventoryValue: 450000,
+    updatedAt: new Date("2026-03-31"),
+  });
+  assert.deepEqual(result.pagination, {
+    page: 1,
+    limit: 10,
+    totalItems: 2,
+    totalPages: 1,
+  });
 });
 
 test("stock receipt list query includes supplier relation", async () => {

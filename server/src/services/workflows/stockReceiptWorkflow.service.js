@@ -1,16 +1,38 @@
-import prisma from "../../db/prisma.js";
 import {
   adjustPartStock,
   calculateImportLineTotal,
   syncStockReceiptTotal,
 } from "../../shared/crud/crudBusiness.helpers.js";
-import {
-  ensureAllRecordsFound,
-  ensureRecordExists,
-  sumQuantityByField,
-  toUniqueNumberList,
-  TRANSACTION_OPTIONS,
-} from "./workflow.helpers.js";
+
+const TRANSACTION_OPTIONS = { isolationLevel: "Serializable" };
+
+const toUniqueNumberList = (values = []) => Array.from(new Set(values.map((value) => Number(value))));
+
+const ensureRecordExists = (record, message) => {
+  if (!record) {
+    throw new Error(message);
+  }
+
+  return record;
+};
+
+const ensureAllRecordsFound = (records, ids, message) => {
+  if (records.length !== ids.length) {
+    throw new Error(message);
+  }
+
+  return records;
+};
+
+const sumQuantityByField = (items = [], idField, quantityField) => {
+  return items.reduce((result, item) => {
+    const id = Number(item[idField]);
+    const quantity = Number(item[quantityField]);
+
+    result.set(id, (result.get(id) ?? 0) + quantity);
+    return result;
+  }, new Map());
+};
 
 const buildStockReceiptCreateData = (stockReceipt) => {
   return {
@@ -64,6 +86,8 @@ const buildStockReceiptMutationResponse = (stockReceipt, stockReceiptDetails) =>
   };
 };
 
+const resolveDb = async (db) => db ?? (await import("../../db/prisma.js")).default;
+
 // Pre-check nha cung cap va vat tu ton tai truoc khi tao phieu nhap.
 const validateStockReceiptReferences = async (tx, stockReceipt, details) => {
   ensureRecordExists(
@@ -94,15 +118,18 @@ const validateStockReceiptReferences = async (tx, stockReceipt, details) => {
 };
 
 const createStockReceiptWorkflowService = ({
-  db = prisma,
+  db,
   businessHelpers = {
     adjustPartStock,
     syncStockReceiptTotal,
   },
 } = {}) => {
+  const resolveClient = async () => resolveDb(db);
+
   return {
     createStockReceiptAtomic: async (payload) => {
-      return db.$transaction(async (tx) => {
+      const client = await resolveClient();
+      return client.$transaction(async (tx) => {
         // B1: validate tham chieu nghiep vu truoc khi co bat ky DB write nao.
         await validateStockReceiptReferences(tx, payload.stockReceipt, payload.details);
 
