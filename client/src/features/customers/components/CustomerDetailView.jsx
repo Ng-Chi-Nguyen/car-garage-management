@@ -16,8 +16,8 @@ function formatCurrency(amount) {
 export function CustomerDetailView() {
   const [searchParams] = useSearchParams();
   const rawId = searchParams.get("id");
-  const id = rawId && rawId.trim() !== "" ? rawId : "KH001";
-  const { data, isLoading, error } = useCustomerDetailQuery(id);
+  const id = rawId && rawId.trim() !== "" ? rawId : null;
+  const { data, isLoading, error } = useCustomerDetailQuery(id, { skip: !id });
 
   const getAvatarColorClass = (color) => {
     const map = {
@@ -35,6 +35,16 @@ export function CustomerDetailView() {
       BienSo: xe.BienSo
     }))
   ).sort((a, b) => new Date(b.NgaySC) - new Date(a.NgaySC)) || [];
+
+  if (!id) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center bg-surface-container-lowest rounded-2xl border border-outline/20">
+        <span className="material-symbols-outlined text-6xl text-outline mb-4">group_off</span>
+        <h3 className="text-xl font-bold text-on-surface mb-2">Không tìm thấy khách hàng</h3>
+        <p className="text-on-surface-variant">Vui lòng chọn một khách hàng từ danh sách để xem chi tiết.</p>
+      </div>
+    );
+  }
 
   return (
     <StateShell isLoading={isLoading} error={error}>
@@ -59,10 +69,10 @@ export function CustomerDetailView() {
             <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary/20 to-tertiary/20"></div>
             <div className="relative pt-12 flex flex-col items-center text-center">
               <div className={`w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg border-4 border-surface-container-lowest mb-4 ${getAvatarColorClass(data?.avatarColor)}`}>
-                {data?.initials || "KH"}
+                {data?.initials}
               </div>
-              <h2 className="text-2xl font-bold text-on-surface">{data?.name || "Nguyễn Văn A"}</h2>
-              <p className="text-on-surface-variant font-medium mt-1">{data?.id || "KH001"}</p>
+              <h2 className="text-2xl font-bold text-on-surface">{data?.name}</h2>
+              <p className="text-on-surface-variant font-medium mt-1">{data?.id}</p>
 
               <div className="mt-4 px-3 py-1 rounded-full text-sm font-semibold bg-primary/10 text-primary">
                 {data?.rank || "Khách hàng"}
@@ -181,7 +191,7 @@ export function CustomerDetailView() {
                         {psc.BienSo}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant truncate max-w-xs">
-                        {psc.NoiDungLoi || "Bảo dưỡng chung"}
+                        {psc.NoiDungLoi || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
