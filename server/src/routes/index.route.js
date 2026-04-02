@@ -19,6 +19,7 @@ import paymentReceiptRoute from "./management/paymentReceipt.route.js";
 import repairOrderDetailRoute from "./management/repairOrderDetail.route.js";
 import repairOrderRoute from "./management/repairOrder.route.js";
 import repairOrderWorkflowRoute from "./workflows/repairOrderWorkflow.route.js";
+import { Router } from "express";
 import stockReceiptDetailRoute from "./management/stockReceiptDetail.route.js";
 import stockReceiptRoute from "./management/stockReceipt.route.js";
 import stockReceiptWorkflowRoute from "./workflows/stockReceiptWorkflow.route.js";
@@ -26,6 +27,7 @@ import supplierRoute from "./management/supplier.route.js";
 import vehicleRoute from "./management/vehicle.route.js";
 
 const apiPrefixV1 = "/api/v1";
+const intakeWorkflowRoute = Router();
 
 const Routes = (app) => {
   // Nhóm middleware bắt buộc phải đăng nhập và có role Admin hoặc NhanVien
@@ -49,6 +51,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
   app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
+  app.use(`${apiPrefixV1}/workflows/intakes`, intakeWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
   app.use(`${apiPrefixV1}/master-data/xlsx`, ...requireManagementAccess, masterDataXlsxRoute);
