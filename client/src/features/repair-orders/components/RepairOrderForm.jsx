@@ -1,12 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 import { SectionCard } from "../../../components/ui/section-card";
 import { useCreateRepairOrderMutation } from "../useCreateRepairOrderMutation";
+import { fetchVehicles, fetchParts, fetchLaborFees } from "../repairOrders.api";
 
 export function RepairOrderForm() {
   const navigate = useNavigate();
   const { mutateAsync: createRepairOrder, isPending } = useCreateRepairOrderMutation();
+
+  const { data: vehiclesData } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: fetchVehicles
+  });
+  const vehicles = vehiclesData?.data?.vehicles || [];
+
+  const { data: partsData } = useQuery({
+    queryKey: ["parts"],
+    queryFn: fetchParts
+  });
+  const parts = partsData?.data?.parts || [];
+
+  const { data: laborFeesData, isError: isLaborFeeError } = useQuery({
+    queryKey: ["laborFees"],
+    queryFn: fetchLaborFees,
+    retry: false
+  });
+  const laborFees = laborFeesData?.data?.laborFees || [];
 
   const [header, setHeader] = useState({
     MaXe: "",
@@ -14,17 +35,36 @@ export function RepairOrderForm() {
     GhiChu: ""
   });
 
-  const [rows, setRows] = useState([
-    { id: 1, MaVatTu: 1, MaTienCong: 1, SoLuong: 1, DonGiaVatTu: 250000, DonGiaTienCong: 50000 },
-    { id: 2, MaVatTu: 2, MaTienCong: 2, SoLuong: 4, DonGiaVatTu: 120000, DonGiaTienCong: 0 }
-  ]);
+  const [rows, setRows] = useState([]);
 
   const addRow = () => {
     setRows([...rows, { id: Date.now(), MaVatTu: "", MaTienCong: "", SoLuong: 1, DonGiaVatTu: 0, DonGiaTienCong: 0 }]);
   };
 
   const updateRow = (id, field, value) => {
-    setRows(rows.map(row => row.id === id ? { ...row, [field]: value } : row));
+    setRows(rows.map(row => {
+      if (row.id === id) {
+        const newRow = { ...row, [field]: value };
+        if (field === 'MaVatTu') {
+          const selectedPart = parts.find(p => p.MaVatTu === Number(value));
+          if (selectedPart) {
+            newRow.DonGiaVatTu = selectedPart.DonGiaBan;
+          } else {
+            newRow.DonGiaVatTu = 0;
+          }
+        }
+        if (field === 'MaTienCong') {
+          const selectedLabor = laborFees.find(l => l.MaTienCong === Number(value));
+          if (selectedLabor) {
+            newRow.DonGiaTienCong = selectedLabor.TienCong;
+          } else if (!isLaborFeeError) {
+            newRow.DonGiaTienCong = 0;
+          }
+        }
+        return newRow;
+      }
+      return row;
+    }));
   };
 
   const removeRow = (id) => {
@@ -33,6 +73,10 @@ export function RepairOrderForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!header.MaXe) {
+      toast.error("Vui lòng chọn xe");
+      return;
+    }
     try {
       const payload = {
         repairOrder: {
@@ -51,7 +95,7 @@ export function RepairOrderForm() {
           DonGiaTienCong: Number(row.DonGiaTienCong)
         }))
       };
-      
+
       await createRepairOrder(payload);
       toast.success("Hoàn tất phiếu sửa chữa thành công!");
       navigate("/repair-orders");
@@ -67,14 +111,18 @@ export function RepairOrderForm() {
       <SectionCard title="Thông tin chung">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground block">Mã xe</label>
-            <input
-              type="number"
+            <label className="text-sm font-medium text-foreground block">Xe</label>
+            <select
               className="w-full border border-border rounded-lg p-2 bg-surface text-foreground"
               value={header.MaXe}
               onChange={(e) => setHeader({ ...header, MaXe: e.target.value })}
               required
-            />
+            >
+              <option value="">Chọn xe</option>
+              {vehicles.map(v => (
+                <option key={v.MaXe} value={v.MaXe}>{v.BienSo} - {v.HieuXe}</option>
+              ))}
+            </select>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground block">Nội dung lỗi</label>
@@ -112,11 +160,11 @@ export function RepairOrderForm() {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
-                <th className="px-4 py-3 font-medium rounded-l-lg">Mã vật tư</th>
-                <th className="px-4 py-3 font-medium">Mã tiền công</th>
+                <th className="px-4 py-3 font-medium rounded-l-lg">Vật tư</th>
+                <th className="px-4 py-3 font-medium">Tiền công</th>
                 <th className="px-4 py-3 font-medium">Số lượng</th>
                 <th className="px-4 py-3 font-medium">Đơn giá VT</th>
-                <th className="px-4 py-3 font-medium">Tiền công</th>
+                <th className="px-4 py-3 font-medium">Phí TC</th>
                 <th className="px-4 py-3 font-medium">Thành tiền</th>
                 <th className="px-4 py-3 font-medium rounded-r-lg">Xóa</th>
               </tr>
@@ -127,22 +175,43 @@ export function RepairOrderForm() {
                 return (
                   <tr key={row.id}>
                     <td className="px-4 py-3">
-                      <input
-                        type="number"
+                      <select
                         className="w-full border border-border rounded p-1.5 bg-surface text-foreground"
                         value={row.MaVatTu}
                         onChange={(e) => updateRow(row.id, 'MaVatTu', e.target.value)}
                         required
-                      />
+                      >
+                        <option value="">Chọn vật tư</option>
+                        {parts.map(p => (
+                          <option key={p.MaVatTu} value={p.MaVatTu}>{p.TenVatTu}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        className="w-full border border-border rounded p-1.5 bg-surface text-foreground"
-                        value={row.MaTienCong}
-                        onChange={(e) => updateRow(row.id, 'MaTienCong', e.target.value)}
-                        required
-                      />
+                      {isLaborFeeError ? (
+                        <input
+                          type="number"
+                          className="w-full border border-border rounded p-1.5 bg-surface text-foreground"
+                          value={row.MaTienCong}
+                          onChange={(e) => updateRow(row.id, 'MaTienCong', e.target.value)}
+                          min="1"
+                          step="1"
+                          required
+                          placeholder="Mã tiền công"
+                        />
+                      ) : (
+                        <select
+                          className="w-full border border-border rounded p-1.5 bg-surface text-foreground"
+                          value={row.MaTienCong}
+                          onChange={(e) => updateRow(row.id, 'MaTienCong', e.target.value)}
+                          required
+                        >
+                          <option value="">Chọn tiền công</option>
+                          {laborFees.map(l => (
+                            <option key={l.MaTienCong} value={l.MaTienCong}>{l.TenTienCong}</option>
+                          ))}
+                        </select>
+                      )}
                     </td>
                     <td className="px-4 py-3 w-24">
                       <input
@@ -162,6 +231,7 @@ export function RepairOrderForm() {
                         onChange={(e) => updateRow(row.id, 'DonGiaVatTu', e.target.value)}
                         min="0"
                         required
+                        disabled={!!row.MaVatTu}
                       />
                     </td>
                     <td className="px-4 py-3 w-32">
@@ -172,6 +242,7 @@ export function RepairOrderForm() {
                         onChange={(e) => updateRow(row.id, 'DonGiaTienCong', e.target.value)}
                         min="0"
                         required
+                        disabled={!!row.MaTienCong && !isLaborFeeError}
                       />
                     </td>
                     <td className="px-4 py-3 font-medium text-foreground">
