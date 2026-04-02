@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { authStorage } from '../features/auth/auth.storage';
+import { authStorage } from '../features/auth/auth.storage.js';
 
 const axiosClient = axios.create({
     baseURL: import.meta?.env?.VITE_API_URL || 'http://localhost:8081',

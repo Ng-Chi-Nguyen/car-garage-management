@@ -1,4 +1,4 @@
-import axiosClient from "../../lib/axiosClient";
+import axiosClient from "../../lib/axiosClient.js";
 
 const unwrap = (response, key) => response.data?.data?.[key];
 

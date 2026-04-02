@@ -1,4 +1,4 @@
-import { authStorage } from "./auth.storage";
+import { authStorage } from "./auth.storage.js";
 
 async function readJsonSafe(response) {
   const rawBody = await response.text();
