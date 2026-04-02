@@ -40,6 +40,7 @@ const isTemporaryAuthBypassEnabled = () => {
 const requireAuth = (req, res, next) => {
   if (isTemporaryAuthBypassEnabled()) {
     req.user = {
+      MaKH: 0,
       MaNV: 0,
       ChucVu: "Admin",
       HoTen: "DEV_AUTH_BYPASS",
