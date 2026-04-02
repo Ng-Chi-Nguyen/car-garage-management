@@ -38,13 +38,13 @@ export function RepairOrderForm() {
   const [rows, setRows] = useState([]);
 
   const addRow = () => {
-    setRows([...rows, { id: Date.now(), MaVatTu: "", MaTienCong: "", SoLuong: 1, DonGiaVatTu: 0, DonGiaTienCong: 0 }]);
+    setRows([...rows, { id: Date.now(), MaVatTu: "", MaTienCong: "", SoLuong: 1, DonGiaVatTu: 0, DonGiaTienCong: 0, mode: 'new', serverId: null }]);
   };
 
   const updateRow = (id, field, value) => {
     setRows(rows.map(row => {
       if (row.id === id) {
-        const newRow = { ...row, [field]: value };
+        const newRow = { ...row, [field]: value, mode: row.serverId ? 'editing' : 'new' };
         if (field === 'MaVatTu') {
           const selectedPart = parts.find(p => p.MaVatTu === Number(value));
           if (selectedPart) {
@@ -67,8 +67,44 @@ export function RepairOrderForm() {
     }));
   };
 
-  const removeRow = (id) => {
-    setRows(rows.filter(row => row.id !== id));
+  const saveRow = async (row) => {
+    if (!header.MaPBS) return; // Cannot save row if repair order not created yet
+    try {
+      const payload = {
+        MaPhieuSC: header.MaPBS,
+        MaVatTu: Number(row.MaVatTu),
+        MaTienCong: Number(row.MaTienCong),
+        SoLuong: Number(row.SoLuong),
+        DonGiaVatTu: Number(row.DonGiaVatTu),
+        DonGiaTienCong: Number(row.DonGiaTienCong)
+      };
+      if (row.serverId) {
+        await updateRepairOrderDetail(row.serverId, payload);
+        toast.success("Cập nhật chi tiết thành công");
+        setRows(rows.map(r => r.id === row.id ? { ...r, mode: 'saved' } : r));
+      } else {
+        const res = await createRepairOrderDetail(payload);
+        toast.success("Thêm chi tiết thành công");
+        const serverId = res.data?.repairOrderDetail?.repairOrderDetail?.MaCTSC || res.data?.repairOrderDetail?.MaCTSC || res.data?.MaCTSC;
+        setRows(rows.map(r => r.id === row.id ? { ...r, mode: 'saved', serverId } : r));
+      }
+    } catch (error) {
+      toast.error("Lỗi khi lưu chi tiết: " + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const removeRow = async (id) => {
+    const row = rows.find(r => r.id === id);
+    if (row && row.serverId) {
+      try {
+        await deleteRepairOrderDetail(row.serverId);
+        toast.success("Xóa chi tiết thành công");
+      } catch (error) {
+        toast.error("Lỗi khi xóa chi tiết: " + (error.response?.data?.message || error.message));
+        return;
+      }
+    }
+    setRows(rows.filter(r => r.id !== id));
   };
 
   const handleSubmit = async (e) => {
@@ -248,7 +284,16 @@ export function RepairOrderForm() {
                     <td className="px-4 py-3 font-medium text-foreground">
                       {amount.toLocaleString('vi-VN')} ₫
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 flex gap-2">
+                      {(row.mode === 'editing' || (row.mode === 'new' && header.MaPBS)) && (
+                        <button
+                          type="button"
+                          onClick={() => saveRow(row)}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          Lưu
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => removeRow(row.id)}

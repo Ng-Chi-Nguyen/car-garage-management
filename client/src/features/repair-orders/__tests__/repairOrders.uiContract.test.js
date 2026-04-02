@@ -41,5 +41,12 @@ describe('Repair Orders UI Contracts', () => {
             assert.ok(content.includes('placeholder="Mã tiền công"'), 'Fallback should be an input with min constraint');
             assert.ok(content.includes('min="1"'), 'Fallback should have min constraint');
         });
+
+        it('asserts detail row lifecycle persistence polish (new|saved|editing) indicators', () => {
+            assert.ok(content.includes('updateRepairOrderDetail'), 'Should have update API call');
+            assert.ok(content.includes('deleteRepairOrderDetail'), 'Should have delete API call');
+            assert.ok(content.match(/mode:\s*('|")new('|")|('|")saved('|")|('|")editing('|")/), 'Should track row modes');
+            assert.ok(content.includes('createRepairOrderDetail'), 'Should have create API call for detail');
+        });
     });
 });
