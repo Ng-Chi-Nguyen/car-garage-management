@@ -102,7 +102,7 @@ test("stock receipt list query includes supplier relation", async () => {
   }
 });
 
-test("stock receipt by id query includes supplier relation", async () => {
+test("stock receipt by id returns normalized receipt contract and ignores legacy aliases", async () => {
   const { stockReceiptService, STOCK_RECEIPT_INCLUDE_SUPPLIER, prisma } = await loadModules();
   const originalDelegate = prisma.pHIEU_NHAP_KHO;
   let findUniqueArgs = null;
@@ -129,10 +129,74 @@ test("stock receipt by id query includes supplier relation", async () => {
     const result = await stockReceiptService.getStockReceiptById(24);
 
     assert.deepEqual(findUniqueArgs.include, STOCK_RECEIPT_INCLUDE_SUPPLIER);
-    assert.equal(result.NhaCungCap.MaNCC, 6);
+    assert.deepEqual(result, {
+      id: 24,
+      supplierId: 6,
+      importedAt: new Date("2026-02-18"),
+      totalAmount: 55000000,
+    });
+    assert.equal(result.receiptId, undefined);
+    assert.equal(result.receivedAt, undefined);
+    assert.equal(result.totalQuantity, undefined);
   } finally {
     prisma.pHIEU_NHAP_KHO = originalDelegate;
   }
+});
+
+test("stock receipt create returns normalized receipt contract", async () => {
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({
+    db: {
+      pHIEU_NHAP_KHO: {
+        create: async () => ({
+          MaPhieuNhap: 9,
+          MaNCC: 4,
+          NgayNhap: new Date("2026-04-01"),
+          TongTien: "1250000",
+        }),
+      },
+    },
+  });
+
+  const result = await stockReceiptService.createStockReceipt({ MaNCC: 4, NgayNhap: new Date("2026-04-01") });
+
+  assert.deepEqual(result, {
+    id: 9,
+    supplierId: 4,
+    importedAt: new Date("2026-04-01"),
+    totalAmount: 1250000,
+  });
+  assert.equal(result.receiptId, undefined);
+  assert.equal(result.receivedAt, undefined);
+  assert.equal(result.totalQuantity, undefined);
+});
+
+test("stock receipt by id returns normalized receipt contract", async () => {
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({
+    db: {
+      pHIEU_NHAP_KHO: {
+        findUnique: async () => ({
+          MaPhieuNhap: 11,
+          MaNCC: 6,
+          NgayNhap: new Date("2026-04-02"),
+          TongTien: "3500000",
+        }),
+      },
+    },
+  });
+
+  const result = await stockReceiptService.getStockReceiptById(11);
+
+  assert.deepEqual(result, {
+    id: 11,
+    supplierId: 6,
+    importedAt: new Date("2026-04-02"),
+    totalAmount: 3500000,
+  });
+  assert.equal(result.receiptId, undefined);
+  assert.equal(result.receivedAt, undefined);
+  assert.equal(result.totalQuantity, undefined);
 });
 
 test("update stock receipt returns normalized receipt contract", async () => {
@@ -159,4 +223,61 @@ test("update stock receipt returns normalized receipt contract", async () => {
   assert.equal(result.receiptId, undefined);
   assert.equal(result.receivedAt, undefined);
   assert.equal(result.totalQuantity, undefined);
+});
+
+test("delete stock receipt returns normalized receipt contract", async () => {
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({
+    db: {
+      pHIEU_NHAP_KHO: {
+        findUnique: async () => ({
+          MaPhieuNhap: 15,
+          MaNCC: 8,
+          NgayNhap: new Date("2026-04-03"),
+          TongTien: "500000",
+        }),
+        delete: async () => ({ deleted: true }),
+      },
+      cT_PHIEU_NHAP: {
+        count: async () => 0,
+      },
+    },
+  });
+
+  const result = await stockReceiptService.deleteStockReceipt(15);
+
+  assert.deepEqual(result, {
+    id: 15,
+    supplierId: 8,
+    importedAt: new Date("2026-04-03"),
+    totalAmount: 500000,
+  });
+  assert.equal(result.receiptId, undefined);
+  assert.equal(result.receivedAt, undefined);
+  assert.equal(result.totalQuantity, undefined);
+});
+
+test("delete stock receipt rejects when detail rows exist", async () => {
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({
+    db: {
+      pHIEU_NHAP_KHO: {
+        findUnique: async () => ({
+          MaPhieuNhap: 15,
+          MaNCC: 8,
+          NgayNhap: new Date("2026-04-03"),
+          TongTien: "500000",
+        }),
+        delete: async () => ({ deleted: true }),
+      },
+      cT_PHIEU_NHAP: {
+        count: async () => 2,
+      },
+    },
+  });
+
+  await assert.rejects(
+    () => stockReceiptService.deleteStockReceipt(15),
+    /Không thể xóa phiếu nhập kho vì đang có dữ liệu chi tiết liên quan\./,
+  );
 });

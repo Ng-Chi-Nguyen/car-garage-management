@@ -71,7 +71,7 @@ const createStockReceiptService = ({ db } = {}) => {
           ...buildWriteData(payload, WRITE_FIELDS),
           TongTien: 0,
         },
-      });
+      }).then(normalizeReceipt);
     },
     getStockReceiptList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
       const prisma = await resolveClient();
@@ -105,7 +105,7 @@ const createStockReceiptService = ({ db } = {}) => {
         },
       };
     },
-    getStockReceiptById: async (id) => getStockReceiptByIdInternal(await resolveClient(), id),
+    getStockReceiptById: async (id) => normalizeReceipt(await getStockReceiptByIdInternal(await resolveClient(), id)),
     updateStockReceipt: async (id, payload) => {
       const prisma = await resolveClient();
       await getStockReceiptByIdInternal(prisma, id);
@@ -119,13 +119,25 @@ const createStockReceiptService = ({ db } = {}) => {
     },
     deleteStockReceipt: async (id) => {
       const prisma = await resolveClient();
-      await getStockReceiptByIdInternal(prisma, id);
+      const existingStockReceipt = await getStockReceiptByIdInternal(prisma, id);
 
-      return prisma.pHIEU_NHAP_KHO.delete({
+      const relatedStockReceiptDetailsCount = await prisma.cT_PHIEU_NHAP.count({
         where: {
           MaPhieuNhap: Number(id),
         },
       });
+
+      if (relatedStockReceiptDetailsCount > 0) {
+        throw buildServiceError(409, "Không thể xóa phiếu nhập kho vì đang có dữ liệu chi tiết liên quan.");
+      }
+
+      await prisma.pHIEU_NHAP_KHO.delete({
+        where: {
+          MaPhieuNhap: Number(id),
+        },
+      });
+
+      return normalizeReceipt(existingStockReceipt);
     },
   };
 };
