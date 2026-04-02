@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { PageHeader } from "../../components/ui/page-header";
 import { InventoryStats } from "../../features/inventory/components/InventoryStats";
 import { InventoryList } from "../../features/inventory/components/InventoryList";
+import { QuickImportModal } from "../../features/inventory/components/QuickImportModal";
 
 export default function InventoryPage() {
+  const [isQuickImportOpen, setIsQuickImportOpen] = useState(false);
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -15,7 +18,10 @@ export default function InventoryPage() {
               <span className="material-symbols-outlined">add</span>
               Thêm vật tư
             </button>
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary border border-primary/10 rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-fixed transition-colors">
+            <button 
+              onClick={() => setIsQuickImportOpen(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary border border-primary/10 rounded-xl font-semibold text-sm shadow-sm hover:bg-primary-fixed transition-colors"
+            >
               <span className="material-symbols-outlined">input</span>
               Nhập kho nhanh
             </button>
@@ -29,6 +35,10 @@ export default function InventoryPage() {
 
       <InventoryStats />
       <InventoryList />
+
+      {isQuickImportOpen && (
+        <QuickImportModal onClose={() => setIsQuickImportOpen(false)} />
+      )}
     </div>
   );
 }

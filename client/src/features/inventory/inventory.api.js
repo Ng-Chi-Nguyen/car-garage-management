@@ -22,11 +22,9 @@ export const inventoryApi = {
   getStockDetail: async (id) => {
     const response = await axiosClient.get(`/api/v1/parts/${id}`);
     const part = response.data.data.part;
-    
-    // Also fetch transaction history if needed, for now just use the part data
-    // /api/v1/stock-receipt-details?MaVatTu=id
+
     const historyResponse = await axiosClient.get('/api/v1/stock-receipt-details', { params: { MaVatTu: id } });
-    
+
     return {
       id: part.MaVatTu,
       name: part.TenVatTu,
@@ -36,5 +34,9 @@ export const inventoryApi = {
       price: part.DonGiaBan,
       history: historyResponse.data.data.stockReceiptDetails || []
     };
+  },
+  createStockReceipt: async (payload) => {
+    const response = await axiosClient.post('/api/v1/workflows/stock-receipts', payload);
+    return response.data;
   }
 };
