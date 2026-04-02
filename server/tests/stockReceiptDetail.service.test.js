@@ -257,6 +257,10 @@ test("stock receipt detail list query includes receipt and part relations", asyn
 
     assert.deepEqual(calls.count, { where: {} });
     assert.deepEqual(calls.findMany.include, STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS);
+    assert.deepEqual(calls.findMany.orderBy, [
+      { MaCTPN: "desc" },
+      { MaVatTu: "desc" },
+    ]);
     assert.equal(result.items.length, 1);
   } finally {
     prisma.$transaction = originalTransaction;

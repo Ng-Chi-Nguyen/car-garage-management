@@ -159,9 +159,10 @@ const createStockReceiptDetailService = ({ db } = {}) => {
           skip: pagination.skip,
           take: pagination.limit,
           include: STOCK_RECEIPT_DETAIL_INCLUDE_RELATIONS,
-          orderBy: {
-            MaCTPN: "desc",
-          },
+          orderBy: [
+            { MaCTPN: "desc" },
+            { MaVatTu: "desc" },
+          ],
         }),
       ]);
 

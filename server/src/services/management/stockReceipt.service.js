@@ -89,9 +89,10 @@ const createStockReceiptService = ({ db } = {}) => {
           skip: pagination.skip,
           take: pagination.limit,
           include: STOCK_RECEIPT_INCLUDE_SUPPLIER,
-          orderBy: {
-            MaPhieuNhap: "desc",
-          },
+          orderBy: [
+            { MaPhieuNhap: "desc" },
+            { NgayNhap: "desc" },
+          ],
         }),
       ]);
 

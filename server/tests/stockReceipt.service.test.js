@@ -95,6 +95,10 @@ test("stock receipt list query includes supplier relation", async () => {
 
     assert.deepEqual(calls.count, { where: {} });
     assert.deepEqual(calls.findMany.include, STOCK_RECEIPT_INCLUDE_SUPPLIER);
+    assert.deepEqual(calls.findMany.orderBy, [
+      { MaPhieuNhap: "desc" },
+      { NgayNhap: "desc" },
+    ]);
     assert.equal(result.items.length, 1);
   } finally {
     prisma.$transaction = originalTransaction;
