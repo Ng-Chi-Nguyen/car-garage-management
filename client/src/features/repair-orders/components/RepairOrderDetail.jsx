@@ -10,12 +10,12 @@ export function RepairOrderDetail({ id }) {
   const { data: detailsResponse, isLoading: isLoadingDetails, error: detailsError } = useRepairOrderDetailsQuery(id);
 
   const order = orderResponse?.data;
-  const details = detailsResponse?.data?.repairOrderDetails || [];
+  const details = detailsResponse?.data?.data?.repairOrderDetails || detailsResponse?.data?.repairOrderDetails || [];
 
   const columns = [
     { header: "Nội dung", accessor: "NoiDung" },
     { header: "Loại", cell: (row) => row.MaVatTu ? 'Vật tư' : 'Nhân công' },
-    { header: "Tên Vật Tư/Tiền công", cell: (row) => row.VatTu?.TenVatTu || row.TienCong?.TenTienCong || '-' },
+     { header: "Tên Vật Tư/Tiền công", cell: (row) => row.VatTu?.TenVatTu || row.TienCong?.TenTienCong || row.TenVatTu || row.TenTienCong || '-' },
     { header: "Số lượng", accessor: "SoLuong" },
     { header: "Đơn giá", cell: (row) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(row.DonGia || 0) },
     { header: "Thành tiền", cell: (row) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(row.ThanhTien || 0) }

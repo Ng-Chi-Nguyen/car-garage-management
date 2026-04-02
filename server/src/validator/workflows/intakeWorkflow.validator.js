@@ -7,7 +7,7 @@ const toDate = (value) => {
 
 const validateIntake = (body) => {
   const errors = [];
-  const intake = body?.intake;
+  const intake = body?.intake ?? body;
 
   if (!intake || typeof intake !== "object") {
     errors.push({ message: '"intake" is required' });

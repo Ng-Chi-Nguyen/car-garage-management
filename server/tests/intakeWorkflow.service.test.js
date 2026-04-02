@@ -7,15 +7,13 @@ test("intake workflow service normalizes intake payload and returns empty histor
   const service = createIntakeWorkflowService();
 
   const result = await service.createIntakeAtomic({
-    intake: {
-      MaKH: 1,
-      MaXe: 2,
-      MaNV: 3,
-      NgayTiepNhan: new Date("2026-03-25"),
-      TrangThai: "TiepNhan",
-      GhiChu: "Xe vao xuong",
-      BienSoXe: "51G-123.45",
-    },
+    MaKH: 1,
+    MaXe: 2,
+    MaNV: 3,
+    NgayTiepNhan: new Date("2026-03-25"),
+    TrangThai: "TiepNhan",
+    GhiChu: "Xe vao xuong",
+    BienSoXe: "51G-123.45",
   });
 
   assert.deepEqual(result, {
