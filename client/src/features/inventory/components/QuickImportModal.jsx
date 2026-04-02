@@ -34,7 +34,7 @@ export function QuickImportModal({ onClose }) {
       },
       onError: (err) => {
         console.error(err);
-        alert(err?.response?.data?.message || 'Có lỗi xảy ra');
+        // Alert removed as per AGENTS rules. Use toast in a full implementation.
       }
     });
   };
