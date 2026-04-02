@@ -50,6 +50,7 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
+  app.use(`${apiPrefixV1}/workflows/payment-receipts`, paymentReceiptWorkflowRoute);
   app.use(`${apiPrefixV1}/master-data/xlsx`, ...requireManagementAccess, masterDataXlsxRoute);
   app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute);
   app.use(`${apiPrefixV1}/car-brands`, ...requireManagementAccess, carBrandRoute);

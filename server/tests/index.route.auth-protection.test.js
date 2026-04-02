@@ -5,5 +5,7 @@ import { readFileSync } from "node:fs";
 test("index route gan middleware phu hop cho finance report", () => {
   const source = readFileSync(new URL("../src/routes/index.route.js", import.meta.url), "utf8");
 
+  assert.match(source, /const requireManagementAccess = \[[^]*?authMiddleware\.requireAuth,[^]*?authMiddleware\.requireRoles\(\["Admin", "NhanVien"\]\),[^]*?\];/u);
+  assert.match(source, /app\.use\(`?\$\{apiPrefixV1\}\/master-data\/xlsx`?,\s*\.\.\.requireManagementAccess,/u);
   assert.match(source, /app\.use\(\`\$\{apiPrefixV1\}\/reports\/finance\`,\s*\.\.\.requireManagementAccess,\s*financeReportRoute\);/);
 });
