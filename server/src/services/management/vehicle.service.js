@@ -47,9 +47,9 @@ const getVehicleByIdInternal = async (db, id) => {
   return vehicle;
 };
 
-const vehicleService = {
+const createVehicleService = ({ db = prisma } = {}) => ({
   createVehicle: async (payload) => {
-    return prisma.xE.create({
+    return db.xE.create({
       data: {
         ...buildWriteData(payload, WRITE_FIELDS),
         TienNoHienTai: 0,
@@ -66,8 +66,8 @@ const vehicleService = {
     });
 
     const [totalItems, vehicles] = await runWithDbRetry(() => Promise.all([
-      prisma.xE.count({ where }),
-      prisma.xE.findMany({
+      db.xE.count({ where }),
+      db.xE.findMany({
         where,
         skip: pagination.skip,
         take: pagination.limit,
@@ -88,11 +88,11 @@ const vehicleService = {
       },
     };
   },
-  getVehicleById: async (id) => getVehicleByIdInternal(prisma, id),
+  getVehicleById: async (id) => getVehicleByIdInternal(db, id),
   updateVehicle: async (id, payload) => {
-    await getVehicleByIdInternal(prisma, id);
+    await getVehicleByIdInternal(db, id);
 
-    return prisma.xE.update({
+    return db.xE.update({
       where: {
         MaXe: Number(id),
       },
@@ -100,15 +100,16 @@ const vehicleService = {
     });
   },
   deleteVehicle: async (id) => {
-    await getVehicleByIdInternal(prisma, id);
+    await getVehicleByIdInternal(db, id);
 
-    return prisma.xE.delete({
+    return db.xE.delete({
       where: {
         MaXe: Number(id),
       },
     });
   },
-};
+});
 
 export { VEHICLE_INCLUDE_RELATIONS };
-export default vehicleService;
+export { createVehicleService };
+export default createVehicleService();
