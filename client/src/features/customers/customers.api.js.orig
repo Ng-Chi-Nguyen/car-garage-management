@@ -131,10 +131,5 @@ export const customersApi = {
       }
     });
     return data.data.customer;
-  },
-
-  getCustomerSummary: async (query) => {
-    const { data } = await axiosClient.get('/api/v1/reports/customer-report/summary', { params: query });
-    return data.data;
   }
 };
