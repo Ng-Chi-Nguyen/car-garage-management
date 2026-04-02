@@ -6,6 +6,7 @@ import financeReportRoute from "./report/financeReport.route.js";
 import inventoryReportRoute from "./report/inventoryReport.route.js";
 import repairReportRoute from "./report/repairReport.route.js";
 import reportExportRoute from "./report/reportExport.route.js";
+import activityRoute from "./activity.route.js";
 import settingsRoute from "./settings.route.js";
 import revenueReportRoute from "./report/revenueReport.route.js";
 import carBrandRoute from "./management/carBrand.route.js";
@@ -43,6 +44,7 @@ const Routes = (app) => {
   // API KHÔNG cần đăng nhập
   // =========================
   app.use(`${apiPrefixV1}/auth`, authRoute);
+  app.use(`${apiPrefixV1}/activity`, ...requireManagementAccess, activityRoute);
   app.use(`${apiPrefixV1}/reports`, reportExportRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
