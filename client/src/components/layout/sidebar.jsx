@@ -4,21 +4,13 @@ import { authStorage } from '../../features/auth/auth.storage';
 
 export function Sidebar() {
   const navItems = [
-    { name: 'Tổng quan', path: '/dashboard', icon: 'dashboard' },
-    { name: 'Trạng thái xưởng', path: '/workshop', icon: 'build' },
-    { name: 'Tiếp nhận xe', path: '/intake', icon: 'directions_car' },
-    { name: 'Phiếu sửa chữa', path: '/repair-orders?page=1', icon: 'receipt_long' },
-    { name: 'Kho vật tư', path: '/inventory', icon: 'inventory_2' },
-    { name: 'Tài chính', path: '/finance/receivables', icon: 'payments' },
+    { name: 'Hệ thống', path: '/dashboard', icon: 'dashboard' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
-    { name: 'Thống kê KH', path: '/customers/analytics', icon: 'analytics' },
-    { name: 'Báo cáo doanh thu', path: '/reports/revenue', icon: 'bar_chart' },
-    { name: 'Báo cáo công nợ', path: '/reports/finance-debt', icon: 'account_balance' },
-    { name: 'Báo cáo tồn kho', path: '/reports/inventory', icon: 'inventory' },
-    { name: 'Báo cáo sửa chữa', path: '/reports/repair', icon: 'handyman' },
-    { name: 'Nhân viên', path: '/admin/users', icon: 'manage_accounts' },
-    { name: 'Cài đặt', path: '/settings', icon: 'settings' },
-    { name: 'Lịch sử HĐ', path: '/settings/activity-log', icon: 'history' },
+    { name: 'Lễ tân', path: '/workshop', icon: 'support_agent' },
+    { name: 'Kho', path: '/inventory', icon: 'inventory_2' },
+    { name: 'Sửa chữa', path: '/repair-orders', icon: 'build' },
+    { name: 'Tài Chính', path: '/finance/receivables', icon: 'payments' },
+    { name: 'Báo Cáo', path: '/reports', icon: 'bar_chart' },
   ];
 
   const handleLogout = (e) => {

@@ -32,10 +32,7 @@ const routeStatus = new Map([
   ['/settings', ['blocked', 'Settings UI depends on mocked API and backend settings/admin route gaps', 'Task 18/19']],
   ['/settings/activity-log', ['working', 'Activity log page is routed and contract-backed', '']],
   ['/admin/users', ['blocked', 'No dedicated backend admin users route is available', 'Task 18/19']],
-  ['/reports/finance-debt', ['blocked', 'Manifest points to missing FinanceDebtReport.jsx file', 'Task 18/19']],
-  ['/reports/inventory', ['working', 'Inventory report page is routed', '']],
-  ['/reports/repair', ['working', 'Repair report page is routed', '']],
-  ['/reports/revenue', ['working', 'Revenue report page is routed', '']],
+  ['/reports', ['working', 'Reports page is routed (consolidated tab page)', '']],
   ['*', ['working', 'Fallback not-found route is routed', '']]
 ]);
 

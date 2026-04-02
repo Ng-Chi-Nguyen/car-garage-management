@@ -148,30 +148,9 @@ export const routeManifest = [
   },
   {
     exportKey: null,
-    path: '/reports/finance-debt',
+    path: '/reports',
     layout: 'app',
-    componentPath: 'src/pages/reports/FinanceDebtReport.jsx',
-    group: 'reports'
-  },
-  {
-    exportKey: null,
-    path: '/reports/inventory',
-    layout: 'app',
-    componentPath: 'src/pages/reports/InventoryReport.jsx',
-    group: 'reports'
-  },
-  {
-    exportKey: null,
-    path: '/reports/repair',
-    layout: 'app',
-    componentPath: 'src/pages/reports/RepairReport.jsx',
-    group: 'reports'
-  },
-  {
-    exportKey: null,
-    path: '/reports/revenue',
-    layout: 'app',
-    componentPath: 'src/pages/reports/RevenueReport.jsx',
+    componentPath: 'src/pages/reports/ReportsPage.jsx',
     group: 'reports'
   },
   {
