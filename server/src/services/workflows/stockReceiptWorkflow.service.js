@@ -72,14 +72,16 @@ const buildStockReceiptDetailCreateData = (maPhieuNhap, details) => {
 };
 
 const buildStockReceiptMutationResponse = (stockReceipt, stockReceiptDetails) => {
+  const items = [...stockReceiptDetails].sort((left, right) => Number(left.MaCTPN) - Number(right.MaCTPN));
+
   return {
     receipt: normalizeReceipt(stockReceipt),
-    items: stockReceiptDetails.map(normalizeReceiptItem),
+    items: items.map(normalizeReceiptItem),
     totals: {
-      receiptQuantity: stockReceiptDetails.reduce((total, detail) => {
+      receiptQuantity: items.reduce((total, detail) => {
         return total + Number(detail.quantity ?? detail.SoLuong ?? 0);
       }, 0),
-      receiptAmount: stockReceiptDetails.reduce((total, detail) => {
+      receiptAmount: items.reduce((total, detail) => {
         return total + Number(detail.inventoryValueAfter ?? detail.ThanhTien ?? 0);
       }, 0),
     },

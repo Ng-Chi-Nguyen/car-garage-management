@@ -38,6 +38,13 @@ const normalizeListItem = (stockReceipt) => ({
   updatedAt: stockReceipt.updatedAt ?? stockReceipt.NgayNhap ?? null,
 });
 
+const normalizeReceipt = (stockReceipt) => ({
+  id: Number(stockReceipt.MaPhieuNhap),
+  supplierId: Number(stockReceipt.MaNCC),
+  importedAt: stockReceipt.NgayNhap,
+  totalAmount: Number(stockReceipt.TongTien ?? 0),
+});
+
 const getStockReceiptByIdInternal = async (db, id) => {
   const stockReceipt = await db.pHIEU_NHAP_KHO.findUnique({
     where: {
@@ -108,7 +115,7 @@ const createStockReceiptService = ({ db } = {}) => {
           MaPhieuNhap: Number(id),
         },
         data: buildWriteData(payload, WRITE_FIELDS),
-      });
+      }).then(normalizeReceipt);
     },
     deleteStockReceipt: async (id) => {
       const prisma = await resolveClient();

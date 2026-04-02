@@ -134,3 +134,29 @@ test("stock receipt by id query includes supplier relation", async () => {
     prisma.pHIEU_NHAP_KHO = originalDelegate;
   }
 });
+
+test("update stock receipt returns normalized receipt contract", async () => {
+  const receipts = [{ MaPhieuNhap: 1, MaNCC: 5, TongTien: 450000, NgayNhap: new Date("2026-03-31") }];
+
+  const { createStockReceiptService } = await loadModules();
+  const stockReceiptService = createStockReceiptService({
+    db: {
+      pHIEU_NHAP_KHO: {
+        findUnique: async () => receipts[0],
+        update: async ({ data }) => ({ ...receipts[0], ...data }),
+      },
+    },
+  });
+
+  const result = await stockReceiptService.updateStockReceipt(1, { MaNCC: 8, NgayNhap: new Date("2026-04-01") });
+
+  assert.deepEqual(result, {
+    id: 1,
+    supplierId: 8,
+    importedAt: new Date("2026-04-01"),
+    totalAmount: 450000,
+  });
+  assert.equal(result.receiptId, undefined);
+  assert.equal(result.receivedAt, undefined);
+  assert.equal(result.totalQuantity, undefined);
+});
