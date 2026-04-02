@@ -439,13 +439,23 @@ const createXlsxService = ({
     throw new Error(`Missing id column for ${entityLabel}.`);
   }
 
-  const createTemplateBuffer = async () =>
-    createWorkbookBuffer({
+  const createTemplateBuffer = async () => {
+    const rows = fetchRows
+      ? await fetchRows(prismaClient)
+      : await getDelegate().findMany({
+          orderBy: {
+            [orderByField]: "desc",
+          },
+        });
+
+    return createWorkbookBuffer({
       sheetName,
       columns,
+      rows: exportRows(rows),
       prepareWorkbook,
       includeValidations: true,
     });
+  };
 
   const exportDataBuffer = async () => {
     const rows = fetchRows

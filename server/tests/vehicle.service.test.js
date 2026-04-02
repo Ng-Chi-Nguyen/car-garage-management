@@ -25,7 +25,7 @@ test("vehicleService getVehicleList include hieu xe va khach hang", async () => 
       {
         MaXe: 90,
         BienSo: "18L-10090",
-        MauXe: "Đen",
+        MauXe: "Vios",
         MaHieuXe: 10,
         MaKH: 35,
         HieuXe: {
@@ -47,7 +47,7 @@ test("vehicleService getVehicleList include hieu xe va khach hang", async () => 
 
     assert.deepEqual(calls.count, { where: {} });
     assert.deepEqual(calls.findMany.include, VEHICLE_INCLUDE_RELATIONS);
-    assert.equal(result.vehicles[0].MauXe, "Đen");
+    assert.equal(result.vehicles[0].MauXe, "Vios");
     assert.equal(result.vehicles[0].HieuXe.TenHieuXe, "Toyota");
     assert.equal(result.vehicles[0].KhachHang.TenChuXe, "Le Van Tet");
   } finally {
@@ -66,7 +66,7 @@ test("vehicleService getVehicleById include hieu xe va khach hang", async () => 
     return {
       MaXe: 90,
       BienSo: "18L-10090",
-      MauXe: "Đỏ",
+      MauXe: "Civic",
       MaHieuXe: 10,
       MaKH: 35,
       HieuXe: {
@@ -85,7 +85,7 @@ test("vehicleService getVehicleById include hieu xe va khach hang", async () => 
     const result = await vehicleService.getVehicleById(90);
 
     assert.deepEqual(receivedArgs.include, VEHICLE_INCLUDE_RELATIONS);
-    assert.equal(result.MauXe, "Đỏ");
+    assert.equal(result.MauXe, "Civic");
     assert.equal(result.HieuXe.TenHieuXe, "Toyota");
     assert.equal(result.KhachHang.TenChuXe, "Le Van Tet");
   } finally {
@@ -93,7 +93,7 @@ test("vehicleService getVehicleById include hieu xe va khach hang", async () => 
   }
 });
 
-test("vehicleService createVehicle ghi MauXe khi duoc cung cap", async () => {
+test("vehicleService createVehicle ghi MauXe model khi duoc cung cap", async () => {
   const originalCreate = prisma.xE.create;
   let receivedArgs = null;
 
@@ -110,17 +110,17 @@ test("vehicleService createVehicle ghi MauXe khi duoc cung cap", async () => {
       BienSo: "51A-67890",
       MaHieuXe: 11,
       MaKH: 36,
-      MauXe: "Trắng",
+      MauXe: "CX-5",
     });
 
-    assert.equal(receivedArgs.data.MauXe, "Trắng");
-    assert.equal(result.MauXe, "Trắng");
+    assert.equal(receivedArgs.data.MauXe, "CX-5");
+    assert.equal(result.MauXe, "CX-5");
   } finally {
     prisma.xE.create = originalCreate;
   }
 });
 
-test("vehicleService updateVehicle ghi MauXe null khi xoa mau xe", async () => {
+test("vehicleService updateVehicle ghi MauXe null khi xoa model xe", async () => {
   const originalFindUnique = prisma.xE.findUnique;
   const originalUpdate = prisma.xE.update;
   let receivedArgs = null;
