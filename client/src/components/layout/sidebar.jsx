@@ -16,7 +16,6 @@ export function Sidebar() {
   const handleLogout = (e) => {
     e.preventDefault();
     authStorage.clearSession();
-    // Use hard reload for robust state clearing without needing queryClient.clear()
     window.location.replace('/login');
   };
 
@@ -42,8 +41,14 @@ export function Sidebar() {
               }`
             }
           >
-            <span className={`material-symbols-outlined text-[20px] ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>{item.icon}</span>
-            <span className="text-sm">{item.name}</span>
+            {({ isActive }) => (
+              <>
+                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+                  {item.icon}
+                </span>
+                <span className="text-sm">{item.name}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
