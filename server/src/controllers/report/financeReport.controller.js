@@ -1,6 +1,4 @@
 import financeReportService from "../../services/report/financeReport.service.js";
-import reportExportService from "../../services/report/reportExport.service.js";
-import { sendXlsxBuffer } from "../../shared/xlsx/xlsxDownload.response.js";
 
 const createHandler = (service, serviceMethodName, successMessage, includeRange = false) => async (req, res) => {
   try {
@@ -24,25 +22,8 @@ const createHandler = (service, serviceMethodName, successMessage, includeRange 
     return res.status(status).json({
       success: false,
       message: isBusinessError
-        ? error?.message || "Da xay ra loi trong qua trinh xu ly yeu cau."
-        : "Da xay ra loi trong qua trinh xu ly yeu cau.",
-    });
-  }
-};
-
-const createExportHandler = (exportMethodName) => async (req, res) => {
-  try {
-    const reportFile = await reportExportService[exportMethodName](req.validatedQuery);
-    return sendXlsxBuffer(res, reportFile);
-  } catch (error) {
-    const status = Number.isInteger(error?.status) ? error.status : 500;
-    const isBusinessError = status >= 400 && status < 500;
-
-    return res.status(status).json({
-      success: false,
-      message: isBusinessError
-        ? error?.message || "Da xay ra loi trong qua trinh xu ly yeu cau."
-        : "Da xay ra loi trong qua trinh xu ly yeu cau.",
+        ? error?.message || "Đã xảy ra lỗi trong quá trình xử lý yêu cầu."
+        : "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.",
     });
   }
 };
@@ -51,16 +32,14 @@ const createFinanceReportController = (service = financeReportService) => ({
   getFinanceSummary: createHandler(
     service,
     "getFinanceSummary",
-    "Lay bao cao cong no/tai chinh thanh cong.",
+    "Lấy báo cáo công nợ/tài chính thành công.",
     true,
   ),
   getFinanceDebtors: createHandler(
     service,
     "getFinanceDebtors",
-    "Lay danh sach cong no thanh cong.",
+    "Lấy danh sách công nợ thành công.",
   ),
-  exportFinanceSummary: createExportHandler("exportFinanceSummary"),
-  exportFinanceDebtors: createExportHandler("exportFinanceDebtors"),
 });
 
 const financeReportController = createFinanceReportController();

@@ -24,12 +24,6 @@ const createCustomerReportRoute = ({
     mergedController.getCustomerSummary,
   );
 
-  router.get(
-    "/summary/export",
-    validateRequest(mergedSchema.getCustomerSummary.query, "query"),
-    mergedController.exportCustomerSummary,
-  );
-
   return router;
 };
 

@@ -16,12 +16,6 @@ const createDashboardRoute = ({
     controller.getRevenueSummary,
   );
 
-  router.get(
-    "/revenue-summary/export",
-    validateRequest(schema.getRevenueSummary.query, "query"),
-    controller.exportRevenueSummary,
-  );
-
   return router;
 };
 

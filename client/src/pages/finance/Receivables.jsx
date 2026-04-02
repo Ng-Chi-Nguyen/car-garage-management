@@ -7,7 +7,7 @@ export default function Receivables() {
       <button
         type="reset"
         form="receivables-form"
-        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.35)] ring-1 ring-inset ring-slate-200/70 transition hover:bg-slate-50 hover:ring-slate-300/70"
+        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
       >
         Hủy thao tác
       </button>
@@ -29,7 +29,7 @@ export default function Receivables() {
         description="Tạo phiếu thu mới với xác nhận giao dịch và danh sách xe còn nợ."
         actions={actions}
       />
-      <section className="overflow-hidden rounded-[30px] bg-white shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)] ring-1 ring-inset ring-slate-200/70">
+      <section className="overflow-hidden rounded-[30px] border border-slate-200/80 bg-white shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)]">
         <ReceivablesForm />
       </section>
     </div>

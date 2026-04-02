@@ -24,12 +24,6 @@ const createInventoryReportRoute = ({
     mergedController.getInventorySummary,
   );
 
-  router.get(
-    "/summary/export",
-    validateRequest(mergedSchema.getInventorySummary.query, "query"),
-    mergedController.exportInventorySummary,
-  );
-
   return router;
 };
 

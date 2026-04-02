@@ -22,31 +22,7 @@ const extractBearerToken = (authorizationHeader = "") => {
   return token;
 };
 
-const isTemporaryAuthBypassEnabled = () => {
-  const nodeEnv = process.env.NODE_ENV;
-  const bypassEnv = process.env.AUTH_BYPASS;
-
-  if (bypassEnv === "true") {
-    return true;
-  }
-
-  if (bypassEnv === "false") {
-    return false;
-  }
-
-  return nodeEnv !== "production" && nodeEnv !== "test";
-};
-
 const requireAuth = (req, res, next) => {
-  if (isTemporaryAuthBypassEnabled()) {
-    req.user = {
-      MaNV: 0,
-      ChucVu: "Admin",
-      HoTen: "DEV_AUTH_BYPASS",
-    };
-    return next();
-  }
-
   const token = extractBearerToken(req.headers?.authorization);
 
   if (!token) {
@@ -62,10 +38,6 @@ const requireAuth = (req, res, next) => {
 };
 
 const requireRoles = (roles = []) => (req, res, next) => {
-  if (isTemporaryAuthBypassEnabled()) {
-    return next();
-  }
-
   if (!req.user) {
     return unauthorized(res);
   }

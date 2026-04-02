@@ -413,17 +413,11 @@ const buildPagination = ({ page = 1, limit = 10 } = {}) => {
 };
 
 // Tạo lỗi service thống nhất có gắn HTTP status để tầng trên xử lý.
-const buildServiceError = (status, message, { errorCode, details } = {}) => {
+const buildServiceError = (status, message) => {
   // Khởi tạo Error object với message nghiệp vụ.
   const error = new Error(message);
   // Gắn status HTTP vào object lỗi.
   error.status = status;
-  if (errorCode) {
-    error.errorCode = errorCode;
-  }
-  if (details !== undefined) {
-    error.details = details;
-  }
   // Trả lỗi để throw ở service/controller.
   return error;
 };

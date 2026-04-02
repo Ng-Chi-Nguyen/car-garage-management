@@ -4,7 +4,6 @@ import revenueReportController from "../../controllers/report/revenueReport.cont
 import authMiddleware from "../../middleware/auth/auth.middleware.js";
 import { validateRequest } from "../../middleware/validation.middleware.js";
 import revenueReportSchema from "../../validator/report/revenueReport.validator.js";
-import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
 
@@ -25,117 +24,42 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/timeseries",
-    createDashboardRateLimiter({
-      message: {
-        success: false,
-        message:
-          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-      },
-    }),
-    auth.requireAuth,
-    auth.requireRoles(managementRoles),
+    // auth.requireAuth,
+    // auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
     mergedController.getRevenueTimeseries,
   );
 
   router.get(
-    "/timeseries/export",
+    "/by-car-brand",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
-    validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
-    mergedController.exportRevenueTimeseries,
-  );
-
-  router.get(
-    "/by-car-brand",
-    createDashboardRateLimiter({
-      message: {
-        success: false,
-        message:
-          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-      },
-    }),
-    auth.requireAuth,
-    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
     mergedController.getRevenueByCarBrand,
   );
 
   router.get(
-    "/by-car-brand/export",
+    "/by-part",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
-    validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
-    mergedController.exportRevenueByCarBrand,
-  );
-
-  router.get(
-    "/by-part",
-    createDashboardRateLimiter({
-      message: {
-        success: false,
-        message:
-          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-      },
-    }),
-    auth.requireAuth,
-    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
     mergedController.getRevenueByPart,
   );
 
   router.get(
-    "/by-part/export",
+    "/comparison",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
-    validateRequest(mergedSchema.getRevenueByPart.query, "query"),
-    mergedController.exportRevenueByPart,
-  );
-
-  router.get(
-    "/comparison",
-    createDashboardRateLimiter({
-      message: {
-        success: false,
-        message:
-          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-      },
-    }),
-    auth.requireAuth,
-    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
     mergedController.getRevenueComparison,
   );
 
   router.get(
-    "/comparison/export",
+    "/composition",
     // auth.requireAuth,
     // auth.requireRoles(managementRoles),
-    validateRequest(mergedSchema.getRevenueComparison.query, "query"),
-    mergedController.exportRevenueComparison,
-  );
-
-  router.get(
-    "/composition",
-    createDashboardRateLimiter({
-      message: {
-        success: false,
-        message:
-          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
-      },
-    }),
-    auth.requireAuth,
-    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),
     mergedController.getRevenueComposition,
-  );
-
-  router.get(
-    "/composition/export",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
-    validateRequest(mergedSchema.getRevenueComposition.query, "query"),
-    mergedController.exportRevenueComposition,
   );
 
   return router;

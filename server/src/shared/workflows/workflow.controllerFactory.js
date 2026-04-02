@@ -9,8 +9,6 @@ const handleWorkflowError = (res, error) => {
   return res.status(error?.status || 500).json({
     success: false,
     message: error?.message || "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.",
-    ...(error?.errorCode ? { errorCode: error.errorCode } : {}),
-    ...(error?.details !== undefined ? { details: error.details } : {}),
   });
 };
 

@@ -39,6 +39,7 @@ const validateRequest = (schema, target) => (req, res, next) => {
     if (target === 'query') {
         req.validatedQuery = value;
     } else if (target === 'params') {
+        req[target] = value;
         req.validatedParams = value;
     } else if (target === 'body') {
         req[target] = value;
