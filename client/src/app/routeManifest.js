@@ -133,6 +133,41 @@ export const routeManifest = [
     group: 'system'
   },
   {
+    exportKey: null,
+    path: '/admin/users',
+    layout: 'app',
+    componentPath: 'src/pages/admin/AdminUsersPage.jsx',
+    group: 'system'
+  },
+  {
+    exportKey: null,
+    path: '/reports/finance-debt',
+    layout: 'app',
+    componentPath: 'src/pages/reports/FinanceDebtReport.jsx',
+    group: 'reports'
+  },
+  {
+    exportKey: null,
+    path: '/reports/inventory',
+    layout: 'app',
+    componentPath: 'src/pages/reports/InventoryReport.jsx',
+    group: 'reports'
+  },
+  {
+    exportKey: null,
+    path: '/reports/repair',
+    layout: 'app',
+    componentPath: 'src/pages/reports/RepairReport.jsx',
+    group: 'reports'
+  },
+  {
+    exportKey: null,
+    path: '/reports/revenue',
+    layout: 'app',
+    componentPath: 'src/pages/reports/RevenueReport.jsx',
+    group: 'reports'
+  },
+  {
     exportKey: null, // Not from Stitch export
     path: '*',
     layout: 'app',
