@@ -3,7 +3,7 @@ export function parseAccessTokenRole(token) {
   try {
     const payloadBase64 = token.split('.')[1];
     if (!payloadBase64) return null;
-    
+
     // Decode base64url
     const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
@@ -12,8 +12,13 @@ export function parseAccessTokenRole(token) {
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    
+
     const payload = JSON.parse(jsonPayload);
+
+    // Fail closed for expired/malformed session payloads.
+    if (typeof payload.exp !== 'number') return null;
+    if (payload.exp * 1000 <= Date.now()) return null;
+
     return payload.ChucVu || null;
   } catch {
     return null;

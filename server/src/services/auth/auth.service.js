@@ -157,7 +157,11 @@ const createAuthService = ({
       where: { Email: normalizeEmail(Email) },
     });
 
-    if (customer && customer.TrangThai === "HoatDong") {
+    if (
+      customer &&
+      customer.TrangThai === "HoatDong" &&
+      allowedDemoRoles.includes(customer.ChucVu)
+    ) {
       const resolvedResetPasswordUrl = resetPasswordUrl ?? getResetPasswordUrlFn();
       const { rawToken, hashedToken, expiresAt } = createResetToken();
 
@@ -194,6 +198,10 @@ const createAuthService = ({
     ensureCustomerExists(customer, "Token đặt lại mật khẩu không hợp lệ.");
     ensureActiveCustomer(customer, "Tài khoản hiện không thể đặt lại mật khẩu.");
 
+    if (!allowedDemoRoles.includes(customer.ChucVu)) {
+      throw buildServiceError(403, "Tài khoản hiện không thể đặt lại mật khẩu.");
+    }
+
     if (!customer.TokenDatLaiMatKhauHetHanLuc || customer.TokenDatLaiMatKhauHetHanLuc <= now()) {
       throw buildServiceError(400, "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ.");
     }
@@ -229,6 +237,10 @@ const createAuthService = ({
 
     ensureCustomerExists(customer, "Bạn chưa đăng nhập hoặc phiên đăng nhập không hợp lệ.");
     ensureActiveCustomer(customer);
+
+    if (!allowedDemoRoles.includes(customer.ChucVu)) {
+      throw buildServiceError(403, "Tài khoản không có quyền truy cập hệ thống nội bộ");
+    }
 
     if (!customer.MatKhau) {
       throw buildServiceError(400, "Tài khoản hiện chưa có mật khẩu để đổi.");

@@ -1,3 +1,5 @@
+import { authStorage } from "./auth.storage";
+
 export async function login(credentials) {
   const response = await fetch("/api/v1/auth/login", {
     method: "POST",
@@ -40,7 +42,7 @@ export async function forgotPassword(email) {
 }
 
 export async function changePassword(payload) {
-  const token = localStorage.getItem("auth_token");
+  const token = authStorage.getToken();
   const response = await fetch("/api/v1/auth/change-password", {
     method: "POST",
     headers: {
