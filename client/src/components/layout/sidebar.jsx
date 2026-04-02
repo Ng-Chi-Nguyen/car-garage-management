@@ -12,6 +12,11 @@ export function Sidebar() {
     { name: 'Tài chính', path: '/finance/receivables', icon: 'payments' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
     { name: 'Thống kê KH', path: '/customers/analytics', icon: 'analytics' },
+    { name: 'Báo cáo doanh thu', path: '/reports/revenue', icon: 'bar_chart' },
+    { name: 'Báo cáo công nợ', path: '/reports/finance-debt', icon: 'account_balance' },
+    { name: 'Báo cáo tồn kho', path: '/reports/inventory', icon: 'inventory' },
+    { name: 'Báo cáo sửa chữa', path: '/reports/repair', icon: 'handyman' },
+    { name: 'Nhân viên', path: '/admin/users', icon: 'manage_accounts' },
     { name: 'Cài đặt', path: '/settings', icon: 'settings' },
     { name: 'Lịch sử HĐ', path: '/settings/activity-log', icon: 'history' },
   ];
