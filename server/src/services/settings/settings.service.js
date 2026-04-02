@@ -16,7 +16,7 @@ const loadPrisma = async () => {
 export const createSettingsService = ({ settingsDelegate, laborFeeDelegate, carBrandDelegate } = {}) => ({
   getSystemParameters: async () => {
     const prisma = settingsDelegate ? null : await loadPrisma();
-    const delegate = settingsDelegate ?? prisma.cAU_HINH_HE_THONG;
+    const delegate = settingsDelegate ?? (prisma.cAU_HINH_HE_THONG || prisma.CAU_HINH_HE_THONG || prisma.cauHinhHeThong);
     const setting = await delegate.findUnique({ where: { MaCauHinh: 1 } });
 
     if (!setting) {
@@ -27,7 +27,7 @@ export const createSettingsService = ({ settingsDelegate, laborFeeDelegate, carB
   },
   updateSystemParameters: async (payload) => {
     const prisma = settingsDelegate ? null : await loadPrisma();
-    const delegate = settingsDelegate ?? prisma.cAU_HINH_HE_THONG;
+    const delegate = settingsDelegate ?? (prisma.cAU_HINH_HE_THONG || prisma.CAU_HINH_HE_THONG || prisma.cauHinhHeThong);
     const setting = await delegate.upsert({
       where: { MaCauHinh: 1 },
       create: {

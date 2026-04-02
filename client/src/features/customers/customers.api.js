@@ -10,7 +10,9 @@ function formatCurrency(amount) {
 
 export const customersApi = {
   getCustomers: async (filters) => {
-    const { data } = await axiosClient.get('/api/v1/customers', { params: filters });
+    // Exclude frontend-only params that cause 400 errors from backend validator
+    const { rank, sort, ...backendFilters } = filters || {};
+    const { data } = await axiosClient.get('/api/v1/customers', { params: backendFilters });
     
     const formattedData = data.data.customers.map(c => {
       let visitCount = 0;
