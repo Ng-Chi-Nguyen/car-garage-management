@@ -11,6 +11,18 @@ export const fetchRepairOrders = async ({ page = 1, limit = 10, search = '' }) =
   return response.data;
 };
 
+export const fetchRepairOrder = async (id) => {
+  const response = await axiosClient.get(`/api/v1/repair-orders/${id}`);
+  return response.data;
+};
+
+export const fetchRepairOrderDetails = async (id) => {
+  const response = await axiosClient.get(`/api/v1/repair-order-details`, {
+    params: { MaPhieuSC: id, limit: 100 }
+  });
+  return response.data;
+};
+
 export const createRepairOrder = async (payload) => {
   const response = await axiosClient.post(`/api/v1/workflows/repair-orders`, payload);
   return response.data;

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { DataTable } from "../../../components/ui/data-table";
 import { SectionCard } from "../../../components/ui/section-card";
 import { StateShell } from "../../../components/ui/state-shell";
@@ -18,7 +19,14 @@ export function RepairOrdersList() {
   const pagination = data?.data?.pagination || { page: 1, totalPages: 1 };
 
   const columns = [
-    { header: "Mã Phiếu", accessor: "MaPhieuSC" },
+    { 
+      header: "Mã Phiếu", 
+      cell: (row) => (
+        <Link to={`/repair-orders/${row.MaPhieuSC}`} className="text-primary hover:underline font-medium">
+          {row.MaPhieuSC}
+        </Link>
+      )
+    },
     { header: "Mã Xe", accessor: "MaXe" },
     {
       header: "Ngày SC",

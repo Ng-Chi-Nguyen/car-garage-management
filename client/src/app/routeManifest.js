@@ -70,6 +70,13 @@ export const routeManifest = [
     group: 'workshop'
   },
   {
+    exportKey: null,
+    path: '/repair-orders/:id',
+    layout: 'app',
+    componentPath: 'src/pages/repair/RepairOrderDetailPage.jsx',
+    group: 'workshop'
+  },
+  {
     exportKey: 'qu_n_l_kho_v_t_t_gms',
     path: '/inventory',
     layout: 'app',
