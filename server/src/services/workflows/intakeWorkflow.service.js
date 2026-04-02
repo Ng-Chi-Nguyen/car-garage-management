@@ -11,7 +11,7 @@ const normalizeIntake = (intake, id = 1) => ({
 
 const createIntakeWorkflowService = () => ({
   createIntakeAtomic: async (payload) => ({
-    intake: normalizeIntake(payload.intake),
+    intake: normalizeIntake(payload.intake ?? payload),
     history: [],
   }),
   fetchIntakeHistory: async () => [],

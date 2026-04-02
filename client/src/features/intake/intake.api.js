@@ -1,7 +1,7 @@
 import axiosClient from "../../lib/axiosClient.js";
 
 export async function createIntake(data) {
-  const response = await axiosClient.post("/api/v1/workflows/intakes", { intake: data });
+  const response = await axiosClient.post("/api/v1/workflows/intakes", data?.intake ? data : { intake: data });
   return response.data;
 }
 
