@@ -25,6 +25,9 @@ const createMockRes = () => {
 };
 
 test("requireAuth trả 401 khi thiếu bearer token", async () => {
+  process.env.AUTH_BYPASS = "false";
+  process.env.NODE_ENV = "test";
+
   const authMiddleware = await loadAuthMiddleware();
   const req = { headers: {} };
   const res = createMockRes();
@@ -40,6 +43,8 @@ test("requireAuth trả 401 khi thiếu bearer token", async () => {
 });
 
 test("requireAuth gắn thông tin user khi token hợp lệ", async () => {
+  process.env.AUTH_BYPASS = "false";
+  process.env.NODE_ENV = "test";
   process.env.JWT_SECRET = "test-secret";
 
   const authMiddleware = await loadAuthMiddleware();
@@ -58,6 +63,9 @@ test("requireAuth gắn thông tin user khi token hợp lệ", async () => {
 });
 
 test("requireRoles trả 403 khi vai trò không được phép", async () => {
+  process.env.AUTH_BYPASS = "false";
+  process.env.NODE_ENV = "test";
+
   const authMiddleware = await loadAuthMiddleware();
   const req = { user: { MaKH: 1, ChucVu: "KhachHang" } };
   const res = createMockRes();

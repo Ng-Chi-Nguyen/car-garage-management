@@ -49,19 +49,18 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/reports/repair-report`, repairReportRoute);
   app.use(`${apiPrefixV1}/workflows/repair-orders`, repairOrderWorkflowRoute);
   app.use(`${apiPrefixV1}/workflows/stock-receipts`, stockReceiptWorkflowRoute);
-  app.use(`${apiPrefixV1}/workflows/payment-receipts`, paymentReceiptWorkflowRoute);
   app.use(`${apiPrefixV1}/master-data/xlsx`, ...requireManagementAccess, masterDataXlsxRoute);
-  app.use(`${apiPrefixV1}/customers`, customerRoute);
-  app.use(`${apiPrefixV1}/car-brands`, carBrandRoute);
-  app.use(`${apiPrefixV1}/vehicles`, vehicleRoute);
-  app.use(`${apiPrefixV1}/repair-orders`, repairOrderRoute);
-  app.use(`${apiPrefixV1}/labor-fees`, laborFeeRoute);
-  app.use(`${apiPrefixV1}/parts`, partRoute);
-  app.use(`${apiPrefixV1}/repair-order-details`, repairOrderDetailRoute);
-  app.use(`${apiPrefixV1}/suppliers`, supplierRoute);
-  app.use(`${apiPrefixV1}/stock-receipts`, stockReceiptRoute);
-  app.use(`${apiPrefixV1}/stock-receipt-details`, stockReceiptDetailRoute);
-  app.use(`${apiPrefixV1}/payment-receipts`, paymentReceiptRoute);
+  app.use(`${apiPrefixV1}/customers`, ...requireManagementAccess, customerRoute);
+  app.use(`${apiPrefixV1}/car-brands`, ...requireManagementAccess, carBrandRoute);
+  app.use(`${apiPrefixV1}/vehicles`, ...requireManagementAccess, vehicleRoute);
+  app.use(`${apiPrefixV1}/repair-orders`, ...requireManagementAccess, repairOrderRoute);
+  app.use(`${apiPrefixV1}/labor-fees`, ...requireManagementAccess, laborFeeRoute);
+  app.use(`${apiPrefixV1}/parts`, ...requireManagementAccess, partRoute);
+  app.use(`${apiPrefixV1}/repair-order-details`, ...requireManagementAccess, repairOrderDetailRoute);
+  app.use(`${apiPrefixV1}/suppliers`, ...requireManagementAccess, supplierRoute);
+  app.use(`${apiPrefixV1}/stock-receipts`, ...requireManagementAccess, stockReceiptRoute);
+  app.use(`${apiPrefixV1}/stock-receipt-details`, ...requireManagementAccess, stockReceiptDetailRoute);
+  app.use(`${apiPrefixV1}/payment-receipts`, ...requireManagementAccess, paymentReceiptRoute);
   app.use(`${apiPrefixV1}/reports/finance`, ...requireManagementAccess, financeReportRoute);
   // =========================
   // API CẦN đăng nhập
