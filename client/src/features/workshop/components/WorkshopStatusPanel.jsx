@@ -1,5 +1,5 @@
 import React from "react";
-import { WorkshopQueueTable } from "./WorkshopQueueTable";
+import { WorkshopQueueGrid } from "./WorkshopQueueGrid";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả" },
@@ -52,7 +52,7 @@ export function WorkshopStatusPanel({
         </div>
       </div>
 
-      <WorkshopQueueTable
+      <WorkshopQueueGrid
         rows={data?.activeRows}
         isLoading={isLoading}
         isFetching={isFetching}

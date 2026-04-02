@@ -49,11 +49,13 @@ export default function WorkshopStatusPage() {
         loadingFallback={<LoadingState message="Đang tải dữ liệu xưởng..." />}
         errorFallback={<ErrorState message="Lỗi tải dữ liệu xưởng" />}
       >
-        <WorkshopKpiSection data={data} />
+        <WorkshopKpiSection data={data} isLoading={isLoading} isError={isError} />
 
         <WorkshopQueueSection
           data={data}
+          isLoading={isLoading}
           isFetching={isFetching}
+          isError={isError}
           filters={filters}
           updateFilters={updateFilters}
         />
