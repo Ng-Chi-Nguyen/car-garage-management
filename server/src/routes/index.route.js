@@ -2,6 +2,7 @@ import authRoute from "./auth/auth.route.js";
 import dashboardRoute from "./report/dashboard.route.js";
 import { dashboardAccessMiddlewares } from "./report/dashboard.access.js";
 import customerReportRoute from "./report/customerReport.route.js";
+import adminUsersRoute from "./admin/users.route.js";
 import financeReportRoute from "./report/financeReport.route.js";
 import inventoryReportRoute from "./report/inventoryReport.route.js";
 import repairReportRoute from "./report/repairReport.route.js";
@@ -47,6 +48,7 @@ const Routes = (app) => {
   // =========================
   app.use(`${apiPrefixV1}/auth`, authRoute);
   app.use(`${apiPrefixV1}/activity`, ...requireManagementAccess, activityRoute);
+  app.use(`${apiPrefixV1}/admin/users`, ...requireManagementAccess, adminUsersRoute);
   app.use(`${apiPrefixV1}/reports`, reportExportRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
