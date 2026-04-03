@@ -5,8 +5,14 @@ const normalizeIntake = (intake, id = 1) => ({
   employeeId: intake.MaNV === null || intake.MaNV === undefined ? null : Number(intake.MaNV),
   receivedAt: intake.NgayTiepNhan,
   status: intake.TrangThai ?? "TiepNhan",
-  note: intake.GhiChu ?? null,
-  licensePlate: intake.BienSoXe,
+  issueDescription: intake.NoiDungLoi ?? null,
+  quickTags: Array.isArray(intake.quickTags) ? intake.quickTags.map((value) => String(value).trim()).filter(Boolean) : [],
+  note: intake.note ?? null,
+  GhiChu: JSON.stringify({
+    quickTags: Array.isArray(intake.quickTags) ? intake.quickTags.map((value) => String(value).trim()).filter(Boolean) : [],
+    note: intake.note ?? null,
+  }),
+  licensePlate: intake.BienSoXe ?? null,
 });
 
 const createIntakeWorkflowService = () => ({
