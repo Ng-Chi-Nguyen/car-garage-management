@@ -82,9 +82,9 @@ const createWorkflowDb = (initialState) => {
         state.repairOrders.push(record);
         return cloneValue(record);
       },
-      findUnique: async ({ where }) => {
+      findUnique: async ({ where, select }) => {
         const record = state.repairOrders.find((item) => item.MaPhieuSC === Number(where.MaPhieuSC));
-        return cloneValue(record ?? null);
+        return selectFields(record, select);
       },
     },
     cT_PHIEU_SUA_CHUA: {
@@ -292,6 +292,87 @@ test("repair order workflow rollback state khi loi xay ra giua transaction", asy
   assert.equal(fixture.state.repairOrders.length, 0);
   assert.equal(fixture.state.repairOrderDetails.length, 0);
   assert.equal(fixture.state.parts[0].SoLuongTon, 10);
+});
+
+test("repair order workflow doc lai phieu sua chua bang select khong gom NgayKetThuc", async () => {
+  const fixture = createWorkflowDb({
+    vehicles: [{ MaXe: 1, TienNoHienTai: 0 }],
+    parts: [{ MaVatTu: 10, SoLuongTon: 10 }],
+    laborFees: [{ MaTienCong: 20 }],
+    suppliers: [],
+    repairOrders: [],
+    repairOrderDetails: [],
+    stockReceipts: [],
+    stockReceiptDetails: [],
+    paymentReceipts: [],
+  });
+  const expectedSelect = {
+    MaPhieuSC: true,
+    MaXe: true,
+    MaNV: true,
+    NgaySC: true,
+    TrangThai: true,
+    NoiDungLoi: true,
+    GhiChu: true,
+    TongTien: true,
+    NgayTao: true,
+    NgayCapNhat: true,
+  };
+  let capturedSelect;
+
+  fixture.tx.pHIEU_SUA_CHUA.findUnique = async ({ where, select }) => {
+    capturedSelect = cloneValue(select);
+    if (!select) {
+      throw new Error("Expected select in pHIEU_SUA_CHUA.findUnique");
+    }
+
+    if (Object.hasOwn(select, "NgayKetThuc")) {
+      throw new Error("Unexpected NgayKetThuc in pHIEU_SUA_CHUA.findUnique select");
+    }
+
+    const record = fixture.state.repairOrders.find((item) => item.MaPhieuSC === Number(where.MaPhieuSC));
+    return selectFields(record, select);
+  };
+
+  const service = createRepairOrderWorkflowService({
+    db: fixture.db,
+    businessHelpers: {
+      adjustPartStock: async (_txArg, maVatTu, quantityDelta) => {
+        const part = fixture.state.parts.find((item) => item.MaVatTu === Number(maVatTu));
+        part.SoLuongTon += Number(quantityDelta);
+      },
+      syncRepairOrderTotal: async (_txArg, maPhieuSC) => {
+        const total = fixture.state.repairOrderDetails
+          .filter((item) => item.MaPhieuSC === Number(maPhieuSC))
+          .reduce((sum, item) => sum + Number(item.ThanhTien), 0);
+        const repairOrder = fixture.state.repairOrders.find((item) => item.MaPhieuSC === Number(maPhieuSC));
+        repairOrder.TongTien = total;
+      },
+    },
+  });
+
+  await service.createRepairOrderAtomic({
+    repairOrder: {
+      MaXe: 1,
+      MaNV: 2,
+      NgaySC: new Date("2026-03-25"),
+      TrangThai: "TiepNhan",
+      NoiDungLoi: "De may",
+      GhiChu: "Regression",
+    },
+    details: [
+      {
+        MaVatTu: 10,
+        MaTienCong: 20,
+        SoLuong: 1,
+        DonGiaVatTu: 100000,
+        DonGiaTienCong: 50000,
+      },
+    ],
+  });
+
+  assert.deepEqual(capturedSelect, expectedSelect);
+  assert.equal(Object.hasOwn(capturedSelect, "NgayKetThuc"), false);
 });
 
 test("stock receipt workflow tao phieu nhap va cong ton bang tx helper", async () => {
