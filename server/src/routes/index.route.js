@@ -36,6 +36,10 @@ const Routes = (app) => {
     authMiddleware.requireAuth,
     authMiddleware.requireRoles(["Admin", "NhanVien"]),
   ];
+  const requireAdminAccess = [
+    authMiddleware.requireAuth,
+    authMiddleware.requireRoles(["Admin"]),
+  ];
 
   // =========================
   // API dashboard nội bộ cần đăng nhập + rate limit
@@ -47,7 +51,7 @@ const Routes = (app) => {
   // =========================
   app.use(`${apiPrefixV1}/auth`, authRoute);
   app.use(`${apiPrefixV1}/activity`, ...requireManagementAccess, activityRoute);
-  app.use(`${apiPrefixV1}/admin/users`, ...requireManagementAccess, adminUsersRoute);
+  app.use(`${apiPrefixV1}/admin/users`, ...requireAdminAccess, adminUsersRoute);
   app.use(`${apiPrefixV1}/reports`, reportExportRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
