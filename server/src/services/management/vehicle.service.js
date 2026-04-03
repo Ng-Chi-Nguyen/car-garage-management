@@ -10,12 +10,13 @@ import {
 const VEHICLE_FILTER_FIELDS = {
   MaXe: { type: "number", positive: true },
   BienSo: { type: "string" },
+  MauXe: { type: "string" },
   MaHieuXe: { type: "number", positive: true },
   MaKH: { type: "number", positive: true },
   TienNoHienTai: { type: "decimal", min: 0 },
 };
 
-const WRITE_FIELDS = ["BienSo", "MaHieuXe", "MaKH"];
+const WRITE_FIELDS = ["BienSo", "MauXe", "MaHieuXe", "MaKH"];
 const VEHICLE_INCLUDE_RELATIONS = {
   HieuXe: {
     select: {
