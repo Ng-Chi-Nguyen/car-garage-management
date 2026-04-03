@@ -58,6 +58,15 @@ const createCustomerService = ({
   const getCustomerOrThrow = async (id) => {
     const customer = await customerDelegate.findUnique({
       where: { MaKH: Number(id) },
+      include: {
+        Xe: {
+          include: {
+            HieuXe: true,
+            PhieuSuaChua: true,
+            PhieuThuTien: true
+          }
+        }
+      }
     });
 
     if (!customer) {

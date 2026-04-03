@@ -1,8 +1,11 @@
+import axiosClient from "../../lib/axiosClient.js";
+
 export async function createIntake(data) {
-  // Mock API call
-  return { id: "PN-" + Date.now(), ...data };
+  const response = await axiosClient.post("/api/v1/workflows/intakes", data?.intake ? data : { intake: data });
+  return response.data;
 }
 
 export async function fetchIntakeHistory() {
-  return [];
+  const response = await axiosClient.get("/api/v1/workflows/intakes/history");
+  return response.data;
 }

@@ -16,6 +16,8 @@ const PART_FILTER_FIELDS = {
   MaNCC: { type: "number", positive: true },
 };
 
+const STOCK_STATUS_THRESHOLD = 5;
+
 const WRITE_FIELDS = ["TenVatTu", "DonViTinh", "GiaVon", "DonGiaBan", "MaNCC"];
 const PART_INCLUDE_SUPPLIER = {
   NhaCungCap: {
@@ -41,6 +43,40 @@ const getPartByIdInternal = async (db, id) => {
   return part;
 };
 
+const applyStockStatusFilter = (where, stockStatus) => {
+  if (stockStatus === undefined || stockStatus === null || stockStatus === "") {
+    return where;
+  }
+
+  if (stockStatus === "out_of_stock") {
+    return {
+      ...where,
+      SoLuongTon: 0,
+    };
+  }
+
+  if (stockStatus === "low") {
+    return {
+      ...where,
+      SoLuongTon: {
+        gt: 0,
+        lte: STOCK_STATUS_THRESHOLD,
+      },
+    };
+  }
+
+  if (stockStatus === "in_stock") {
+    return {
+      ...where,
+      SoLuongTon: {
+        gt: STOCK_STATUS_THRESHOLD,
+      },
+    };
+  }
+
+  return where;
+};
+
 const partService = {
   createPart: async (payload) => {
     return prisma.vAT_TU.create({
@@ -51,13 +87,17 @@ const partService = {
     });
   },
   getPartList: async ({ page = 1, limit = 10, search = "", ...filters } = {}) => {
+    const { stockStatus, ...queryFilters } = filters;
     const pagination = buildPagination({ page, limit });
-    const where = buildListWhere({
-      search,
-      filters,
-      searchFields: ["TenVatTu", "DonViTinh"],
-      filterFields: PART_FILTER_FIELDS,
-    });
+    const where = applyStockStatusFilter(
+      buildListWhere({
+        search,
+        filters: queryFilters,
+        searchFields: ["TenVatTu", "DonViTinh"],
+        filterFields: PART_FILTER_FIELDS,
+      }),
+      stockStatus,
+    );
 
     const [totalItems, parts] = await prisma.$transaction([
       prisma.vAT_TU.count({ where }),

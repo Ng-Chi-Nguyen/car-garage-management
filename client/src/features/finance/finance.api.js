@@ -1,11 +1,11 @@
-import axiosClient from '../../lib/axiosClient';
+import axiosClient from '../../lib/axiosClient.js';
 
 export async function fetchReceivables(params = {}) {
   const response = await axiosClient.get("/api/v1/reports/finance/debtors", {
     params: {
       page: Number(params.page) > 0 ? Number(params.page) : 1,
       limit: params.limit || params.pageSize || 20,
-      search: params.q || "",
+      search: params.search || params.q || "",
       groupBy: params.groupBy || "vehicle",
     },
   });
@@ -13,6 +13,9 @@ export async function fetchReceivables(params = {}) {
 }
 
 export async function fetchFinanceSummary(params = {}) {
+  if (!params.from || !params.to || !params.granularity) {
+    throw new Error("Missing required params: from,to,granularity");
+  }
   const response = await axiosClient.get("/api/v1/reports/finance/summary", {
     params,
   });
@@ -57,4 +60,15 @@ export async function fetchVehicleDebt(vehicleId) {
 export async function fetchSettlement(id) {
   const response = await axiosClient.get(`/api/v1/repair-orders/${id}`);
   return response.data?.data?.repairOrder || response.data?.data || response.data;
+}
+
+export async function exportFinanceDebtors(params = {}) {
+  const response = await axiosClient.get("/api/v1/reports/finance/debtors/export", {
+    params: {
+      search: params.search || params.q || "",
+      groupBy: params.groupBy || "vehicle",
+    },
+    responseType: 'blob'
+  });
+  return response.data;
 }

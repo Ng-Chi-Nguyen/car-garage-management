@@ -9,9 +9,11 @@ import { LoadingState } from "../../components/ui/loading-state";
 import { ErrorState } from "../../components/ui/error-state";
 
 export default function WorkshopStatusPage() {
-  const { data, isLoading, isFetching, isError, filters, updateFilters } =
+  const { data, isLoading, isFetching, isError, filters, updateFilters, refetch } =
     useWorkshopQuery();
   const navigate = useNavigate();
+
+  const onRetry = () => refetch();
 
   const topActions = (
     <>
@@ -45,17 +47,18 @@ export default function WorkshopStatusPage() {
       />
       <StateShell
         isLoading={isLoading}
-        isError={isError}
         loadingFallback={<LoadingState message="Đang tải dữ liệu xưởng..." />}
-        errorFallback={<ErrorState message="Lỗi tải dữ liệu xưởng" />}
       >
-        <WorkshopKpiSection data={data} />
+        <WorkshopKpiSection data={data} isLoading={isLoading} isError={isError} />
 
         <WorkshopQueueSection
           data={data}
+          isLoading={isLoading}
           isFetching={isFetching}
+          isError={isError}
           filters={filters}
           updateFilters={updateFilters}
+          onRetry={onRetry}
         />
       </StateShell>
     </div>

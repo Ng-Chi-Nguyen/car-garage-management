@@ -150,7 +150,7 @@ test("register từ chối email đã tồn tại", async () => {
     TenChuXe: "Cu",
     DienThoai: "0900000000",
     DiaChi: "HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
   });
   const authService = createAuthService(createDependencies(customerDelegate));
@@ -177,7 +177,7 @@ test("register từ chối số điện thoại đã tồn tại", async () => {
     TenChuXe: "Cu",
     DienThoai: "0901234567",
     DiaChi: "HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
   });
   const authService = createAuthService(createDependencies(customerDelegate));
@@ -195,7 +195,7 @@ test("register từ chối số điện thoại đã tồn tại", async () => {
   );
 });
 
-test("login trả access token và user đã sanitize", async () => {
+test("login trả access token và user đã sanitize cho tài khoản nội bộ", async () => {
   const createAuthService = await loadCreateAuthService();
   const customerDelegate = createCustomerDelegate({
     MaKH: 5,
@@ -204,7 +204,7 @@ test("login trả access token và user đã sanitize", async () => {
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "Admin",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: "hashed-reset-token",
   });
@@ -215,7 +215,7 @@ test("login trả access token và user đã sanitize", async () => {
     MatKhau: "Password123!",
   });
 
-  assert.equal(result.accessToken, "token::5::KhachHang");
+  assert.equal(result.accessToken, "token::5::Admin");
   assert.equal(result.user.MaKH, 5);
   assert.equal(result.user.MatKhau, undefined);
   assert.equal(result.user.ResetPasswordToken, undefined);
@@ -230,7 +230,7 @@ test("login từ chối tài khoản chưa có mật khẩu thay vì throw 500",
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
   });
   const authService = createAuthService(createDependencies(customerDelegate));
@@ -254,7 +254,7 @@ test("forgotPassword tạo reset token đã hash và gửi email", async () => {
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: null,
     TokenDatLaiMatKhauHetHanLuc: null,
@@ -285,7 +285,7 @@ test("forgotPassword fallback về reset URL local khi thiếu RESET_PASSWORD_UR
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: null,
     TokenDatLaiMatKhauHetHanLuc: null,
@@ -316,7 +316,7 @@ test("forgotPassword đọc RESET_PASSWORD_URL tại runtime thay vì đóng bă
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: null,
     TokenDatLaiMatKhauHetHanLuc: null,
@@ -346,7 +346,7 @@ test("resetPassword cập nhật mật khẩu mới và vô hiệu hóa reset to
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: "hashed::raw-reset-token",
     TokenDatLaiMatKhauHetHanLuc: new Date("2026-03-25T00:00:00.000Z"),
@@ -390,7 +390,7 @@ test("changePassword từ chối mật khẩu hiện tại sai", async () => {
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: "hashed::old-reset-token",
     TokenDatLaiMatKhauHetHanLuc: new Date("2026-03-25T00:00:00.000Z"),
@@ -417,7 +417,7 @@ test("changePassword cập nhật mật khẩu và xóa reset token đang chờ"
     TenChuXe: "Nguyen Van A",
     DienThoai: "0901234567",
     DiaChi: "TP HCM",
-    ChucVu: "KhachHang",
+    ChucVu: "NhanVien",
     TrangThai: "HoatDong",
     TokenDatLaiMatKhau: "hashed::old-reset-token",
     TokenDatLaiMatKhauHetHanLuc: new Date("2026-03-25T00:00:00.000Z"),

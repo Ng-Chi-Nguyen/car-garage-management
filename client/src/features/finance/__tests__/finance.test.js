@@ -3,6 +3,9 @@ import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import axiosClient from "../../../lib/axiosClient.js";
+import { fetchReceivables, fetchFinanceSummary } from "../finance.api.js";
+import { applyReceivablesSearchParams } from "../receivablesSearchParams.js";
 import { buildFinanceSummaryQueryRange } from "../finance.utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -86,4 +89,74 @@ test("SettlementInvoice complies with AGENTS.md rules", () => {
 test("ReceiptHistorySection is not part of the finance component surface anymore", () => {
   const historyFile = path.join(__dirname, "../components/ReceiptHistorySection.jsx");
   assert.ok(!fs.existsSync(historyFile), "ReceiptHistorySection should be removed if unused");
+});
+
+test("fetchReceivables maps search with precedence over q at runtime", async () => {
+  const originalGet = axiosClient.get;
+  const calls = [];
+  axiosClient.get = async (...args) => {
+    calls.push(args);
+    return { data: { data: { items: [] } } };
+  };
+
+  try {
+    await fetchReceivables({ search: "canon", q: "legacy", page: 2, pageSize: 15 });
+    await fetchReceivables({ q: "legacy-only" });
+
+    assert.equal(calls.length, 2);
+    assert.equal(calls[0][1].params.search, "canon", "search must override q");
+    assert.equal(calls[1][1].params.search, "legacy-only", "q fallback must work");
+  } finally {
+    axiosClient.get = originalGet;
+  }
+});
+
+test("fetchFinanceSummary throws exact error when required params are missing", async () => {
+  const originalGet = axiosClient.get;
+  let getCalled = false;
+  axiosClient.get = async () => {
+    getCalled = true;
+    return { data: { data: {} } };
+  };
+
+  try {
+    await assert.rejects(
+      () => fetchFinanceSummary({ from: "2026-01-01", to: "2026-01-31" }),
+      /Missing required params: from,to,granularity/
+    );
+    assert.equal(getCalled, false, "axiosClient.get must not be called when guard fails");
+  } finally {
+    axiosClient.get = originalGet;
+  }
+});
+
+test("fetchFinanceSummary calls API when params are valid", async () => {
+  const originalGet = axiosClient.get;
+  const calls = [];
+  axiosClient.get = async (...args) => {
+    calls.push(args);
+    return { data: { data: { totalOutstandingDebt: 0 } } };
+  };
+
+  try {
+    await fetchFinanceSummary({ from: "2026-01-01", to: "2026-01-31", granularity: "day" });
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][0], "/api/v1/reports/finance/summary");
+    assert.equal(calls[0][1].params.granularity, "day");
+  } finally {
+    axiosClient.get = originalGet;
+  }
+});
+
+test("Receivables URL normalization helper enforces canonical search and clears q", () => {
+  const initial = new URLSearchParams("q=old&page=9");
+  const withValue = applyReceivablesSearchParams(initial, "new-keyword");
+  assert.equal(withValue.get("search"), "new-keyword");
+  assert.equal(withValue.get("q"), null);
+  assert.equal(withValue.get("page"), "1");
+
+  const cleared = applyReceivablesSearchParams(withValue, "");
+  assert.equal(cleared.get("search"), null);
+  assert.equal(cleared.get("q"), null);
+  assert.equal(cleared.get("page"), "1");
 });

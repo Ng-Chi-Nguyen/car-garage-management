@@ -3,8 +3,8 @@ import React from "react";
 export function WorkshopKpiGrid({ metrics, isLoading, isError }) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 animate-pulse">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-pulse">
+        {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="h-28 bg-surface-container-low rounded-xl" />
         ))}
       </div>
@@ -22,84 +22,86 @@ export function WorkshopKpiGrid({ metrics, isLoading, isError }) {
   if (!metrics) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div className="bg-surface-container-low p-5 rounded-xl">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      {/* CHỜ */}
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-secondary uppercase tracking-wider">
-            Tiếp nhận
+            CHỜ
           </span>
-          <span className="material-symbols-outlined text-secondary opacity-50">
-            schedule
-          </span>
-        </div>
-        <div className="flex items-end justify-between">
-          <h3 className="text-3xl text-on-surface font-bold">
-            {metrics.waiting}
-          </h3>
-          <div className="text-xs text-secondary font-medium bg-secondary/10 px-2 py-1 rounded">
-            Chờ
+          <div className="bg-secondary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-secondary opacity-50 text-xl">
+              schedule
+            </span>
           </div>
         </div>
+        <h3 className="text-3xl text-on-surface font-bold">
+          {metrics.waiting || 0}
+        </h3>
       </div>
 
-      <div className="bg-surface-container-low p-5 rounded-xl">
+      {/* CHẨN ĐOÁN */}
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-tertiary uppercase tracking-wider">
+            CHẨN ĐOÁN
+          </span>
+          <div className="bg-tertiary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-tertiary opacity-50 text-xl">
+              troubleshoot
+            </span>
+          </div>
+        </div>
+        <h3 className="text-3xl text-on-surface font-bold">0</h3>
+      </div>
+
+      {/* ĐANG SỬA */}
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-            Đang sửa
+            ĐANG SỬA
           </span>
-          <span className="material-symbols-outlined text-primary opacity-50">
-            handyman
-          </span>
-        </div>
-        <div className="flex items-end justify-between">
-          <h3 className="text-3xl text-on-surface font-bold">
-            {metrics.in_progress}
-          </h3>
-          <div className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded">
-            Thực hiện
+          <div className="bg-primary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-primary opacity-50 text-xl">
+              handyman
+            </span>
           </div>
         </div>
+        <h3 className="text-3xl text-on-surface font-bold">
+          {metrics.in_progress || 0}
+        </h3>
       </div>
 
-      <div className="bg-surface-container-low p-5 rounded-xl">
+      {/* CHỜ T.TOÁN */}
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-warning uppercase tracking-wider">
+            CHỜ T.TOÁN
+          </span>
+          <div className="bg-warning/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-warning opacity-50 text-xl">
+              payments
+            </span>
+          </div>
+        </div>
+        <h3 className="text-3xl text-on-surface font-bold">0</h3>
+      </div>
+
+      {/* ĐÃ BÀN GIAO */}
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-success uppercase tracking-wider">
-            Hoàn tất
+            ĐÃ BÀN GIAO
           </span>
-          <span className="material-symbols-outlined text-success opacity-50">
-            task_alt
-          </span>
-        </div>
-        <div className="flex items-end justify-between">
-          <h3 className="text-3xl text-on-surface font-bold">
-            {metrics.completed}
-          </h3>
-          <div className="text-xs text-success font-medium bg-success/10 px-2 py-1 rounded">
-            Xong
+          <div className="bg-success/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-success opacity-50 text-xl">
+              task_alt
+            </span>
           </div>
         </div>
-      </div>
-
-      <div className="bg-primary-container p-5 rounded-xl text-white shadow-lg shadow-primary-container/20">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-on-primary-container uppercase tracking-wider">
-            Tổng cộng
-          </span>
-          <span
-            className="material-symbols-outlined text-on-primary-container"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            view_list
-          </span>
-        </div>
-        <div className="flex items-end justify-between">
-          <h3 className="text-3xl text-on-primary-container font-bold">
-            {metrics.total}
-          </h3>
-          <div className="text-xs font-medium bg-white/20 text-on-primary-container px-2 py-1 rounded">
-            Tất cả
-          </div>
-        </div>
+        <h3 className="text-3xl text-on-surface font-bold">
+          {metrics.completed || 0}
+        </h3>
       </div>
     </div>
   );

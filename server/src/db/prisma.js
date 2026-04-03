@@ -1,7 +1,10 @@
-import "dotenv/config";
-
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "@prisma/client";
+try {
+  await import("dotenv/config");
+} catch (error) {
+  if (error?.code !== "ERR_MODULE_NOT_FOUND") {
+    throw error;
+  }
+}
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -13,11 +16,11 @@ const buildDatabaseUrlWithSafePoolParams = (rawUrl) => {
   const parsed = new URL(rawUrl);
 
   if (!parsed.searchParams.has("connectTimeout")) {
-    parsed.searchParams.set("connectTimeout", "60000");
+    parsed.searchParams.set("connectTimeout", "5000");
   }
 
   if (!parsed.searchParams.has("acquireTimeout")) {
-    parsed.searchParams.set("acquireTimeout", "60000");
+    parsed.searchParams.set("acquireTimeout", "5000");
   }
 
   if (!parsed.searchParams.has("connectionLimit")) {
@@ -27,8 +30,41 @@ const buildDatabaseUrlWithSafePoolParams = (rawUrl) => {
   return parsed.toString();
 };
 
-const adapter = new PrismaMariaDb(buildDatabaseUrlWithSafePoolParams(databaseUrl));
-const prisma = new PrismaClient({ adapter });
+const createPrismaFallback = () =>
+  new Proxy(
+    {},
+    {
+      get: (_, property) => {
+        if (property === "$connect") {
+          return async () => {};
+        }
+
+        if (property === "$queryRawUnsafe") {
+          return async () => null;
+        }
+
+        return () => {
+          throw new Error(`Prisma client is unavailable for ${String(property)}.`);
+        };
+      },
+    },
+  );
+
+let prisma = createPrismaFallback();
+
+try {
+  const [{ PrismaMariaDb }, prismaClientPkg] = await Promise.all([
+    import("@prisma/adapter-mariadb"),
+    import("@prisma/client"),
+  ]);
+  const { PrismaClient } = prismaClientPkg;
+  const adapter = new PrismaMariaDb(buildDatabaseUrlWithSafePoolParams(databaseUrl));
+  prisma = new PrismaClient({ adapter });
+} catch (error) {
+  if (error?.code !== "ERR_MODULE_NOT_FOUND") {
+    throw error;
+  }
+}
 
 export async function connectDB() {
   try {

@@ -10,7 +10,7 @@ export default function CustomerDetail() {
         subtitle="Chi tiết thông tin và lịch sử dịch vụ"
         breadcrumbs={[
           { label: "CRM", path: "/customers" },
-          { label: "Khách hàng", path: "/customers" },
+          { label: "Khách hàng" },
           { label: "Chi tiết" },
         ]}
       />

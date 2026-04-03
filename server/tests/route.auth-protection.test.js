@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 const loadIndexRouteSource = () =>
   readFile(new URL("../src/routes/index.route.js", import.meta.url), "utf8");
 
-test("index route protects repair-orders, finance reports, and payment receipts", async () => {
+test("index route protects activity, settings, repair-orders, finance reports, and payment receipts", async () => {
   const indexRouteSource = await loadIndexRouteSource();
 
   assert.match(
@@ -14,6 +14,16 @@ test("index route protects repair-orders, finance reports, and payment receipts"
     "dashboard route should be protected by dashboardAccessMiddlewares",
   );
 
+  assert.match(
+    indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/activity`,\s*\.\.\.requireManagementAccess,\s*activityRoute\);/u,
+    "activity route should be protected by requireManagementAccess",
+  );
+  assert.match(
+    indexRouteSource,
+    /app\.use\(`\$\{apiPrefixV1\}\/settings`,\s*\.\.\.requireManagementAccess,\s*settingsRoute\);/u,
+    "settings route should be protected by requireManagementAccess",
+  );
   assert.match(
     indexRouteSource,
     /app\.use\(`\$\{apiPrefixV1\}\/repair-orders`,\s*\.\.\.requireManagementAccess,\s*repairOrderRoute\);/u,

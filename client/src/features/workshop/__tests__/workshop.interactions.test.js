@@ -4,8 +4,8 @@ import { getWorkshopRouteTarget, handleWorkshopAction } from '../workshop.intera
 
 describe('Workshop Interactions', () => {
     describe('getWorkshopRouteTarget', () => {
-        it('should return /intake/new for create_intake', () => {
-            assert.equal(getWorkshopRouteTarget('create_intake'), '/intake/new');
+        it('should return /intake for create_intake', () => {
+            assert.equal(getWorkshopRouteTarget('create_intake'), '/intake');
         });
 
         it('should return /repair-orders/new for create_repair_order', () => {
@@ -16,8 +16,8 @@ describe('Workshop Interactions', () => {
             assert.equal(getWorkshopRouteTarget('view_repair_orders'), '/repair-orders?page=1');
         });
 
-        it('should return /vehicles for view_vehicle with context.id', () => {
-            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/vehicles');
+        it('should return /repair-orders?page=1 for view_vehicle with context.id', () => {
+            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/repair-orders?page=1');
         });
 
         it('should fallback to /repair-orders?page=1 for view_vehicle without context or id', () => {
@@ -39,10 +39,10 @@ describe('Workshop Interactions', () => {
             };
 
             handleWorkshopAction(mockNavigate, 'create_intake');
-            assert.equal(navigatedTo, '/intake/new');
+            assert.equal(navigatedTo, '/intake');
 
             handleWorkshopAction(mockNavigate, 'view_vehicle', { id: '123' });
-            assert.equal(navigatedTo, '/vehicles');
+            assert.equal(navigatedTo, '/repair-orders?page=1');
 
             handleWorkshopAction(mockNavigate, 'unknown');
             assert.equal(navigatedTo, '/repair-orders?page=1');

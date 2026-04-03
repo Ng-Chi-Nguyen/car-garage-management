@@ -14,7 +14,7 @@ export function InventoryList() {
 
   const tableHeaders = [
     "Mã vật tư",
-    "Tên vật tư / Nhóm",
+    "Tên vật tư / NCC",
     "Đơn vị",
     "Tồn kho",
     "Giá vốn",
@@ -26,33 +26,38 @@ export function InventoryList() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[300px]">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            setFilters({ search: formData.get('search'), page: 1 });
+          }}>
           <SearchInput 
+            name="search"
             placeholder="Tìm kiếm vật tư, mã phụ tùng..." 
-            value={filters.search}
-            onChange={(val) => setFilters({ search: val })}
+            defaultValue={filters.search}
           />
+          </form>
         </div>
         <div className="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl">
-          {['all', 'oil', 'spark_plug', 'tires', 'engine_parts'].map((cat) => {
+                    {['all', 'in_stock', 'low_stock', 'out_of_stock'].map((status) => {
             const labels = {
               all: 'Tất cả',
-              oil: 'Dầu nhớt',
-              spark_plug: 'Bugi',
-              tires: 'Lốp xe',
-              engine_parts: 'Phụ tùng máy'
+              in_stock: 'Còn hàng',
+              low_stock: 'Sắp hết',
+              out_of_stock: 'Hết hàng'
             };
-            const isActive = filters.category === cat;
+            const isActive = filters.stockStatus === status || (!filters.stockStatus && status === 'all');
             return (
               <button 
-                key={cat}
-                onClick={() => setFilters({ category: cat })}
+                key={status}
+                onClick={() => setFilters({ stockStatus: status === 'all' ? undefined : status, page: 1 })}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                   isActive 
                     ? 'bg-surface-container-lowest shadow-sm text-primary' 
                     : 'hover:bg-surface-container-high text-on-surface-variant'
                 }`}
               >
-                {labels[cat]}
+                {labels[status]}
               </button>
             );
           })}
@@ -83,15 +88,16 @@ export function InventoryList() {
             {data?.data?.map((item) => (
               <tr key={item.id} className="hover:bg-surface-container-low transition-colors group">
                 <td className="px-6 py-4 font-bold text-primary text-sm">
-                  <Link to={`/inventory/${item.id}`} className="hover:underline">{item.id}</Link>
+                  <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.id}</Link>
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-semibold text-on-surface">
-                    <Link to={`/inventory/${item.id}`} className="hover:underline">{item.name}</Link>
+                    <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.name}</Link>
                   </p>
                   <p className="text-[10px] text-on-surface-variant font-medium">
-                    Nhóm: {item.group}
+                    NCC: {item.supplier}
                   </p>
+                  
                 </td>
                 <td className="px-6 py-4 text-center text-sm font-medium">
                   {item.unit}

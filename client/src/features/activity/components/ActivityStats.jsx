@@ -3,8 +3,8 @@ import { StatCard } from "../../../components/ui/stat-card";
 import { useActivityStatsQuery } from "../useActivityQuery";
 import { StateShell } from "../../../components/ui/state-shell";
 
-export function ActivityStats() {
-  const query = useActivityStatsQuery();
+export function ActivityStats({ filters }) {
+  const query = useActivityStatsQuery(filters);
 
   return (
     <StateShell
@@ -19,14 +19,14 @@ export function ActivityStats() {
                 Tổng thao tác hôm nay
               </p>
               <h3 className="text-5xl font-bold mt-2 font-headline">
-                {data.totalActions.toLocaleString()}
+                {Number(data.totalActions ?? 0).toLocaleString("vi-VN")}
               </h3>
             </div>
             <div className="relative z-10 flex items-center gap-2 text-sm text-primary-fixed">
               <span className="material-symbols-outlined text-sm">
                 trending_up
               </span>
-              <span>{data.trend} so với hôm qua</span>
+              <span>{data.trend ?? "+0.0%"} so với hôm qua</span>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-10">
               <span
@@ -41,7 +41,7 @@ export function ActivityStats() {
           <div className="col-span-6 lg:col-span-4">
             <StatCard
               title="Người dùng tích cực"
-              value={data.activeUsers.toString()}
+               value={String(data.activeUsers ?? 0)}
               icon="person"
               description="nhân viên"
             />
@@ -50,9 +50,9 @@ export function ActivityStats() {
           <div className="col-span-6 lg:col-span-4">
             <StatCard
               title="Lỗi phát sinh"
-              value={data.errors.toString().padStart(2, "0")}
+               value={String(data.errors ?? 0).padStart(2, "0")}
               icon="warning"
-              description={`thất bại (Tỷ lệ thành công ${data.successRate})`}
+               description={`thất bại (Tỷ lệ thành công ${data.successRate ?? "0%"})`}
               valueColor="text-error"
             />
           </div>

@@ -1,8 +1,8 @@
 const STATUS_MAP = {
-  TiepNhan: { id: "waiting", badge: "secondary", label: "Tiếp nhận" },
-  DangSua: { id: "in_progress", badge: "primary", label: "Đang sửa" },
-  HoanTat: { id: "completed", badge: "success", label: "Hoàn tất" },
-  Huy: { id: "completed", badge: "success", label: "Đã hủy" },
+  TiepNhan: { id: "waiting", badge: "secondary", label: "CHỜ" },
+  DangSua: { id: "in_progress", badge: "primary", label: "ĐANG SỬA" },
+  HoanTat: { id: "completed", badge: "success", label: "ĐÃ BÀN GIAO" },
+  Huy: { id: "completed", badge: "error", label: "ĐÃ HỦY" },
 };
 
 const DEFAULT_STATUS = { id: "waiting", badge: "secondary", label: "Chưa rõ" };
@@ -53,6 +53,8 @@ export function normalizeWorkshopData(rawData) {
       carId: ro.MaXe,
       licensePlate: vehicle.BienSo || "Không rõ",
       brand: vehicle.HieuXe?.TenHieuXe || vehicle.TenHieuXe || "",
+      model: vehicle.MauXe || "",
+      customerName: vehicle.KhachHang?.TenChuXe || "Chưa rõ",
       status: mappedStatus,
       time,
       actions: {

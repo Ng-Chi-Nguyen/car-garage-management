@@ -80,7 +80,7 @@ export function CustomersList() {
             {data?.data?.map((customer) => (
               <tr key={customer.id} className="hover:bg-surface-container-low/50 transition-colors group">
                 <td className="px-6 py-4 text-sm font-medium text-primary">
-                  <Link to={`/customers/${customer.id}`} className="hover:underline">{customer.id}</Link>
+                  <Link to={`/customers/detail?id=${customer.id}`} className="hover:underline">{customer.id}</Link>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -89,7 +89,7 @@ export function CustomersList() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-on-surface">
-                        <Link to={`/customers/${customer.id}`} className="hover:underline">{customer.name}</Link>
+                        <Link to={`/customers/detail?id=${customer.id}`} className="hover:underline">{customer.name}</Link>
                       </p>
                       <p className="text-xs text-on-surface-variant">
                         {customer.phone}
