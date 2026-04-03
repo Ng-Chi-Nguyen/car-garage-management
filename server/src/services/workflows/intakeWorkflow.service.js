@@ -19,22 +19,12 @@ const normalizeIntake = (intake, id = 1) => {
     quickTags,
     note,
     GhiChu: JSON.stringify({ quickTags, note }),
-    licensePlate: intake.BienSoXe ?? null,
   };
 };
 
 const createIntakeWorkflowService = ({ db = prisma } = {}) => ({
   createIntakeAtomic: async (payload) => {
     const intake = payload.intake ?? payload;
-    const customer = await db.kHACH_HANG.findUnique({
-      where: { MaKH: Number(intake.MaKH) },
-      select: { MaKH: true },
-    });
-
-    if (!customer) {
-      throw buildServiceError(404, "Không tìm thấy khách hàng.");
-    }
-
     const vehicle = await db.xE.findUnique({
       where: { MaXe: Number(intake.MaXe) },
       select: { MaXe: true, MaKH: true },
@@ -42,6 +32,15 @@ const createIntakeWorkflowService = ({ db = prisma } = {}) => ({
 
     if (!vehicle || Number(vehicle.MaKH) !== Number(intake.MaKH)) {
       throw buildServiceError(404, "Không tìm thấy xe.");
+    }
+
+    const customer = await db.kHACH_HANG.findUnique({
+      where: { MaKH: Number(intake.MaKH) },
+      select: { MaKH: true },
+    });
+
+    if (!customer) {
+      throw buildServiceError(404, "Không tìm thấy khách hàng.");
     }
 
     const normalizedIntake = normalizeIntake(intake);
