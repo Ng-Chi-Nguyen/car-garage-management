@@ -53,8 +53,8 @@ export function normalizeWorkshopData(rawData) {
       carId: ro.MaXe,
       licensePlate: vehicle.BienSo || "Không rõ",
       brand: vehicle.HieuXe?.TenHieuXe || vehicle.TenHieuXe || "",
-      owner: vehicle.KhachHang?.TenChuXe || "Chưa rõ",
-      technician: ro.NguoiSuaChua || "KTV", // Mock technician since it might not be in response
+      model: vehicle.MauXe || "",
+      customerName: vehicle.KhachHang?.TenChuXe || "Chưa rõ",
       status: mappedStatus,
       time,
       actions: {
