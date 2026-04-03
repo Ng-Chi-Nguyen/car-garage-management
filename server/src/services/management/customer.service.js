@@ -21,6 +21,21 @@ const CUSTOMER_FILTER_FIELDS = {
   DiaChi: { type: "string" },
   ChucVu: { type: "enum", values: ["NhanVien", "KhachHang"] },
   TrangThai: { type: "enum", values: ["HoatDong", "BiKhoa", "DaXoa"], multi: true },
+  BienSo: { type: "string", relation: "Xe", relationMode: "some", targetField: "BienSo" },
+  CongNoFrom: {
+    type: "decimal",
+    min: 0,
+    targetField: "totalDebt",
+    aggregate: "sumDebt",
+    relation: "Xe",
+  },
+  CongNoTo: {
+    type: "decimal",
+    min: 0,
+    targetField: "totalDebt",
+    aggregate: "sumDebt",
+    relation: "Xe",
+  },
   NgayTaoFrom: { type: "dateFrom", targetField: "NgayTao" },
   NgayTaoTo: { type: "dateTo", targetField: "NgayTao" },
   NgayCapNhatFrom: { type: "dateFrom", targetField: "NgayCapNhat" },
@@ -42,6 +57,52 @@ const sanitizeCustomer = (customer) => {
 const sanitizeCustomerListResult = (result) => ({
   ...result,
   customers: result.customers.map(sanitizeCustomer),
+});
+
+const normalizeNumber = (value) => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const numericValue = Number(value);
+
+  return Number.isFinite(numericValue) ? numericValue : null;
+};
+
+const buildCustomerSummary = (customer) => {
+  const cars = Array.isArray(customer?.Xe) ? customer.Xe : [];
+  const visits = [];
+  let totalSpent = 0;
+  let totalDebt = 0;
+
+  cars.forEach((car) => {
+    totalDebt += normalizeNumber(car?.TienNoHienTai) ?? 0;
+
+    (car?.PhieuSuaChua ?? []).forEach((receipt) => {
+      visits.push(receipt);
+      totalSpent += normalizeNumber(receipt?.TongTien) ?? 0;
+    });
+  });
+
+  const lastVisitSource = visits
+    .map((receipt) => receipt?.NgaySC ?? receipt?.NgayTao)
+    .map((value) => (value ? new Date(value) : null))
+    .filter((value) => value instanceof Date && !Number.isNaN(value.getTime()))
+    .sort((left, right) => right.getTime() - left.getTime())[0] ?? null;
+
+  return {
+    carsCount: cars.length,
+    visitCount: visits.length,
+    totalSpent,
+    totalDebt,
+    rank: totalSpent > 50000000 ? "VIP" : totalSpent > 10000000 ? "Thân thiết" : totalSpent > 0 ? "Thường xuyên" : "Mới",
+    lastVisit: lastVisitSource,
+  };
+};
+
+const mergeCustomerSummaries = (customer) => ({
+  ...customer,
+  ...buildCustomerSummary(customer),
 });
 
 const buildCustomerAvatarPath = (customerId) => `customers/${customerId}/avatar.webp`;
@@ -79,12 +140,66 @@ const createCustomerService = ({
   const getCustomerList = async (query = {}) => {
     const { page = 1, limit = 10, search = "", ...filters } = query;
     const pagination = buildPagination({ page, limit });
+    const { CongNoFrom, CongNoTo, BienSo, ...baseFilters } = filters;
     const where = buildListWhere({
       search,
-      filters,
+      filters: baseFilters,
       searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
       filterFields: CUSTOMER_FILTER_FIELDS,
     });
+
+    if (BienSo?.trim()) {
+      where.Xe = {
+        some: {
+          BienSo: {
+            contains: BienSo.trim(),
+          },
+        },
+      };
+    }
+
+    const minDebt = normalizeNumber(CongNoFrom);
+    const maxDebt = normalizeNumber(CongNoTo);
+
+    if (minDebt !== null || maxDebt !== null) {
+      const vehicles = await vehicleDelegate.findMany({
+        select: {
+          MaKH: true,
+          TienNoHienTai: true,
+        },
+      });
+
+      const debtByCustomer = new Map();
+
+      vehicles.forEach((vehicle) => {
+        const customerId = Number(vehicle?.MaKH);
+        const debt = normalizeNumber(vehicle?.TienNoHienTai) ?? 0;
+
+        if (!Number.isFinite(customerId)) {
+          return;
+        }
+
+        debtByCustomer.set(customerId, (debtByCustomer.get(customerId) ?? 0) + debt);
+      });
+
+      const filteredCustomerIds = Array.from(debtByCustomer.entries())
+        .filter(([, debt]) => {
+          if (minDebt !== null && debt < minDebt) {
+            return false;
+          }
+
+          if (maxDebt !== null && debt > maxDebt) {
+            return false;
+          }
+
+          return true;
+        })
+        .map(([customerId]) => customerId);
+
+      where.MaKH = {
+        in: filteredCustomerIds,
+      };
+    }
 
     const [totalItems, customers] = await runWithDbRetry(() => Promise.all([
       customerDelegate.count({ where }),
@@ -95,11 +210,30 @@ const createCustomerService = ({
         orderBy: {
           MaKH: "desc",
         },
+        include: {
+          Xe: {
+            select: {
+              MaXe: true,
+              BienSo: true,
+              TienNoHienTai: true,
+              PhieuSuaChua: {
+                select: {
+                  MaPhieuSC: true,
+                  TongTien: true,
+                  NgaySC: true,
+                  NgayTao: true,
+                },
+              },
+            },
+          },
+        },
       }),
     ]));
 
+    const normalizedCustomers = customers.map(mergeCustomerSummaries);
+
     return sanitizeCustomerListResult({
-      customers,
+      customers: normalizedCustomers,
       pagination: {
         page: pagination.page,
         limit: pagination.limit,
