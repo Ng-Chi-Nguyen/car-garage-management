@@ -40,7 +40,7 @@ export async function fetchIntakeVehicleCatalog() {
     }
 
     return normalized;
-  } catch (error) {
+  } catch {
     return intakeVehicleCatalog;
   }
 }

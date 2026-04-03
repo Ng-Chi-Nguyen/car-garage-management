@@ -63,6 +63,7 @@ test("Intake components exist", () => {
   assert.ok(content.includes("useCustomersQuery"), "Customer search must be wired in");
   assert.ok(content.includes("useCustomersMutations"), "Customer creation must be wired in");
   assert.ok(content.includes("useCarBrandsQuery"), "Car brand options must come from backend");
+  assert.ok(!content.includes("Object.keys(vehicleCatalog"), "Brand list fallback to catalog must be removed");
   assert.ok(content.includes("useVehicleCatalogQuery"), "Model options must come from local JSON");
   assert.ok(flowContent.includes("buildIntakePayload"), "Submit flow must use the payload builder");
   assert.ok(!content.includes("const carBrands = ["), "Hardcoded brand list must be removed");
