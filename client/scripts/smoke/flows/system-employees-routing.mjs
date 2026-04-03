@@ -1,7 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { routeManifest } from '../../../src/app/routeManifest.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default async function run() {
   console.log('Running system-employees-routing smoke flow...');
@@ -31,7 +35,8 @@ export default async function run() {
     throw new Error(`Expected AdminUsersPage.jsx to be mapped exactly once, found ${dupAdminPages.length}`);
   }
 
-  const pageSource = await fs.readFile(path.resolve(process.cwd(), 'src/pages/admin/AdminUsersPage.jsx'), 'utf-8');
+  const pagePath = path.resolve(__dirname, '../../../src/pages/admin/AdminUsersPage.jsx');
+  const pageSource = await fs.readFile(pagePath, 'utf-8');
   if (pageSource.includes('search: queryParams.search')) {
     throw new Error('AdminUsersPage must not pass search into useAdminUsersQuery');
   }
