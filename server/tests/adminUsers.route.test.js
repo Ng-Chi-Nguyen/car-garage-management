@@ -8,10 +8,11 @@ test("admin users route exposes list and update endpoints", () => {
     .filter((layer) => layer.route)
     .map((layer) => ({ path: layer.route.path, methods: layer.route.methods }));
 
-  assert.deepEqual(
-    routes.map((route) => route.path).sort(),
-    ["/", "/:id"].sort(),
-  );
-  assert.equal(routes[0].methods.get || routes[1].methods.get, true);
-  assert.equal(routes[0].methods.put || routes[1].methods.put, true);
+  const paths = routes.map((route) => route.path).sort();
+  assert.deepEqual(paths, ["/", "/:id", "/:id/reset-password"].sort());
+
+  const methodsByPath = Object.fromEntries(routes.map((route) => [route.path, route.methods]));
+  assert.equal(methodsByPath["/"].get, true);
+  assert.equal(methodsByPath["/:id"].put, true);
+  assert.equal(methodsByPath["/:id/reset-password"].post, true);
 });

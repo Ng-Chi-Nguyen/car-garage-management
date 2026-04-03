@@ -53,3 +53,84 @@ test("adminUsersService updateAdminUser updates role and status", async () => {
   assert.deepEqual(calls.update.data, { ChucVu: "Admin", TrangThai: "BiKhoa" });
   assert.equal(result.ChucVu, "Admin");
 });
+
+test("adminUsersService resetAdminUserPassword hashes password and clears reset token fields", async () => {
+  const calls = { findUnique: null, update: null, hashPassword: null };
+  const service = createAdminUsersService({
+    userDelegate: {
+      findUnique: async (args) => {
+        calls.findUnique = args;
+        return {
+          MaKH: 8,
+          TenChuXe: "User",
+          MatKhau: "old-hash",
+          TokenDatLaiMatKhau: "token-hash",
+          TokenDatLaiMatKhauHetHanLuc: new Date("2026-01-01T00:00:00.000Z"),
+          TokenDatLaiMatKhauDaDungLuc: new Date("2026-01-02T00:00:00.000Z"),
+        };
+      },
+      update: async (args) => {
+        calls.update = args;
+        return {
+          MaKH: 8,
+          TenChuXe: "User",
+          MatKhau: "new-hash",
+          TokenDatLaiMatKhau: null,
+          TokenDatLaiMatKhauHetHanLuc: null,
+          TokenDatLaiMatKhauDaDungLuc: null,
+        };
+      },
+    },
+    hashPassword: async (password) => {
+      calls.hashPassword = password;
+      return "new-hash";
+    },
+  });
+
+  const result = await service.resetAdminUserPassword(8, {
+    MatKhauMoi: "Password123!",
+    XacNhanMatKhauMoi: "Password123!",
+  });
+
+  assert.equal(calls.findUnique.where.MaKH, 8);
+  assert.equal(calls.hashPassword, "Password123!");
+  assert.deepEqual(calls.update.data, {
+    MatKhau: "new-hash",
+    TokenDatLaiMatKhau: null,
+    TokenDatLaiMatKhauHetHanLuc: null,
+    TokenDatLaiMatKhauDaDungLuc: null,
+  });
+  assert.equal(result.MatKhau, undefined);
+});
+
+test("adminUsersService resetAdminUserPassword rejects password mismatch", async () => {
+  const service = createAdminUsersService({
+    userDelegate: {
+      findUnique: async () => ({ MaKH: 8 }),
+    },
+  });
+
+  await assert.rejects(
+    service.resetAdminUserPassword(8, {
+      MatKhauMoi: "Password123!",
+      XacNhanMatKhauMoi: "Password456!",
+    }),
+    (error) => error.status === 400 && error.message === "Mật khẩu xác nhận không khớp.",
+  );
+});
+
+test("adminUsersService resetAdminUserPassword throws 404 when user is missing", async () => {
+  const service = createAdminUsersService({
+    userDelegate: {
+      findUnique: async () => null,
+    },
+  });
+
+  await assert.rejects(
+    service.resetAdminUserPassword(99, {
+      MatKhauMoi: "Password123!",
+      XacNhanMatKhauMoi: "Password123!",
+    }),
+    (error) => error.status === 404 && error.message === "Không tìm thấy tài khoản.",
+  );
+});

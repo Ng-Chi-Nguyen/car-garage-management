@@ -20,6 +20,14 @@ const adminUsersController = {
       return handleError(res, error);
     }
   },
+  resetAdminUserPassword: async (req, res) => {
+    try {
+      const user = await adminUsersService.resetAdminUserPassword(req.validatedParams?.id ?? req.params.id, req.body);
+      return res.json({ success: true, message: "Đặt lại mật khẩu thành công.", data: { user } });
+    } catch (error) {
+      return handleError(res, error);
+    }
+  },
 };
 
 export default adminUsersController;

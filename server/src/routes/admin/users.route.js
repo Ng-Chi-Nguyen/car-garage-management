@@ -14,4 +14,11 @@ router.put(
   adminUsersController.updateAdminUser,
 );
 
+router.post(
+  "/:id/reset-password",
+  validateRequest(adminUsersSchema.resetPassword.params, "params"),
+  validateRequest(adminUsersSchema.resetPassword.body, "body"),
+  adminUsersController.resetAdminUserPassword,
+);
+
 export default router;

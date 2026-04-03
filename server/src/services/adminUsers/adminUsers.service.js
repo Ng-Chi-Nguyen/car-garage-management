@@ -6,6 +6,11 @@ const loadPrisma = async () => {
   return prisma;
 };
 
+const loadHashPassword = async () => {
+  const { hashPassword } = await import("../../utils/auth/password.util.js");
+  return hashPassword;
+};
+
 const sanitizeUser = (user) => {
   if (!user) return user;
 
@@ -17,7 +22,7 @@ const sanitizeUser = (user) => {
   };
 };
 
-export const createAdminUsersService = ({ userDelegate } = {}) => ({
+export const createAdminUsersService = ({ userDelegate, hashPassword } = {}) => ({
   getAdminUsers: async (query = {}) => {
     const prisma = userDelegate ? null : await loadPrisma();
     const delegate = userDelegate ?? prisma.kHACH_HANG;
@@ -82,6 +87,38 @@ export const createAdminUsersService = ({ userDelegate } = {}) => ({
     if (payload.TrangThai && ALLOWED_STATUSES.includes(payload.TrangThai)) data.TrangThai = payload.TrangThai;
 
     const updated = await delegate.update({ where: { MaKH: userId }, data });
+    return sanitizeUser(updated);
+  },
+  resetAdminUserPassword: async (id, payload) => {
+    const prisma = userDelegate ? null : await loadPrisma();
+    const delegate = userDelegate ?? prisma.kHACH_HANG;
+    const userId = Number(id);
+
+    const existing = await delegate.findUnique({ where: { MaKH: userId } });
+    if (!existing) {
+      const error = new Error("Không tìm thấy tài khoản.");
+      error.status = 404;
+      throw error;
+    }
+
+    if (payload.MatKhauMoi !== payload.XacNhanMatKhauMoi) {
+      const error = new Error("Mật khẩu xác nhận không khớp.");
+      error.status = 400;
+      throw error;
+    }
+
+    const hashPasswordFn = hashPassword ?? (await loadHashPassword());
+    const hashedPassword = await hashPasswordFn(payload.MatKhauMoi);
+    const updated = await delegate.update({
+      where: { MaKH: userId },
+      data: {
+        MatKhau: hashedPassword,
+        TokenDatLaiMatKhau: null,
+        TokenDatLaiMatKhauHetHanLuc: null,
+        TokenDatLaiMatKhauDaDungLuc: null,
+      },
+    });
+
     return sanitizeUser(updated);
   },
 });
