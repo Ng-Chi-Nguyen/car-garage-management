@@ -67,6 +67,8 @@ test("Intake components exist", () => {
   assert.ok(flowContent.includes("buildIntakePayload"), "Submit flow must use the payload builder");
   assert.ok(!content.includes("const carBrands = ["), "Hardcoded brand list must be removed");
   assert.ok(!content.includes("const carModels = ["), "Hardcoded model list must be removed");
+  assert.ok(!content.includes("clean("), "Undefined clean function must be removed");
+  assert.ok(content.includes("?.trim()"), "Search input should be sanitized locally");
   assert.ok(catalogQueryContent.includes("fetchIntakeVehicleCatalog"), "Vehicle catalog query must exist");
   assert.ok(catalogApiContent.includes("intakeVehicleCatalog.json"), "Model options must come from local JSON");
 });
