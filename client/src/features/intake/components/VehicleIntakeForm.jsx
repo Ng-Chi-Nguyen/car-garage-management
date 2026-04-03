@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { useCarBrandsQuery } from "../../settings/useSettingsQuery.js";
 import { useCustomersMutations } from "../../customers/useCustomersMutations.js";
 import { useCustomersQuery } from "../../customers/useCustomersQuery.js";
-import { buildIntakePayload } from "../intakePayloadBuilder.js";
 import { resolveVehicleByPlate } from "../intakeVehicleResolver.api.js";
 import { useCreateIntakeMutation } from "../useIntakeMutation.js";
+import { submitIntakeFlow } from "../intakeSubmissionFlow.js";
 import { useVehicleCatalogQuery } from "../useVehicleCatalogQuery.js";
 
 const initialForm = {
@@ -18,8 +18,6 @@ const initialForm = {
 };
 
 const quickTagOptions = ["Xước nhẹ", "Móp méo", "Hỏng đèn", "Nứt kính", "Bẩn nội thất"];
-
-const clean = (value) => String(value ?? "").trim();
 
 function Field({ label, required, children }) {
   return (
@@ -85,47 +83,20 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
     setCustomerSearch(customer.phone ?? customer.name ?? "");
   };
 
-  const ensureCustomer = async () => {
-    if (selectedCustomer?.id) {
-      return selectedCustomer;
-    }
-
-    const createdCustomer = await createCustomer.mutateAsync({
-      TenChuXe: clean(form.ownerName),
-      DienThoai: clean(form.phone),
-      DiaChi: clean(form.address),
-    });
-
-    const normalizedCustomer = {
-      id: createdCustomer.MaKH,
-      name: createdCustomer.TenChuXe,
-      phone: createdCustomer.DienThoai,
-      address: createdCustomer.DiaChi,
-    };
-
-    setSelectedCustomer(normalizedCustomer);
-    return normalizedCustomer;
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
 
     try {
-      const customer = await ensureCustomer();
-      const vehicle = await resolveVehicleByPlate(form.licensePlate);
-      const intakePayload = buildIntakePayload(
-        {
-          note: form.note,
-          quickTags: selectedQuickTags,
-          TrangThai: "TiepNhan",
-        },
-        vehicle.MaXe,
-        customer.id,
-        null,
-      );
-
-      await createIntakeMutation.mutateAsync(intakePayload);
+      await submitIntakeFlow({
+        form,
+        selectedQuickTags,
+        selectedCustomer,
+        resolveVehicleByPlate,
+        createCustomer,
+        createIntakeMutation,
+        setSelectedCustomer,
+      });
       onSuccess?.();
     } catch (error) {
       setErrorMessage(error?.response?.data?.message || error?.message || "Không thể tiếp nhận xe.");
