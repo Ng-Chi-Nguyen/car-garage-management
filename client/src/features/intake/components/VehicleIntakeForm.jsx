@@ -6,6 +6,8 @@ import { resolveVehicleByPlate } from "../intakeVehicleResolver.api.js";
 import { useCreateIntakeMutation } from "../useIntakeMutation.js";
 import { submitIntakeFlow } from "../intakeSubmissionFlow.js";
 import { useVehicleCatalogQuery } from "../useVehicleCatalogQuery.js";
+import { resolveModelsForBrand } from "../intakeVehicleCatalog.resolve.js";
+import fallbackCatalog from "../intakeVehicleCatalog.json" with { type: "json" };
 
 const initialForm = {
   phone: "",
@@ -53,8 +55,8 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
   }, [carBrands, vehicleCatalog]);
 
   const modelOptions = useMemo(() => {
-    const models = vehicleCatalog?.[form.brand] ?? [];
-    return Array.isArray(models) ? models : [];
+    if (!form.brand) return [];
+    return resolveModelsForBrand(vehicleCatalog ?? {}, form.brand, fallbackCatalog);
   }, [form.brand, vehicleCatalog]);
 
   const customerResults = customersResult?.data ?? [];
@@ -152,7 +154,8 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
             value={form.brand}
             onChange={(event) => {
               const brand = event.target.value;
-              setForm((current) => ({ ...current, brand, model: vehicleCatalog?.[brand]?.[0] ?? "" }));
+              const resolvedModels = resolveModelsForBrand(vehicleCatalog ?? {}, brand, fallbackCatalog);
+              setForm((current) => ({ ...current, brand, model: resolvedModels[0] ?? "" }));
             }}
             className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none"
           >
