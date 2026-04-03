@@ -73,8 +73,14 @@ test("getCustomerStats returns the customer stats contract", async () => {
     totalOutstandingDebt: 12500000,
     monthlyRepairOrders: 9,
   });
-  assert.equal(calls.customerCountWhere.ChucVu, "KhachHang");
-  assert.equal(calls.customerCountWhere.TrangThai.not, "DaXoa");
+  assert.deepEqual(calls.customerCountWhere.AND[0].OR, [
+    { ChucVu: "KhachHang" },
+    { ChucVu: null },
+  ]);
+  assert.deepEqual(calls.customerCountWhere.AND[1].OR, [
+    { TrangThai: { not: "DaXoa" } },
+    { TrangThai: null },
+  ]);
   assert.equal(calls.outstandingDebtWhere.TienNoHienTai.gt, 0);
   assert.equal(calls.repairOrderCountWhere.NgaySC.gte.toISOString(), "2026-02-28T17:00:00.000Z");
   assert.equal(calls.repairOrderCountWhere.NgaySC.lt.toISOString(), "2026-03-31T17:00:00.000Z");

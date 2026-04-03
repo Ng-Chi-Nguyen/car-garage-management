@@ -252,23 +252,39 @@ const createCustomerService = ({
 
   const getCustomerStats = async () => {
     const currentMonthRange = buildCurrentVietnamMonthRange(nowProvider());
+    const customerStatsWhere = {
+      AND: [
+        {
+          OR: [
+            {
+              ChucVu: "KhachHang",
+            },
+            {
+              ChucVu: null,
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              TrangThai: {
+                not: "DaXoa",
+              },
+            },
+            {
+              TrangThai: null,
+            },
+          ],
+        },
+      ],
+    };
 
     const [totalCustomers, customers, debtAggregate, monthlyRepairOrders] = await Promise.all([
       customerDelegate.count({
-        where: {
-          ChucVu: "KhachHang",
-          TrangThai: {
-            not: "DaXoa",
-          },
-        },
+        where: customerStatsWhere,
       }),
       customerDelegate.findMany({
-        where: {
-          ChucVu: "KhachHang",
-          TrangThai: {
-            not: "DaXoa",
-          },
-        },
+        where: customerStatsWhere,
         select: {
           Xe: {
             select: {
