@@ -38,7 +38,6 @@ export const inventoryApi = {
       history: historyResponse.data.data.stockReceiptDetails || []
     };
   },
-<<<<<<< HEAD
   getSuppliers: async () => {
     const response = await axiosClient.get('/api/v1/suppliers', { params: { limit: 100 } });
     return response.data.data.suppliers || [];
