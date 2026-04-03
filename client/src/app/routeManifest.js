@@ -141,9 +141,16 @@ export const routeManifest = [
   },
   {
     exportKey: null,
-    path: '/admin/users',
+    path: '/settings/employees',
     layout: 'app',
     componentPath: 'src/pages/admin/AdminUsersPage.jsx',
+    group: 'system'
+  },
+  {
+    exportKey: null,
+    path: '/admin/users',
+    layout: 'app',
+    componentPath: 'src/pages/admin/AdminUsersLegacyRedirect.jsx',
     group: 'system'
   },
   {

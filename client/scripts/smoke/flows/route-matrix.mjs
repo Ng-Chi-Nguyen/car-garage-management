@@ -31,7 +31,8 @@ const routeStatus = new Map([
   ['/customers/analytics', ['intentionally deferred', 'Static placeholder analytics UI is present but not a real backend journey', 'Task 18/19']],
   ['/settings', ['blocked', 'Settings UI depends on mocked API and backend settings/admin route gaps', 'Task 18/19']],
   ['/settings/activity-log', ['working', 'Activity log page is routed and contract-backed', '']],
-  ['/admin/users', ['blocked', 'No dedicated backend admin users route is available', 'Task 18/19']],
+  ['/settings/employees', ['working', 'Canonical employee management route', '']],
+  ['/admin/users', ['working', 'Legacy redirect to canonical employee route', '']],
   ['/reports', ['working', 'Reports page is routed (consolidated tab page)', '']],
   ['*', ['working', 'Fallback not-found route is routed', '']]
 ]);
