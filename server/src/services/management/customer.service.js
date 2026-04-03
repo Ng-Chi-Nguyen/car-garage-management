@@ -155,7 +155,7 @@ const createCustomerService = ({
     const where = buildListWhere({
       search,
       filters: customerOnlyFilters,
-      searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
+      searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi", "Xe.some.BienSo"],
       filterFields: CUSTOMER_FILTER_FIELDS,
     });
 

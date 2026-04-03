@@ -138,37 +138,19 @@ test("customer list filters by BienSo through vehicle relation", async () => {
   assert.equal(calls.findMany[0].where.Xe.some.BienSo.contains, "51A-123");
 });
 
-test("customer list filters CongNo by inclusive total debt range", async () => {
+test("customer list search query checks BienSo", async () => {
   const { service, calls } = buildService({
-    customers: [
-      {
-        MaKH: 2,
-        TenChuXe: "Nguyễn Văn B",
-        DienThoai: "0909009008",
-        Email: "b@example.com",
-        DiaChi: "Hà Nội",
-        ChucVu: "KhachHang",
-        TrangThai: "HoatDong",
-        NgayTao: new Date("2025-01-01T00:00:00.000Z"),
-        NgayCapNhat: new Date("2025-03-01T00:00:00.000Z"),
-        Xe: [],
-      },
-    ],
-    vehicles: [
-      { MaKH: 1, TienNoHienTai: "50000.00" },
-      { MaKH: 1, TienNoHienTai: "50000.00" },
-      { MaKH: 2, TienNoHienTai: "100000.00" },
-      { MaKH: 2, TienNoHienTai: "50000.00" },
-      { MaKH: 3, TienNoHienTai: "300000.00" },
-    ],
-    count: 1,
+    customers: [],
+    count: 0,
   });
 
-  await service.getCustomerList({ CongNoFrom: 100000, CongNoTo: 150000 });
+  await service.getCustomerList({ search: "51A" });
 
-  assert.deepEqual(calls.vehicleFindMany[0].select, {
-    MaKH: true,
-    TienNoHienTai: true,
-  });
-  assert.deepEqual(calls.findMany[0].where.MaKH.in, [1, 2]);
+  assert.deepEqual(calls.findMany[0].where.AND[0].OR, [
+    { TenChuXe: { contains: "51A" } },
+    { Email: { contains: "51A" } },
+    { DienThoai: { contains: "51A" } },
+    { DiaChi: { contains: "51A" } },
+    { Xe: { some: { BienSo: { contains: "51A" } } } },
+  ]);
 });

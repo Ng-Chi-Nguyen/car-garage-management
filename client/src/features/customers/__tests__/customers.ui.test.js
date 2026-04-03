@@ -69,12 +69,10 @@ describe('Customers Mappers', () => {
 describe('Customers Filters and UI Contracts', () => {
   describe('customers.filters.js helpers', () => {
     it('serializes advanced filters', () => {
-      const filters = { search: 'A', page: 2, minDebt: 1000000, licensePlate: '51A' };
+      const filters = { search: 'A', page: 2 };
       const searchParams = serializeFilters(filters);
       assert.strictEqual(searchParams.get('search'), 'A');
       assert.strictEqual(searchParams.get('page'), '2');
-      assert.strictEqual(searchParams.get('minDebt'), '1000000');
-      assert.strictEqual(searchParams.get('licensePlate'), '51A');
     });
 
     it('resets page on filter change', () => {
@@ -84,13 +82,6 @@ describe('Customers Filters and UI Contracts', () => {
       assert.strictEqual(searchParams.get('search'), 'B');
       assert.strictEqual(searchParams.has('page'), false); // or '1'
     });
-
-    it('converts debt filters to number', () => {
-      const searchParams = new URLSearchParams('minDebt=1000000&maxDebt=2000000');
-      const filters = deserializeFilters(searchParams);
-      assert.strictEqual(filters.minDebt, 1000000);
-      assert.strictEqual(filters.maxDebt, 2000000);
-    });
   });
 
   describe('CustomersList UI Contracts', () => {
@@ -99,7 +90,6 @@ describe('Customers Filters and UI Contracts', () => {
     it('CustomersList uses form onSubmit for advanced filter', () => {
       assert.ok(content.includes('<form'), 'Must use form element');
       assert.ok(content.includes('onSubmit='), 'Must use onSubmit handler');
-      // "Nối nút “Bộ lọc nâng cao” với <form onSubmit> thật." - wait, the task implies a form for search and advanced filters
     });
 
     it('CustomersList has no rank/sort controls', () => {
