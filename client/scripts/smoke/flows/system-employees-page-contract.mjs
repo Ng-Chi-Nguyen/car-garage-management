@@ -32,5 +32,10 @@ export default async function run() {
     "invalidateQueries({ queryKey: [\"adminUsers\"] })"
   ]);
 
+  await assertFileIncludes("client/src/index.css", [
+    "background-color: var(--color-surface-container-low);",
+    "color: var(--color-on-surface);"
+  ]);
+
   console.log("All contract markers found.");
 }
