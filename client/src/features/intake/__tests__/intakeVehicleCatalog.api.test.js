@@ -15,11 +15,14 @@ test("fetchIntakeVehicleCatalog success path: loads /data/car_data.json and norm
     if (url === "/data/car_data.json") {
       return {
         ok: true,
-        json: async () => [
-          { make: "Toyota", model: "Camry" },
-          { make: "Toyota", model: "Corolla" },
-          { make: "Honda", model: "Civic" }
-        ]
+        json: async () => ({
+          brands: {
+            " Toyota ": ["Camry", "Corolla", "Camry"],
+            "Honda": ["Civic", " ", null]
+          },
+          "Empty": [],
+          "Invalid": "not an array"
+        })
       };
     }
     throw new Error(`Unexpected URL fetch: ${url}`);
