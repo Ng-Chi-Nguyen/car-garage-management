@@ -2,7 +2,7 @@ import React from "react";
 import { useUpdateAdminUserMutation } from "../useAdminUsersMutation.js";
 import { toast } from "react-toastify";
 
-export function AdminUsersTable({ users, pagination, goNext, goPrev, goToPage }) {
+export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
   const mutation = useUpdateAdminUserMutation();
 
   const handleToggleRole = (user) => {
@@ -106,9 +106,9 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev, goToPage })
       {pagination && (
         <div className="px-6 py-4 border-t border-outline-variant flex items-center justify-between bg-surface mt-auto">
           <div className="text-sm text-on-surface-variant">
-            Trang <span className="font-medium text-on-surface">{pagination.page}</span> / <span className="font-medium text-on-surface">{Math.ceil(pagination.total / pagination.limit) || 1}</span> 
+            Trang <span className="font-medium text-on-surface">{pagination.page}</span> / <span className="font-medium text-on-surface">{pagination.totalPages || 1}</span> 
             <span className="mx-2">•</span>
-            Tổng <span className="font-medium text-on-surface">{pagination.total}</span> nhân viên
+            Tổng <span className="font-medium text-on-surface">{pagination.totalItems}</span> nhân viên
           </div>
           <div className="flex gap-2">
             <button
@@ -121,7 +121,7 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev, goToPage })
             </button>
             <button
               onClick={goNext}
-              disabled={pagination.page >= Math.ceil(pagination.total / pagination.limit)}
+              disabled={pagination.page >= pagination.totalPages}
               className="p-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-low disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Trang sau"
             >
