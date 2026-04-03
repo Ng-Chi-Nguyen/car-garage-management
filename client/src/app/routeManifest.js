@@ -49,13 +49,6 @@ export const routeManifest = [
     group: 'workshop'
   },
   {
-    exportKey: 'modal_l_p_phi_u_ti_p_nh_n_gms',
-    path: '/intake/new',
-    layout: 'app',
-    componentPath: 'src/pages/intake/IntakeModalPage.jsx',
-    group: 'workshop'
-  },
-  {
     exportKey: 'l_p_phi_u_s_a_ch_a_gms',
     path: '/repair-orders/new',
     layout: 'app',

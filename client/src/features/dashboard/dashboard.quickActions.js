@@ -1,5 +1,5 @@
 export const DASHBOARD_QUICK_ACTIONS = [
-  { label: 'Tiếp nhận xe', path: '/intake/new', icon: 'directions_car' },
+  { label: 'Tiếp nhận xe', path: '/intake', icon: 'directions_car' },
   { label: 'Lập phiếu sửa chữa', path: '/repair-orders/new', icon: 'build' },
   { label: 'DS phiếu sửa chữa', path: '/repair-orders?page=1', icon: 'receipt_long' },
   { label: 'Khách hàng', path: '/customers', icon: 'group' },
