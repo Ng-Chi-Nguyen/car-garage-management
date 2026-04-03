@@ -16,7 +16,7 @@ export default async function run() {
 
   // One of them must restrict /settings/employees to Admin
   const hasGuard = (manifestSource.includes('roles: [\'Admin\']') && manifestSource.includes('/settings/employees')) || 
-                   (routerSource.includes('RoleGuard') && routerSource.includes('/settings/employees'));
+                   (routerSource.includes('AdminOnlyRoute') && routerSource.includes('/settings/employees'));
 
   if (!hasGuard) {
     throw new Error('Manifest or router does not guard /settings/employees for Admin role only');
