@@ -25,7 +25,10 @@ export default async function run() {
   await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
     "useUpdateAdminUserMutation",
     "ChucVu",
-    "TrangThai"
+    "TrangThai",
+    "bg-surface-container-low",
+    "text-on-surface",
+    "border-outline-variant"
   ]);
 
   await assertFileIncludes("client/src/features/adminUsers/useAdminUsersMutation.js", [
