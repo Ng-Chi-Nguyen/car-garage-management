@@ -27,6 +27,11 @@ const REPAIR_ORDER_SEARCH_FIELDS = [
   },
   "NoiDungLoi",
   "GhiChu",
+  "Xe.BienSo",
+  "Xe.MauXe",
+  "Xe.HieuXe.TenHieuXe",
+  "Xe.KhachHang.TenChuXe",
+  "Xe.KhachHang.DienThoai",
 ];
 const REPAIR_ORDER_FILTER_FIELDS = {
   MaPhieuSC: { type: "number", positive: true },
