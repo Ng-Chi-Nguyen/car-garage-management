@@ -147,10 +147,14 @@ const createCustomerService = ({
   const getCustomerList = async (query = {}) => {
     const { page = 1, limit = 10, search = "", ...filters } = query;
     const pagination = buildPagination({ page, limit });
-    const { CongNoFrom, CongNoTo, BienSo, ...baseFilters } = filters;
+    const { CongNoFrom, CongNoTo, BienSo, ChucVu, ...baseFilters } = filters;
+    const customerOnlyFilters = {
+      ...baseFilters,
+      ChucVu: "KhachHang",
+    };
     const where = buildListWhere({
       search,
-      filters: baseFilters,
+      filters: customerOnlyFilters,
       searchFields: ["TenChuXe", "Email", "DienThoai", "DiaChi"],
       filterFields: CUSTOMER_FILTER_FIELDS,
     });

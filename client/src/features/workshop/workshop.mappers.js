@@ -1,8 +1,7 @@
 const STATUS_MAP = {
   TiepNhan: { id: "waiting", badge: "secondary", label: "CHỜ" },
   DangSua: { id: "in_progress", badge: "primary", label: "ĐANG SỬA" },
-  HoanTat: { id: "completed", badge: "success", label: "ĐÃ BÀN GIAO" },
-  Huy: { id: "completed", badge: "error", label: "ĐÃ HỦY" },
+  HoanTat: { id: "completed", badge: "success", label: "HOÀN TẤT" },
 };
 
 const DEFAULT_STATUS = { id: "waiting", badge: "secondary", label: "Chưa rõ" };
@@ -17,6 +16,7 @@ export function normalizeWorkshopData(rawData) {
   const {
     repairOrders = [],
     vehicles = [],
+    staffById = {},
     pagination,
     globalMetrics,
   } = rawData;
@@ -55,6 +55,9 @@ export function normalizeWorkshopData(rawData) {
       brand: vehicle.HieuXe?.TenHieuXe || vehicle.TenHieuXe || "",
       model: vehicle.MauXe || "",
       customerName: vehicle.KhachHang?.TenChuXe || "Chưa rõ",
+      intakeStaffName: ro.MaNV
+        ? staffById[Number(ro.MaNV)] || `NV #${ro.MaNV}`
+        : "Chưa phân công",
       status: mappedStatus,
       time,
       actions: {

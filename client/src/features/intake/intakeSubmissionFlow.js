@@ -12,7 +12,16 @@ export async function submitIntakeFlow({
   setSelectedCustomer,
   buildPayload = buildIntakePayload,
 }) {
-  const vehicle = await resolveVehicleByPlate(form.licensePlate);
+  let vehicle;
+  try {
+    vehicle = await resolveVehicleByPlate(form.licensePlate);
+  } catch (error) {
+    if (!clean(form.ownerName) || !clean(form.phone)) {
+      throw error;
+    }
+    vehicle = { MaXe: null };
+  }
+
   const customer = selectedCustomer?.id
     ? selectedCustomer
     : await createCustomer.mutateAsync({

@@ -8,7 +8,7 @@ test("intake vehicle resolver returns MaXe for a matching plate", async () => {
     db: {
       xE: {
         findUnique: async ({ where, select }) => {
-          assert.deepEqual(where, { BienSo: "51G-123.45" });
+          assert.deepEqual(where, { BienSo: "51G-123-45" });
           assert.deepEqual(select, { MaXe: true });
 
           return { MaXe: 12 };
@@ -17,7 +17,7 @@ test("intake vehicle resolver returns MaXe for a matching plate", async () => {
     },
   });
 
-  const result = await service.resolveVehicleByPlate({ BienSo: "51G-123.45" });
+  const result = await service.resolveVehicleByPlate({ BienSo: " 51g-123.45 " });
 
   assert.deepEqual(result, { MaXe: 12 });
 });

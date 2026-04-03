@@ -21,51 +21,23 @@ test("intake vehicle resolver normalizes plate variants before matching", async 
   assert.deepEqual(seenWhere[0], { BienSo: "51G-123.45" });
 });
 
-test("intake workflow creates a new customer and vehicle when the plate is unknown", async () => {
-  let customerCreateCalls = 0;
-  let vehicleCreateCalls = 0;
-  let intakeCreateCalls = 0;
+test("intake workflow correctly normalizes plate before finding vehicle", async () => {
+  let vehicleFindCalls = 0;
   const service = createIntakeVehicleResolverService({
     db: {
-      kHACH_HANG: {
-        findUnique: async () => null,
-        create: async ({ data }) => {
-          customerCreateCalls += 1;
-          return { MaKH: 21, ...data };
-        },
-      },
       xE: {
-        findUnique: async () => null,
-        create: async ({ data }) => {
-          vehicleCreateCalls += 1;
-          return { MaXe: 31, ...data };
-        },
-      },
-      pHIEU_SUA_CHUA: {
-        create: async ({ data }) => {
-          intakeCreateCalls += 1;
-          return { MaPhieuSC: 41, ...data };
+        findUnique: async () => {
+          vehicleFindCalls += 1;
+          return null;
         },
       },
     },
   });
 
-  await assert.doesNotReject(
-    service.createIntakeAtomic({
-      intake: {
-        MaKH: null,
-        MaXe: null,
-        MaNV: 5,
-        NgayTiepNhan: new Date("2026-04-01"),
-        TrangThai: "TiepNhan",
-        BienSo: "51G-123.45",
-        TenChuXe: "Nguyen Van A",
-        DienThoai: "0900000000",
-      },
-    }),
+  await assert.rejects(
+    service.resolveVehicleByPlate({ BienSo: "51G-123-45" }),
+    /Không tìm thấy xe/,
   );
 
-  assert.equal(customerCreateCalls, 1);
-  assert.equal(vehicleCreateCalls, 1);
-  assert.equal(intakeCreateCalls, 1);
+  assert.equal(vehicleFindCalls, 1);
 });

@@ -94,7 +94,7 @@ export const customersApi = {
     // We can assume backend has a /api/v1/customers/stats or similar. Wait, let me check the discovery findings.
     // "backend-stats-endpoint--routevalidator-contract: Resolved the server environment blocker... Verified getCustomerStats, customer route stats..."
     const { data } = await axiosClient.get('/api/v1/customers/stats', { params: filters });
-    return mapCustomerStats(data.data);
+    return mapCustomerStats(data.data?.stats ?? {});
   },
 
   getCustomerSummary: async (query) => {

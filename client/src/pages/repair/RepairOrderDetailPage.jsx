@@ -11,7 +11,7 @@ export default function RepairOrderDetailPage() {
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-4">
         <button
-          onClick={() => navigate("/repair-orders")}
+          onClick={() => navigate("/workshop")}
           className="p-2 hover:bg-slate-100 rounded-full"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

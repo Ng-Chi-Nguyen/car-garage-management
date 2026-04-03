@@ -7,29 +7,24 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-test("VehicleIntakeForm customer search dropdown UX", () => {
+test("VehicleIntakeForm has customer dropdown UX and vehicle autofill", () => {
   const formFile = path.join(__dirname, "../components/VehicleIntakeForm.jsx");
   const content = fs.readFileSync(formFile, "utf-8");
 
-  // Step 1: Add failing interaction tests for customer search dropdown selection behavior.
-  assert.ok(content.includes("showCustomerDropdown"), "Must manage dropdown visibility state for customer search");
-  assert.ok(content.includes("onSelect={handleSelectCustomer}"), "Dropdown must trigger handleSelectCustomer on selection");
-  assert.ok(content.includes("dropdown"), "Component must have a dropdown element for customers");
+  // Step 1: Replace customer suggestion cards with dropdown list bound to search results
+  assert.ok(content.includes("showCustomerDropdown"), "Must control customer dropdown visibility");
+  assert.ok(!content.includes("Khách hàng gợi ý"), "Must not use static suggestion cards section anymore");
 
-  // Step 2: Add failing test: when search returns no customers, user can open add-customer modal.
-  assert.ok(content.includes("setIsAddCustomerModalOpen(true)"), "Must allow opening add-customer modal");
-  assert.ok(content.includes("<AddCustomerModal"), "Must include AddCustomerModal component");
-  assert.ok(content.includes("Không tìm thấy khách hàng"), "Must show no customers found message or option to add new");
-});
+  // Step 2: Show CTA to open AddCustomerModal if search has no result
+  assert.ok(content.includes("AddCustomerModal"), "Must include AddCustomerModal component");
+  assert.ok(content.includes("Thêm khách hàng mới"), "Must have CTA to add new customer");
 
-test("VehicleIntakeForm vehicle lookup and autofill UX", () => {
-  const formFile = path.join(__dirname, "../components/VehicleIntakeForm.jsx");
-  const content = fs.readFileSync(formFile, "utf-8");
+  // Step 3: Vehicle plate lookup to autofill
+  assert.ok(content.includes("handlePlateBlur"), "Must have onBlur handler for license plate");
+  assert.ok(content.includes("resolveVehicleByPlate("), "Must resolve vehicle by plate on blur");
+  assert.ok(content.includes("brand: vehicle.HieuXe?.TenHieuXe"), "Must map brand from resolved vehicle");
 
-  // Step 3: Add failing test for vehicle lookup dropdown by license plate and autofill of brand/model/customer fields when existing vehicle selected.
-  assert.ok(content.includes("useVehiclesQuery"), "Must fetch vehicles for license plate lookup");
-  assert.ok(content.includes("showVehicleDropdown"), "Must manage dropdown visibility state for vehicle search");
-  assert.ok(content.includes("handleSelectVehicle"), "Must have a handler for when a vehicle is selected");
-  assert.ok(content.match(/setForm\(\(current\) => \(\{ \.\.\.current,.*brand:.*model:.*\}/), "Must autofill brand and model when vehicle is selected");
-  assert.ok(content.includes("handleSelectCustomer"), "Must autofill or trigger customer selection when vehicle has an associated customer");
+  // Step 4: Ensure selected customer/vehicle is source of truth and manual edits clear them
+  assert.ok(content.includes("setSelectedCustomer(null)"), "Must clear selected customer on manual edit");
+  assert.ok(content.includes("setSelectedVehicle(null)"), "Must clear selected vehicle on manual edit");
 });

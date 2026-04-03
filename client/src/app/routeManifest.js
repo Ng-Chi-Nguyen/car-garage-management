@@ -57,13 +57,6 @@ export const routeManifest = [
   },
   {
     exportKey: null,
-    path: '/repair-orders',
-    layout: 'app',
-    componentPath: 'src/pages/repair/RepairOrdersListPage.jsx',
-    group: 'workshop'
-  },
-  {
-    exportKey: null,
     path: '/repair-orders/:id',
     layout: 'app',
     componentPath: 'src/pages/repair/RepairOrderDetailPage.jsx',
@@ -117,6 +110,13 @@ export const routeManifest = [
     layout: 'app',
     componentPath: 'src/pages/customers/CustomerAnalytics.jsx',
     group: 'crm'
+  },
+  {
+    exportKey: 'c_i_t_h_th_ng_gms',
+    path: '/settings',
+    layout: 'app',
+    componentPath: 'src/pages/settings/settings-page.jsx',
+    group: 'system'
   },
   {
     exportKey: null,

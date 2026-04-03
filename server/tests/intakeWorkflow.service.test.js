@@ -49,7 +49,7 @@ test("intake workflow service normalizes intake payload and returns empty histor
       issueDescription: null,
       quickTags: [],
       note: null,
-      GhiChu: JSON.stringify({ quickTags: [], note: null }),
+      GhiChu: null,
     },
     history: [
       {
@@ -59,7 +59,7 @@ test("intake workflow service normalizes intake payload and returns empty histor
         NgaySC: new Date("2026-03-25"),
         TrangThai: "TiepNhan",
         NoiDungLoi: null,
-        GhiChu: JSON.stringify({ quickTags: [], note: null }),
+        GhiChu: null,
         TongTien: 0,
       },
     ],
@@ -69,48 +69,58 @@ test("intake workflow service normalizes intake payload and returns empty histor
   assert.deepEqual(calls[2][0], "create");
 });
 
-test("intake workflow service creates missing records for new vehicle intake", async () => {
-  let customerCalls = 0;
-  let vehicleCreateCalls = 0;
-  let customerCreateCalls = 0;
+test("intake workflow service throws 404 when vehicle or customer is missing", async () => {
   const service = createIntakeWorkflowService({
     db: {
       kHACH_HANG: {
-        findUnique: async () => {
-          customerCalls += 1;
-          return null;
-        },
-        create: async ({ data }) => {
-          customerCreateCalls += 1;
-          return { MaKH: 1, ...data };
-        },
+        findUnique: async () => null,
       },
       xE: {
         findUnique: async () => null,
-        create: async ({ data }) => {
-          vehicleCreateCalls += 1;
-          return { MaXe: 2, ...data };
-        },
-      },
-      pHIEU_SUA_CHUA: {
-        create: async ({ data }) => ({ MaPhieuSC: 1, ...data }),
       },
     },
   });
 
-  await assert.doesNotReject(
+  await assert.rejects(
     service.createIntakeAtomic({
       MaKH: 1,
       MaXe: 2,
       NgayTiepNhan: new Date("2026-03-25"),
       TrangThai: "TiepNhan",
-      BienSo: "51G-123.45",
-      customer: { TenChuXe: "Nguyen Van A", DienThoai: "0900000000" },
-      vehicle: { BienSo: "51G-123.45" },
     }),
+    /Không tìm thấy xe/,
   );
+});
 
-  assert.equal(customerCalls, 0);
-  assert.equal(customerCreateCalls, 1);
-  assert.equal(vehicleCreateCalls, 1);
+test("intake workflow service maps quick tags to GhiChu text and keeps NoiDungLoi", async () => {
+  let createdRepairOrder = null;
+  const service = createIntakeWorkflowService({
+    db: {
+      kHACH_HANG: {
+        findUnique: async () => ({ MaKH: 5 }),
+      },
+      xE: {
+        findUnique: async () => ({ MaXe: 10, MaKH: 5 }),
+      },
+      pHIEU_SUA_CHUA: {
+        create: async ({ data }) => {
+          createdRepairOrder = data;
+          return { MaPhieuSC: 99, ...data };
+        },
+      },
+    },
+  });
+
+  await service.createIntakeAtomic({
+    MaKH: 5,
+    MaXe: 10,
+    NgayTiepNhan: new Date("2026-03-25"),
+    TrangThai: "TiepNhan",
+    NoiDungLoi: "Xe rung khi tăng tốc",
+    quickTags: ["Xước nhẹ", "Móp méo"],
+    note: "Xe rung khi tăng tốc",
+  });
+
+  assert.equal(createdRepairOrder.NoiDungLoi, "Xe rung khi tăng tốc");
+  assert.equal(createdRepairOrder.GhiChu, "Xước nhẹ, Móp méo");
 });

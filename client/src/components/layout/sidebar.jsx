@@ -5,11 +5,11 @@ import { authStorage } from '../../features/auth/auth.storage';
 export function Sidebar() {
   const navItems = [
     { name: 'Hệ thống', path: '/dashboard', icon: 'dashboard' },
+    { name: 'Cài đặt', path: '/settings', icon: 'settings' },
     { name: 'Nhân sự', path: '/settings/employees', icon: 'badge' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
     { name: 'Lễ tân', path: '/workshop', icon: 'support_agent' },
     { name: 'Kho', path: '/inventory', icon: 'inventory_2' },
-    { name: 'Sửa chữa', path: '/repair-orders', icon: 'build' },
     { name: 'Tài Chính', path: '/finance/receivables', icon: 'payments' },
     { name: 'Báo Cáo', path: '/reports', icon: 'bar_chart' },
   ];

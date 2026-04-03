@@ -1,12 +1,15 @@
 import prisma from "../../db/prisma.js";
 import { buildServiceError } from "../../shared/crud/crud.helpers.js";
 
+const normalizePlate = (value) => String(value ?? "").trim().replace(/-(\d{2})$/, ".$1");
+
 const normalizeQuickTags = (value) =>
   (Array.isArray(value) ? value : []).map((item) => String(item).trim()).filter(Boolean);
 
 const normalizeIntake = (intake, id = 1) => {
   const quickTags = normalizeQuickTags(intake.quickTags);
   const note = intake.note ?? null;
+  const quickTagsText = quickTags.length ? quickTags.join(", ") : null;
 
   return {
     id,
@@ -18,21 +21,40 @@ const normalizeIntake = (intake, id = 1) => {
     issueDescription: intake.NoiDungLoi ?? null,
     quickTags,
     note,
-    GhiChu: JSON.stringify({ quickTags, note }),
+    GhiChu: quickTagsText,
   };
 };
 
 const createIntakeWorkflowService = ({ db = prisma } = {}) => ({
   createIntakeAtomic: async (payload) => {
-    const intake = payload.intake ?? payload;
-    const vehicle = await db.xE.findUnique({
+    const body = payload.intake ?? payload;
+    const intake = {
+      ...body,
+      MaKH: body.MaKH ?? payload.customer?.MaKH ?? null,
+      MaXe: body.MaXe ?? payload.vehicle?.MaXe ?? null,
+      BienSo: body.BienSo ?? payload.vehicle?.BienSo ?? null,
+    };
+    let vehicle = await db.xE.findUnique({
       where: { MaXe: Number(intake.MaXe) },
       select: { MaXe: true, MaKH: true },
     });
 
-    if (!vehicle || Number(vehicle.MaKH) !== Number(intake.MaKH)) {
+    if (!vehicle) {
+      const normalizedPlate = normalizePlate(intake.BienSo);
+      if (normalizedPlate) {
+        vehicle = await db.xE.findUnique({
+          where: { BienSo: normalizedPlate },
+          select: { MaXe: true, MaKH: true },
+        });
+      }
+    }
+
+    if (!vehicle) {
       throw buildServiceError(404, "Không tìm thấy xe.");
     }
+
+    intake.MaXe = Number(vehicle.MaXe);
+    intake.MaKH = Number(intake.MaKH ?? vehicle.MaKH);
 
     const customer = await db.kHACH_HANG.findUnique({
       where: { MaKH: Number(intake.MaKH) },
@@ -41,6 +63,10 @@ const createIntakeWorkflowService = ({ db = prisma } = {}) => ({
 
     if (!customer) {
       throw buildServiceError(404, "Không tìm thấy khách hàng.");
+    }
+
+    if (Number(vehicle.MaKH) !== Number(intake.MaKH)) {
+      throw buildServiceError(404, "Không tìm thấy xe.");
     }
 
     const normalizedIntake = normalizeIntake(intake);

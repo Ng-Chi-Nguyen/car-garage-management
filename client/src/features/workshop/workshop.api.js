@@ -105,6 +105,7 @@ export async function fetchWorkshopData(filters = {}) {
   ];
 
   let vehicles = [];
+  let staffById = {};
   if (vehicleIds.length > 0) {
     const vehiclePromises = vehicleIds.map((id) =>
       axiosClient.get(`/api/v1/vehicles/${id}`).catch(() => null),
@@ -139,9 +140,24 @@ export async function fetchWorkshopData(filters = {}) {
     }
   }
 
+  try {
+    const usersRes = await axiosClient.get(
+      `/api/v1/admin/users?${buildQueryString({ role: "NhanVien", limit: 200 })}`,
+    );
+    const users = usersRes?.data?.data?.users || [];
+    staffById = Object.fromEntries(
+      users
+        .filter((user) => user?.MaKH)
+        .map((user) => [Number(user.MaKH), user.TenChuXe || `NV #${user.MaKH}`]),
+    );
+  } catch {
+    staffById = {};
+  }
+
   const rawData = {
     vehicles,
     repairOrders,
+    staffById,
     pagination,
     globalMetrics,
   };

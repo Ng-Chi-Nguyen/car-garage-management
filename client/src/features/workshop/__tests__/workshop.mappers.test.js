@@ -14,7 +14,6 @@ describe('normalizeWorkshopData', () => {
       { MaPhieuSC: 1, TrangThai: 'TiepNhan' },
       { MaPhieuSC: 2, TrangThai: 'DangSua' },
       { MaPhieuSC: 3, TrangThai: 'HoanTat' },
-      { MaPhieuSC: 4, TrangThai: 'Huy' },
       { MaPhieuSC: 5, TrangThai: null },
       { MaPhieuSC: 6, TrangThai: 'UnknownStatus' }
     ];
@@ -23,8 +22,8 @@ describe('normalizeWorkshopData', () => {
     
     assert.strictEqual(result.metrics.waiting, 3); // 1 TiepNhan + 2 unknown
     assert.strictEqual(result.metrics.in_progress, 1);
-    assert.strictEqual(result.metrics.completed, 2); // HoanTat + Huy
-    assert.strictEqual(result.metrics.total, 6);
+    assert.strictEqual(result.metrics.completed, 1); // HoanTat
+    assert.strictEqual(result.metrics.total, 5);
   });
 
   it('should map active rows with correct badge tokens and deterministic time mapping', () => {

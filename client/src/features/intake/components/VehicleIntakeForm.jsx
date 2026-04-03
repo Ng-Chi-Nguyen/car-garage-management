@@ -8,6 +8,7 @@ import { submitIntakeFlow } from "../intakeSubmissionFlow.js";
 import { useVehicleCatalogQuery } from "../useVehicleCatalogQuery.js";
 import { resolveModelsForBrand } from "../intakeVehicleCatalog.resolve.js";
 import fallbackCatalog from "../intakeVehicleCatalog.json" with { type: "json" };
+import { AddCustomerModal } from "../../customers/components/AddCustomerModal.jsx";
 
 const initialForm = {
   phone: "",
@@ -23,7 +24,7 @@ const quickTagOptions = ["Xước nhẹ", "Móp méo", "Hỏng đèn", "Nứt k�
 
 function Field({ label, required, children }) {
   return (
-    <label className="space-y-2">
+    <label className="space-y-2 relative">
       <div className="text-sm font-semibold text-slate-700">
         {label}
         {required ? <span className="text-rose-600"> *</span> : null}
@@ -37,7 +38,12 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
   const [form, setForm] = useState(initialForm);
   const [selectedQuickTags, setSelectedQuickTags] = useState(["Xước nhẹ"]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  
   const [customerSearch, setCustomerSearch] = useState("");
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
   const createIntakeMutation = useCreateIntakeMutation();
   const { createCustomer } = useCustomersMutations();
@@ -66,6 +72,9 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
     if (["phone", "ownerName", "address"].includes(field)) {
       setSelectedCustomer(null);
     }
+    if (field === "licensePlate") {
+      setSelectedVehicle(null);
+    }
   };
 
   const handleQuickTagToggle = (tag) => {
@@ -78,11 +87,40 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
     setSelectedCustomer(customer);
     setForm((current) => ({
       ...current,
-      phone: customer.phone ?? current.phone,
-      ownerName: customer.name ?? current.ownerName,
-      address: customer.address ?? current.address,
+      phone: customer.phone ?? customer.DienThoai ?? current.phone,
+      ownerName: customer.name ?? customer.TenChuXe ?? current.ownerName,
+      address: customer.address ?? customer.DiaChi ?? current.address,
     }));
-    setCustomerSearch(customer.phone ?? customer.name ?? "");
+    setCustomerSearch(customer.phone ?? customer.DienThoai ?? customer.name ?? customer.TenChuXe ?? "");
+    setShowCustomerDropdown(false);
+  };
+
+  const handlePlateBlur = async () => {
+    const plate = form.licensePlate?.trim();
+    if (!plate || selectedVehicle?.BienSo === plate) return;
+    
+    try {
+      const vehicle = await resolveVehicleByPlate(plate);
+      if (vehicle) {
+        setSelectedVehicle(vehicle);
+        setForm(current => ({
+          ...current,
+          brand: vehicle.HieuXe?.TenHieuXe ?? current.brand,
+          model: vehicle.MauXe ?? current.model
+        }));
+        if (vehicle.KhachHang) {
+          const cust = vehicle.KhachHang;
+          handleSelectCustomer({
+            id: cust.MaKH,
+            name: cust.TenChuXe,
+            phone: cust.DienThoai,
+            address: cust.DiaChi
+          });
+        }
+      }
+    } catch (error) {
+      // Not found or error, ignore to let user fill manually
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -94,6 +132,7 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
         form,
         selectedQuickTags,
         selectedCustomer,
+        selectedVehicle,
         resolveVehicleByPlate,
         createCustomer,
         createIntakeMutation,
@@ -105,21 +144,73 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
     }
   };
 
+  const handleCustomerCreated = (data) => {
+    const newCustomer = data.data || data;
+    handleSelectCustomer({
+      id: newCustomer.MaKH,
+      name: newCustomer.TenChuXe,
+      phone: newCustomer.DienThoai,
+      address: newCustomer.DiaChi
+    });
+  };
+
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6 p-6 lg:p-8">
       <section className="grid gap-4 md:grid-cols-2">
         <Field label="Tra cứu khách hàng">
-          <input
-            value={customerSearch}
-            onChange={(event) => setCustomerSearch(event.target.value)}
-            placeholder="Nhập số điện thoại hoặc tên"
-            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none"
-          />
+          <div className="relative">
+            <input
+              value={customerSearch}
+              onChange={(event) => {
+                setCustomerSearch(event.target.value);
+                setShowCustomerDropdown(true);
+              }}
+              onFocus={() => setShowCustomerDropdown(true)}
+              placeholder="Nhập số điện thoại hoặc tên"
+              className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none"
+            />
+            {showCustomerDropdown && cleanSearch && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg">
+                {customerResults.length > 0 ? (
+                  <ul className="max-h-60 overflow-auto py-1">
+                    {customerResults.map((customer) => (
+                      <li key={customer.id}>
+                        <button
+                          type="button"
+                          onClick={() => handleSelectCustomer(customer)}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 flex flex-col"
+                        >
+                          <span className="font-semibold text-sm">{customer.name}</span>
+                          <span className="text-xs text-slate-500">{customer.phone}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="p-4 text-center">
+                    <p className="text-sm text-slate-500 mb-2">Không tìm thấy khách hàng</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCustomerDropdown(false);
+                        setShowAddCustomerModal(true);
+                      }}
+                      className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    >
+                      + Thêm khách hàng mới
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </Field>
         <Field label="Biển số xe" required>
           <input
             value={form.licensePlate}
             onChange={handleChange("licensePlate")}
+            onBlur={handlePlateBlur}
             placeholder="51G-123.45"
             required
             className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none"
@@ -204,25 +295,6 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
         </Field>
       </section>
 
-      {customerResults.length > 0 ? (
-        <section className="space-y-2">
-          <div className="text-sm font-semibold text-slate-700">Khách hàng gợi ý</div>
-          <div className="grid gap-2 md:grid-cols-2">
-            {customerResults.map((customer) => (
-              <button
-                key={customer.id}
-                type="button"
-                onClick={() => handleSelectCustomer(customer)}
-                className="rounded-2xl border border-slate-200 p-3 text-left"
-              >
-                <div className="font-semibold">{customer.name}</div>
-                <div className="text-sm text-slate-500">{customer.phone}</div>
-              </button>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
       {errorMessage ? <p className="text-sm text-rose-600">{errorMessage}</p> : null}
 
       <div className="flex gap-3">
@@ -236,5 +308,17 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
         </button>
       </div>
     </form>
+
+    {showAddCustomerModal && (
+      <AddCustomerModal
+        onClose={() => setShowAddCustomerModal(false)}
+        initialData={{
+          phone: !isNaN(customerSearch) ? customerSearch : '',
+          name: isNaN(customerSearch) ? customerSearch : ''
+        }}
+        onSuccessCallback={handleCustomerCreated}
+      />
+    )}
+    </>
   );
 }

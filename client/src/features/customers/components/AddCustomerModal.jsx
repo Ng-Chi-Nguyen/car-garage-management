@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useCustomersMutations } from '../useCustomersMutations';
 
-export function AddCustomerModal({ onClose }) {
+export function AddCustomerModal({ onClose, initialData = {}, onSuccessCallback }) {
   const { createCustomer } = useCustomersMutations();
   const [formData, setFormData] = useState({
-    TenChuXe: '',
-    DienThoai: '',
+    TenChuXe: initialData.name || '',
+    DienThoai: initialData.phone || '',
     Email: '',
     DiaChi: '',
   });
@@ -13,8 +13,11 @@ export function AddCustomerModal({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     createCustomer.mutate(formData, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         onClose();
+        if (onSuccessCallback) {
+          onSuccessCallback(data);
+        }
       }
     });
   };

@@ -1,6 +1,6 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { inventoryApi } from './inventory.api';
-import { INVENTORY_KEYS } from './inventory.queryKeys';
+import { INVENTORY_KEYS, SUPPLIER_KEYS } from './inventory.queryKeys';
 import { sanitizeInventoryFilters } from './inventory.filters.js';
 
 export function useInventoryQuery(filters) {
@@ -23,7 +23,7 @@ export function useStockDetailQuery(id) {
 
 export function useSuppliersQuery() {
   return useQuery({
-    queryKey: ['suppliers'],
+    queryKey: SUPPLIER_KEYS.list({ limit: 100 }),
     queryFn: () => inventoryApi.getSuppliers(),
   });
 }
