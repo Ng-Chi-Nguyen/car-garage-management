@@ -3,12 +3,12 @@ import intakeWorkflowSchema from '../../../../server/src/validator/workflows/int
 export default async function run() {
   console.log('Running reception smoke flow (contract check)...');
 
-  // Executable assertion: the custom validator must require MaKH, MaXe, BienSoXe, NgayTiepNhan
+  // Executable assertion: the custom validator must require MaKH, MaXe, NoiDungLoi, NgayTiepNhan
   const validData = {
     intake: {
       MaKH: 1,
       MaXe: 2,
-      BienSoXe: '51A-123.45',
+      NoiDungLoi: 'Test error',
       NgayTiepNhan: new Date().toISOString()
     }
   };

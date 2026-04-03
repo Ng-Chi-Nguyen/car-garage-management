@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { useCreateIntakeMutation } from "../useIntakeMutation";
+import * as resolver from "../intakeVehicleResolver.api";
 
-const vehicleTypes = [
-  "Sedan",
-  "SUV / Crossover",
-  "Hatchback",
-  "Bán tải (Pickup)",
-  "MPV",
-];
 const carBrands = [
   "Toyota",
   "Honda",
@@ -31,7 +25,6 @@ const initialForm = {
   ownerName: "",
   address: "",
   licensePlate: "",
-  vehicleType: "Sedan",
   brand: "Toyota",
   model: "Camry",
   advisor: "Nguyễn Văn A",
@@ -275,12 +268,6 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
                 </div>
               </div>
 
-              <IntakeSelect
-                label="Loại xe"
-                options={vehicleTypes}
-                value={form.vehicleType}
-                onChange={updateField("vehicleType")}
-              />
               <IntakeSelect
                 label="Hãng xe"
                 options={carBrands}
