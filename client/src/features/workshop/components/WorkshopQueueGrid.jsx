@@ -55,7 +55,6 @@ export function WorkshopQueueGrid({ rows, isLoading, isFetching, isError, isEmpt
                 <h4 className="text-xl font-bold text-on-surface">
                   {row.licensePlate}
                 </h4>
-                <p className="text-sm text-on-surface-variant">{row.brand}</p>
               </div>
               <span
                 className={`px-2.5 py-1 rounded-full text-xs font-bold ${
@@ -69,11 +68,24 @@ export function WorkshopQueueGrid({ rows, isLoading, isFetching, isError, isEmpt
             <div className="space-y-2 mb-6">
               <div className="flex items-center text-sm">
                 <span className="material-symbols-outlined text-base mr-2 text-on-surface-variant">person</span>
-                <span className="text-on-surface truncate">{row.owner || "Chưa rõ"}</span>
+                <span className="text-on-surface truncate">
+                  <span className="text-on-surface-variant mr-1">Khách hàng:</span>
+                  {row.customerName || "Chưa rõ"}
+                </span>
               </div>
               <div className="flex items-center text-sm">
-                <span className="material-symbols-outlined text-base mr-2 text-on-surface-variant">engineering</span>
-                <span className="text-on-surface truncate">{row.technician || "KTV"}</span>
+                <span className="material-symbols-outlined text-base mr-2 text-on-surface-variant">directions_car</span>
+                <span className="text-on-surface truncate">
+                  <span className="text-on-surface-variant mr-1">Hãng:</span>
+                  {row.brand || "Chưa rõ"}
+                </span>
+              </div>
+              <div className="flex items-center text-sm">
+                <span className="material-symbols-outlined text-base mr-2 text-on-surface-variant">car_repair</span>
+                <span className="text-on-surface truncate">
+                  <span className="text-on-surface-variant mr-1">Mẫu xe:</span>
+                  {row.model || "Chưa rõ"}
+                </span>
               </div>
             </div>
 
