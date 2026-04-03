@@ -38,9 +38,6 @@ const customerSchema = createCrudValidator({
   })
     .min(1)
     .unknown(false),
-  listQuerySchema: Joi.object({
-    search: Joi.string().trim().allow(""),
-  }).unknown(false),
   filterFields: CUSTOMER_FILTER_FIELDS,
 });
 
