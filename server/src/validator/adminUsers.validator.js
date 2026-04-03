@@ -40,6 +40,8 @@ export default {
       page: { type: "number" },
       limit: { type: "number" },
       search: {},
+      role: { values: ["Admin", "NhanVien", "KhachHang"] },
+      status: { values: ["HoatDong", "BiKhoa", "DaXoa"] },
     }),
   },
   update: {

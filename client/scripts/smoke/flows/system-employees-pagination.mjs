@@ -14,13 +14,13 @@ export default async function run() {
     }
   };
 
-  await assertFileIncludes("client/src/features/adminUsers/adminUsers.api.js", [
+  await assertFileIncludes("src/features/adminUsers/adminUsers.api.js", [
     "return {",
     "users: unwrap(response, \"users\"),",
     "pagination: unwrap(response, \"pagination\")"
   ]);
 
-  await assertFileIncludes("client/src/features/adminUsers/adminUsers.query.js", [
+  await assertFileIncludes("src/features/adminUsers/adminUsers.query.js", [
     "page",
     "limit",
     "parseAdminUsersQuery",
@@ -28,7 +28,7 @@ export default async function run() {
     "URLSearchParams"
   ]);
 
-  await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
+  await assertFileIncludes("src/pages/admin/AdminUsersPage.jsx", [
     "goNext",
     "goPrev",
     "pagination",
@@ -39,10 +39,12 @@ export default async function run() {
     "parseAdminUsersQuery",
     "buildAdminUsersQuery",
     "updateParams({ page: pagination.page + 1 })",
-    "updateParams({ page: pagination.page - 1 })"
+    "updateParams({ page: pagination.page - 1 })",
+    "role: queryParams.role",
+    "status: queryParams.status"
   ]);
 
-  await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
+  await assertFileIncludes("src/features/adminUsers/components/AdminUsersTable.jsx", [
     "goNext",
     "goPrev",
     "totalItems",

@@ -24,12 +24,12 @@ export default async function run() {
     }
   };
 
-  await assertFileExcludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
+  await assertFileExcludes("src/features/adminUsers/components/AdminUsersTable.jsx", [
     "pagination.totalPages || 1",
     "pagination.totalPages === 0 ? 1 : pagination.totalPages"
   ]);
 
-  await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
+  await assertFileIncludes("src/pages/admin/AdminUsersPage.jsx", [
     "AdminUsersHeader",
     "AdminUsersStats",
     "AdminUsersFilters",
@@ -37,10 +37,18 @@ export default async function run() {
     "useAdminUsersQuery",
     "onSubmit={handleSearchSubmit}",
     "e.preventDefault()",
-    "}, [searchParams]);"
+    "}, [searchParams]);",
+    "role: queryParams.role",
+    "status: queryParams.status"
   ]);
 
-  await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
+  await assertFileExcludes("src/pages/admin/AdminUsersPage.jsx", [
+    "search: queryParams.search",
+    "user.ChucVu !== queryParams.role",
+    "user.TrangThai !== queryParams.status"
+  ]);
+
+  await assertFileIncludes("src/features/adminUsers/components/AdminUsersTable.jsx", [
     "useUpdateAdminUserMutation",
     "ChucVu",
     "TrangThai",
@@ -49,11 +57,11 @@ export default async function run() {
     "border-outline-variant"
   ]);
 
-  await assertFileIncludes("client/src/features/adminUsers/useAdminUsersMutation.js", [
+  await assertFileIncludes("src/features/adminUsers/useAdminUsersMutation.js", [
     "invalidateQueries({ queryKey: [\"adminUsers\"] })"
   ]);
 
-  await assertFileIncludes("client/src/index.css", [
+  await assertFileIncludes("src/index.css", [
     "background-color: var(--color-surface-container-low);",
     "color: var(--color-on-surface);"
   ]);

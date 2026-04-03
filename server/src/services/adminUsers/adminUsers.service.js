@@ -24,17 +24,26 @@ export const createAdminUsersService = ({ userDelegate } = {}) => ({
     const page = Number(query.page ?? 1);
     const limit = Number(query.limit ?? 10);
     const search = String(query.search ?? "");
+    const role = String(query.role ?? "");
+    const status = String(query.status ?? "");
 
-    const where = search
-      ? {
-          OR: [
-            { TenChuXe: { contains: search } },
-            { Email: { contains: search } },
-            { DienThoai: { contains: search } },
-            { ChucVu: { contains: search } },
-          ],
-        }
-      : {};
+    const where = {};
+
+    if (search) {
+      where.OR = [
+        { TenChuXe: { contains: search } },
+        { Email: { contains: search } },
+        { DienThoai: { contains: search } },
+      ];
+    }
+
+    if (role) {
+      where.ChucVu = role;
+    }
+
+    if (status) {
+      where.TrangThai = status;
+    }
 
     const [totalItems, users] = await Promise.all([
       delegate.count({ where }),
