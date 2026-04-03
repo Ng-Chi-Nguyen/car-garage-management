@@ -5,6 +5,7 @@ import { authStorage } from '../../features/auth/auth.storage';
 export function Sidebar() {
   const navItems = [
     { name: 'Hệ thống', path: '/dashboard', icon: 'dashboard' },
+    { name: 'Nhân sự', path: '/settings/employees', icon: 'badge' },
     { name: 'Khách hàng', path: '/customers', icon: 'people' },
     { name: 'Lễ tân', path: '/workshop', icon: 'support_agent' },
     { name: 'Kho', path: '/inventory', icon: 'inventory_2' },
