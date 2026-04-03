@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import prisma from "../src/db/prisma.js";
+
 const ensureTestDatabaseUrl = () => {
   process.env.DATABASE_URL ??= "mysql://tester:secret@127.0.0.1:3306/garage_test";
 };
@@ -29,6 +31,7 @@ test("vehicleService getVehicleList include hieu xe va khach hang", async () => 
           {
             MaXe: 90,
             BienSo: "18L-10090",
+            MauXe: "Vios",
             MaHieuXe: 10,
             MaKH: 35,
             HieuXe: {
@@ -53,6 +56,7 @@ test("vehicleService getVehicleList include hieu xe va khach hang", async () => 
 
   assert.deepEqual(calls.count, { where: {} });
   assert.deepEqual(calls.findMany.include, VEHICLE_INCLUDE_RELATIONS);
+  assert.equal(result.vehicles[0].MauXe, "Vios");
   assert.equal(result.vehicles[0].HieuXe.TenHieuXe, "Toyota");
   assert.equal(result.vehicles[0].KhachHang.TenChuXe, "Le Van Tet");
 });
@@ -170,9 +174,9 @@ test("vehicleService getVehicleById returns MauXe", async () => {
       findUnique: async () => ({
         MaXe: 90,
         BienSo: "18L-10090",
+        MauXe: "Bạc",
         MaHieuXe: 10,
         MaKH: 35,
-        MauXe: "Bạc",
       }),
     },
   };
@@ -182,4 +186,136 @@ test("vehicleService getVehicleById returns MauXe", async () => {
   const result = await vehicleService.getVehicleById(90);
 
   assert.equal(result.MauXe, "Bạc");
+});
+
+test("vehicleService createVehicle ghi MauXe khi duoc cung cap", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const originalCreate = prisma.xE.create;
+  let receivedArgs = null;
+
+  prisma.xE.create = async (args) => {
+    receivedArgs = args;
+    return {
+      MaXe: 91,
+      ...args.data,
+    };
+  };
+
+  try {
+    const vehicleService = createVehicleService();
+    const result = await vehicleService.createVehicle({
+      BienSo: "51A-67890",
+      MaHieuXe: 11,
+      MaKH: 36,
+      MauXe: "Trắng",
+    });
+
+    assert.equal(receivedArgs.data.MauXe, "Trắng");
+    assert.equal(result.MauXe, "Trắng");
+  } finally {
+    prisma.xE.create = originalCreate;
+  }
+});
+
+test("vehicleService updateVehicle ghi MauXe null khi xoa mau xe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const originalFindUnique = prisma.xE.findUnique;
+  const originalUpdate = prisma.xE.update;
+  let receivedArgs = null;
+
+  prisma.xE.findUnique = async () => ({
+    MaXe: 91,
+    BienSo: "51A-67890",
+    MaHieuXe: 11,
+    MaKH: 36,
+  });
+  prisma.xE.update = async (args) => {
+    receivedArgs = args;
+    return {
+      MaXe: 91,
+      BienSo: "51A-67890",
+      MaHieuXe: 11,
+      MaKH: 36,
+      ...args.data,
+    };
+  };
+
+  try {
+    const vehicleService = createVehicleService();
+    const result = await vehicleService.updateVehicle(91, {
+      MauXe: null,
+    });
+
+    assert.equal(receivedArgs.data.MauXe, null);
+    assert.equal(result.MauXe, null);
+  } finally {
+    prisma.xE.findUnique = originalFindUnique;
+    prisma.xE.update = originalUpdate;
+  }
+});
+
+test("vehicleService createVehicle ghi MauXe model khi duoc cung cap", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const originalCreate = prisma.xE.create;
+  let receivedArgs = null;
+
+  prisma.xE.create = async (args) => {
+    receivedArgs = args;
+    return {
+      MaXe: 91,
+      ...args.data,
+    };
+  };
+
+  try {
+    const vehicleService = createVehicleService();
+    const result = await vehicleService.createVehicle({
+      BienSo: "51A-67890",
+      MaHieuXe: 11,
+      MaKH: 36,
+      MauXe: "CX-5",
+    });
+
+    assert.equal(receivedArgs.data.MauXe, "CX-5");
+    assert.equal(result.MauXe, "CX-5");
+  } finally {
+    prisma.xE.create = originalCreate;
+  }
+});
+
+test("vehicleService updateVehicle ghi MauXe null khi xoa model xe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const originalFindUnique = prisma.xE.findUnique;
+  const originalUpdate = prisma.xE.update;
+  let receivedArgs = null;
+
+  prisma.xE.findUnique = async () => ({
+    MaXe: 91,
+    BienSo: "51A-67890",
+    MaHieuXe: 11,
+    MaKH: 36,
+  });
+  prisma.xE.update = async (args) => {
+    receivedArgs = args;
+    return {
+      MaXe: 91,
+      BienSo: "51A-67890",
+      MaHieuXe: 11,
+      MaKH: 36,
+      ...args.data,
+    };
+  };
+
+  try {
+    const vehicleService = createVehicleService();
+    const result = await vehicleService.updateVehicle(91, {
+      MauXe: null,
+    });
+
+    assert.equal(receivedArgs.data.MauXe, null);
+    assert.equal(result.MauXe, null);
+  } finally {
+    prisma.xE.findUnique = originalFindUnique;
+    prisma.xE.update = originalUpdate;
+  }
 });

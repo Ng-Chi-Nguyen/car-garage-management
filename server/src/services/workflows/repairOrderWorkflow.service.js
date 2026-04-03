@@ -13,6 +13,19 @@ import {
   TRANSACTION_OPTIONS,
 } from "./workflow.helpers.js";
 
+const REPAIR_ORDER_WORKFLOW_SELECT = {
+  MaPhieuSC: true,
+  MaXe: true,
+  MaNV: true,
+  NgaySC: true,
+  TrangThai: true,
+  NoiDungLoi: true,
+  GhiChu: true,
+  TongTien: true,
+  NgayTao: true,
+  NgayCapNhat: true,
+};
+
 const buildRepairOrderCreateData = (repairOrder) => {
   return {
     MaXe: Number(repairOrder.MaXe),
@@ -131,6 +144,7 @@ const createRepairOrderWorkflowService = ({
             where: {
               MaPhieuSC: repairOrder.MaPhieuSC,
             },
+            select: REPAIR_ORDER_WORKFLOW_SELECT,
           }),
           repairOrderDetails: await tx.cT_PHIEU_SUA_CHUA.findMany({
             where: {

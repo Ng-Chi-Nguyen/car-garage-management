@@ -49,7 +49,7 @@ test("intake workflow service normalizes intake payload and returns empty histor
       issueDescription: null,
       quickTags: [],
       note: null,
-      GhiChu: null,
+      GhiChu: JSON.stringify({ quickTags: [], note: null }),
     },
     history: [
       {
@@ -59,7 +59,7 @@ test("intake workflow service normalizes intake payload and returns empty histor
         NgaySC: new Date("2026-03-25"),
         TrangThai: "TiepNhan",
         NoiDungLoi: null,
-        GhiChu: null,
+        GhiChu: JSON.stringify({ quickTags: [], note: null }),
         TongTien: 0,
       },
     ],
@@ -122,5 +122,5 @@ test("intake workflow service maps quick tags to GhiChu text and keeps NoiDungLo
   });
 
   assert.equal(createdRepairOrder.NoiDungLoi, "Xe rung khi tăng tốc");
-  assert.equal(createdRepairOrder.GhiChu, "Xước nhẹ, Móp méo");
+  assert.equal(createdRepairOrder.GhiChu, JSON.stringify({ quickTags: ["Xước nhẹ", "Móp méo"], note: "Xe rung khi tăng tốc" }));
 });

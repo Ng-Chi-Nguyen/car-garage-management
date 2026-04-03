@@ -4,6 +4,7 @@ import inventoryReportController from "../../controllers/report/inventoryReport.
 import authMiddleware from "../../middleware/auth/auth.middleware.js";
 import { validateRequest } from "../../middleware/validation.middleware.js";
 import inventoryReportSchema from "../../validator/report/inventoryReport.validator.js";
+import { createDashboardRateLimiter } from "./dashboard.access.js";
 
 const managementRoles = ["Admin", "NhanVien"];
 
@@ -24,6 +25,13 @@ const createInventoryReportRoute = ({
 
   router.get(
     "/summary",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tồn kho. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getInventorySummary.query, "query"),
@@ -32,6 +40,13 @@ const createInventoryReportRoute = ({
 
   router.get(
     "/summary/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo tồn kho. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getInventorySummary.query, "query"),

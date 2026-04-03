@@ -328,6 +328,161 @@ test("createXlsxService createTemplateBuffer gan dinh dang va validation cho cot
   assert.equal(worksheet.getCell("B2").dataValidation.prompt, "Nhap ngay theo dinh dang yyyy-mm-dd.");
 });
 
+test("createXlsxService createTemplateBuffer hien du lieu DB va van giu validation", async () => {
+  const prismaClient = {
+    demo: {
+      findMany: async () => [
+        {
+          MaDemo: 1,
+          TenDemo: "Ban ghi A",
+          TrangThai: "Moi",
+        },
+      ],
+    },
+  };
+
+  const service = createXlsxService({
+    entityLabel: "demo",
+    fileBaseName: "demo",
+    sheetName: "Demo",
+    delegateName: "demo",
+    idField: "MaDemo",
+    prismaClient,
+    columns: [
+      { key: "MaDemo", header: "MaDemo", type: "number" },
+      { key: "TenDemo", header: "TenDemo", type: "string" },
+      {
+        key: "TrangThai",
+        header: "TrangThai",
+        type: "string",
+        validation: {
+          type: "list",
+          formulae: ['"Moi,DangXuLy,HoanTat"'],
+        },
+      },
+    ],
+    createSchema: Joi.object({
+      TenDemo: Joi.string().required(),
+      TrangThai: Joi.string().required(),
+    }).unknown(false),
+    updateSchema: Joi.object({
+      TenDemo: Joi.string(),
+      TrangThai: Joi.string(),
+    }).min(1).unknown(false),
+  });
+
+  const buffer = await service.createTemplateBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet("Demo");
+
+  assert.equal(worksheet.getRow(2).getCell(1).value, 1);
+  assert.equal(worksheet.getRow(2).getCell(2).value, "Ban ghi A");
+  assert.equal(worksheet.getRow(2).getCell(3).value, "Moi");
+  assert.equal(worksheet.getCell("C2").dataValidation.type, "list");
+  assert.deepEqual(worksheet.getCell("C2").dataValidation.formulae, ['"Moi,DangXuLy,HoanTat"']);
+});
+
+test("createXlsxService createTemplateBuffer cho phep prepareWorkbook gan dropdown dong khi da prefill du lieu", async () => {
+  const prismaClient = {
+    demo: {
+      findMany: async () => [
+        {
+          MaDemo: 1,
+          MaRef: 2,
+        },
+      ],
+    },
+  };
+
+  const service = createXlsxService({
+    entityLabel: "demo",
+    fileBaseName: "demo",
+    sheetName: "Demo",
+    delegateName: "demo",
+    idField: "MaDemo",
+    prismaClient,
+    columns: [
+      { key: "MaDemo", header: "MaDemo", type: "number" },
+      { key: "MaRef", header: "MaRef", type: "number" },
+    ],
+    createSchema: Joi.object({
+      MaRef: Joi.number().required(),
+    }).unknown(false),
+    updateSchema: Joi.object({
+      MaRef: Joi.number(),
+    }).min(1).unknown(false),
+    prepareWorkbook: async ({ workbook, worksheet }) => {
+      const listWorksheet = workbook.addWorksheet("_demo_lists");
+      listWorksheet.state = "veryHidden";
+      listWorksheet.getCell("A1").value = "DemoOption";
+      listWorksheet.getCell("A2").value = "1 - Demo A";
+      listWorksheet.getCell("A3").value = "2 - Demo B";
+
+      for (let rowNumber = 2; rowNumber <= 10; rowNumber += 1) {
+        worksheet.getCell(`B${rowNumber}`).dataValidation = {
+          type: "list",
+          allowBlank: true,
+          formulae: ["'_demo_lists'!$A$2:$A$3"],
+        };
+      }
+    },
+  });
+
+  const buffer = await service.createTemplateBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet("Demo");
+
+  assert.equal(worksheet.getRow(2).getCell(1).value, 1);
+  assert.equal(worksheet.getRow(2).getCell(2).value, 2);
+  assert.equal(worksheet.getCell("B2").dataValidation.type, "list");
+  assert.deepEqual(worksheet.getCell("B2").dataValidation.formulae, ["'_demo_lists'!$A$2:$A$3"]);
+});
+
+test("createXlsxService createTemplateBuffer ap dung exportRows khi prefill du lieu", async () => {
+  const prismaClient = {
+    demo: {
+      findMany: async () => [
+        {
+          MaDemo: 1,
+          NgayLap: new Date("2026-04-02T00:00:00.000Z"),
+        },
+      ],
+    },
+  };
+
+  const service = createXlsxService({
+    entityLabel: "demo",
+    fileBaseName: "demo",
+    sheetName: "Demo",
+    delegateName: "demo",
+    idField: "MaDemo",
+    prismaClient,
+    columns: [
+      { key: "MaDemo", header: "MaDemo", type: "number" },
+      { key: "NgayLap", header: "NgayLap", type: "string" },
+    ],
+    createSchema: Joi.object({
+      NgayLap: Joi.string().required(),
+    }).unknown(false),
+    updateSchema: Joi.object({
+      NgayLap: Joi.string(),
+    }).min(1).unknown(false),
+    exportRows: (rows) => rows.map((row) => ({
+      ...row,
+      NgayLap: row.NgayLap.toISOString().slice(0, 10),
+    })),
+  });
+
+  const buffer = await service.createTemplateBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet("Demo");
+
+  assert.equal(worksheet.getRow(2).getCell(2).value, "2026-04-02");
+});
+
 test("createXlsxService exportDataBuffer khong gan validation mac dinh cho cot enum", async () => {
   const prismaClient = {
     demo: {

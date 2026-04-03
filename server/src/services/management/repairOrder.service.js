@@ -105,66 +105,17 @@ const getRepairOrderByIdInternal = async (db, id) => {
     where: {
       MaPhieuSC: Number(id),
     },
-    select: {
-      MaPhieuSC: true,
-      MaXe: true,
-      MaNV: true,
-      NgaySC: true,
-      TrangThai: true,
-      NoiDungLoi: true,
-      GhiChu: true,
-      TongTien: true,
-      NgayTao: true,
-      NgayCapNhat: true,
+    include: {
       Xe: {
-        select: {
-          MaXe: true,
-          BienSo: true,
-          MauXe: true,
-          MaHieuXe: true,
-          MaKH: true,
-          TienNoHienTai: true,
-          HieuXe: {
-            select: {
-              MaHieuXe: true,
-              TenHieuXe: true,
-              Logo: true,
-            },
-          },
-          KhachHang: {
-            select: {
-              MaKH: true,
-              TenChuXe: true,
-              DienThoai: true,
-              DiaChi: true,
-            },
-          },
+        include: {
+          KhachHang: true,
+          HieuXe: true,
         },
       },
       ChiTietSuaChua: {
-        select: {
-          MaCTSC: true,
-          MaPhieuSC: true,
-          MaVatTu: true,
-          MaTienCong: true,
-          SoLuong: true,
-          DonGiaVatTu: true,
-          DonGiaTienCong: true,
-          ThanhTien: true,
-          VatTu: {
-            select: {
-              MaVatTu: true,
-              TenVatTu: true,
-              DonViTinh: true,
-            },
-          },
-          TienCong: {
-            select: {
-              MaTienCong: true,
-              NoiDung: true,
-              DonGia: true,
-            },
-          },
+        include: {
+          VatTu: true,
+          TienCong: true,
         },
       },
     },

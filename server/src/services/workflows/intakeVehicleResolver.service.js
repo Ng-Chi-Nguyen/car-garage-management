@@ -1,16 +1,11 @@
+const resolveDb = async (db) => db ?? (await import("../../db/prisma.js")).default;
+
 export const normalizeLicensePlate = (plate) => {
   if (!plate) return "";
   let clean = String(plate).trim().toUpperCase();
-  // 51G-12345 or 51G-123-45 -> 51G-123.45
-  // Basically, if we have 5 characters at the end, and the format is something like XXX-XXXXX or XXX-XXX-XX, we normalize it to XXX-XXX.XX
-  // Let's do a simple approach: if it has exactly one dash replacing the dot, e.g. 51G-123-45, we change the last dash to a dot.
-  // Regex: match the pattern and replace
-  // e.g., \b(\d{2}[A-Z]-\d{3})-(\d{2})\b
-  clean = clean.replace(/^(\d{2}[A-Z]\d?-\d{3})[- ](\d{2})$/, "$1.$2");
+  clean = clean.replace(/^(\d{2}[A-Z]\d?)-?(\d{3})[- ](\d{2})$/, "$1-$2.$3");
   return clean;
 };
-
-const resolveDb = async (db) => db ?? (await import("../../db/prisma.js")).default;
 
 const normalizeIntake = (intake, id = 1) => {
   const quickTags = Array.isArray(intake.quickTags)

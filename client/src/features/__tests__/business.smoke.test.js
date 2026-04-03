@@ -33,11 +33,20 @@ describe('Business Smoke Checklist', () => {
     const filters = getInventoryFilters(prev);
     assert.strictEqual(filters.search, 'oil');
     assert.strictEqual(filters.page, 3);
-    assert.strictEqual(filters.category, 'all');
+    assert.strictEqual(filters.stockStatus, '');
 
     const updatedSearch = applyInventoryFilterUpdates(prev, { search: 'brake' });
     assert.strictEqual(updatedSearch.get('search'), 'brake');
     assert.strictEqual(updatedSearch.get('page'), null, 'Changing search should reset to page 1');
+
+    const prevWithStockStatus = new URLSearchParams('?stockStatus=low&page=4');
+    const updatedStockStatus = applyInventoryFilterUpdates(prevWithStockStatus, { stockStatus: 'out_of_stock' });
+    assert.strictEqual(updatedStockStatus.get('stockStatus'), 'out_of_stock');
+    assert.strictEqual(updatedStockStatus.get('page'), null, 'Changing stockStatus should reset to page 1');
+
+    const unchangedStockStatus = applyInventoryFilterUpdates(prevWithStockStatus, { stockStatus: 'low' });
+    assert.strictEqual(unchangedStockStatus.get('stockStatus'), 'low');
+    assert.strictEqual(unchangedStockStatus.get('page'), '4', 'Keeping stockStatus should preserve current page');
   });
 
   test('3. Receivables grouping/totals behavior', () => {

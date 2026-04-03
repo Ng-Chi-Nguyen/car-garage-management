@@ -37,7 +37,7 @@ const toParametersDto = (setting) => ({
 const toServicePriceDto = (servicePrice) => ({
   id: servicePrice.MaTienCong,
   name: servicePrice.NoiDung,
-  duration: null,
+  duration: servicePrice.ThoiLuong ?? null,
   price: Number(servicePrice.DonGia),
 });
 

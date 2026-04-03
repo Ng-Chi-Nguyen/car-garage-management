@@ -40,6 +40,13 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/timeseries/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueTimeseries.query, "query"),
@@ -63,6 +70,13 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/by-car-brand/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByCarBrand.query, "query"),
@@ -86,6 +100,13 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/by-part/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueByPart.query, "query"),
@@ -109,6 +130,13 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/comparison/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComparison.query, "query"),
@@ -132,6 +160,13 @@ const createRevenueReportRoute = ({
 
   router.get(
     "/composition/export",
+    createDashboardRateLimiter({
+      message: {
+        success: false,
+        message:
+          "Bạn đang gửi quá nhiều yêu cầu đến báo cáo doanh thu. Vui lòng thử lại sau.",
+      },
+    }),
     auth.requireAuth,
     auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRevenueComposition.query, "query"),

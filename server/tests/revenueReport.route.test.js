@@ -147,3 +147,56 @@ test("revenue report route returns 400 and skips controller when validation fail
     await stopTestServer(server);
   }
 });
+
+test("revenue report export route ap dung rate limit cho composition export", async () => {
+  const createRevenueReportRoute = await loadCreateRevenueReportRoute();
+  const originalMax = process.env.DASHBOARD_RATE_LIMIT_MAX;
+  process.env.DASHBOARD_RATE_LIMIT_MAX = "1";
+
+  const auth = {
+    requireAuth(req, res, next) {
+      req.user = { ChucVu: "Admin" };
+      next();
+    },
+    requireRoles() {
+      return (req, res, next) => next();
+    },
+  };
+
+  const schema = {
+    getRevenueTimeseries: { query: { validate: (query) => ({ error: undefined, value: query }) } },
+    getRevenueByCarBrand: { query: { validate: (query) => ({ error: undefined, value: query }) } },
+    getRevenueByPart: { query: { validate: (query) => ({ error: undefined, value: query }) } },
+    getRevenueComparison: { query: { validate: (query) => ({ error: undefined, value: query }) } },
+    getRevenueComposition: { query: { validate: (query) => ({ error: undefined, value: query }) } },
+  };
+
+  const controller = {
+    getRevenueTimeseries: (req, res) => res.status(200).json({ success: true, data: {} }),
+    exportRevenueTimeseries: (req, res) => res.status(200).json({ success: true, data: {} }),
+    getRevenueByCarBrand: (req, res) => res.status(200).json({ success: true, data: {} }),
+    exportRevenueByCarBrand: (req, res) => res.status(200).json({ success: true, data: {} }),
+    getRevenueByPart: (req, res) => res.status(200).json({ success: true, data: {} }),
+    exportRevenueByPart: (req, res) => res.status(200).json({ success: true, data: {} }),
+    getRevenueComparison: (req, res) => res.status(200).json({ success: true, data: {} }),
+    exportRevenueComparison: (req, res) => res.status(200).json({ success: true, data: {} }),
+    getRevenueComposition: (req, res) => res.status(200).json({ success: true, data: {} }),
+    exportRevenueComposition: (req, res) => res.status(200).json({ success: true, data: {} }),
+  };
+
+  const router = createRevenueReportRoute({ auth, schema, controller });
+  const { server, baseUrl } = await startTestServer(router);
+
+  try {
+    const firstResponse = await fetch(`${baseUrl}/api/v1/reports/revenue/composition/export`);
+    const secondResponse = await fetch(`${baseUrl}/api/v1/reports/revenue/composition/export`);
+    const secondPayload = await secondResponse.json();
+
+    assert.equal(firstResponse.status, 200);
+    assert.equal(secondResponse.status, 429);
+    assert.equal(secondPayload.success, false);
+  } finally {
+    process.env.DASHBOARD_RATE_LIMIT_MAX = originalMax;
+    await stopTestServer(server);
+  }
+});

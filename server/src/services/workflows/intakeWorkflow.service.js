@@ -9,7 +9,6 @@ const normalizeQuickTags = (value) =>
 const normalizeIntake = (intake, id = 1) => {
   const quickTags = normalizeQuickTags(intake.quickTags);
   const note = intake.note ?? null;
-  const quickTagsText = quickTags.length ? quickTags.join(", ") : null;
 
   return {
     id,
@@ -21,7 +20,7 @@ const normalizeIntake = (intake, id = 1) => {
     issueDescription: intake.NoiDungLoi ?? null,
     quickTags,
     note,
-    GhiChu: quickTagsText,
+    GhiChu: JSON.stringify({ quickTags, note }),
   };
 };
 
