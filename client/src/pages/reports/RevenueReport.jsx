@@ -29,7 +29,7 @@ export default function RevenueReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };

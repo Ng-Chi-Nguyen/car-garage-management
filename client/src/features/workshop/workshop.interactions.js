@@ -5,11 +5,11 @@ export const getWorkshopRouteTarget = (action) => {
     case "create_repair_order":
       return "/repair-orders/new";
     case "view_repair_orders":
-      return "/repair-orders?page=1";
+      return "/workshop";
     case "view_vehicle":
-      return "/repair-orders?page=1";
+      return "/workshop";
     default:
-      return "/repair-orders?page=1";
+      return "/workshop";
   }
 };
 

@@ -25,6 +25,10 @@ const normalizeSearchField = (field) => {
   return field;
 };
 
+const buildNestedCondition = (fieldPath, value) => {
+  return fieldPath.split(".").reduceRight((accumulator, key) => ({ [key]: accumulator }), value);
+};
+
 // Đưa input về mảng để xử lý đồng nhất cho cả single value và list value.
 const toArray = (value) => {
   // Nếu đã là mảng thì dùng luôn.
@@ -175,11 +179,11 @@ const buildSearchCondition = (search, fields = []) => {
         }
 
         // Enum search tạo điều kiện IN trên field đích.
-        return [{ [descriptor.field]: { in: values } }];
+        return [buildNestedCondition(descriptor.field, { in: values })];
       }
 
       // Field chuỗi tạo điều kiện contains keyword.
-      return [{ [descriptor.field]: { contains: keyword } }];
+      return [buildNestedCondition(descriptor.field, { contains: keyword })];
     });
 
   // Nếu không sinh ra điều kiện hợp lệ nào thì trả object rỗng.

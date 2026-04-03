@@ -3,7 +3,7 @@ import { WorkshopQueueGrid } from "./WorkshopQueueGrid";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả", metricKey: "total" },
-  { value: "waiting", label: "Tiếp nhận", metricKey: "waiting" },
+  { value: "waiting", label: "Chờ", metricKey: "waiting" },
   { value: "in_progress", label: "Đang sửa", metricKey: "in_progress" },
   { value: "completed", label: "Hoàn tất", metricKey: "completed" },
 ];
@@ -48,14 +48,14 @@ export function WorkshopStatusPanel({
   const hasActiveFilters = currentStatus !== "all" || filters?.range !== "7d" || currentSearch !== "";
 
   return (
-    <div className="bg-surface-container-low rounded-[24px] p-6">
-      <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-on-surface">
+    <div className="bg-surface-container-low rounded-[24px] p-6 shadow-sm">
+      <div className="flex flex-col gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h3 className="text-xl font-black text-on-surface tracking-tight">
             Danh sách xe trong xưởng
           </h3>
 
-          <div className="flex gap-2">
+          <div className="flex bg-surface-container-high p-1 rounded-xl">
             {STATUS_OPTIONS.map((opt) => {
               const isActive = currentStatus === opt.value;
               const count = metrics[opt.metricKey] ?? 0;
@@ -65,43 +65,41 @@ export function WorkshopStatusPanel({
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => updateFilters({ status: opt.value, page: 1 })}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-none ${
+                  className={`px-5 py-2 rounded-lg text-sm font-bold transition-all border-none ${
                     isActive
-                      ? "bg-primary text-white"
-                      : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"
+                      ? "bg-surface shadow-sm text-primary"
+                      : "text-on-surface-variant hover:text-on-surface"
                   }`}
                 >
-                  {opt.label} ({count})
+                  {opt.label}
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${isActive ? 'bg-primary/10' : 'bg-surface-container-highest'}`}>{count}</span>
                 </button>
               );
             })}
           </div>
         </div>
         
-        <div className="flex items-center justify-between bg-surface-container-high p-4 rounded-xl">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2 items-center flex-1 max-w-md">
+        <div className="flex items-center justify-between">
+          <form onSubmit={handleSearchSubmit} className="flex gap-2 items-center w-full max-w-md relative">
+            <span className="material-symbols-outlined absolute left-4 text-on-surface-variant">search</span>
             <input
               type="text"
               value={draftSearch}
               onChange={(e) => setDraftSearch(e.target.value)}
-              placeholder="Tìm kiếm..."
-              className="flex-1 px-4 py-2 rounded-lg border border-outline bg-surface text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Tìm theo biển số, khách hàng..."
+              className="w-full pl-12 pr-4 py-3 rounded-xl border-none bg-surface-container-high text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
             />
-            <button 
-              type="submit"
-              className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white transition-colors hover:bg-primary-container hover:text-on-primary-container border-none"
-            >
-              Tìm
-            </button>
           </form>
           
-          <button
-            type="button"
-            onClick={handleReset}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-primary transition-colors hover:bg-surface-container-highest border-none ml-4"
-          >
-            Xóa bộ lọc
-          </button>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-error transition-colors hover:bg-error/10 border-none ml-4 flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">filter_alt_off</span> Xóa bộ lọc
+            </button>
+          )}
         </div>
       </div>
 

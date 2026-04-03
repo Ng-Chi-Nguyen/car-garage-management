@@ -18,7 +18,6 @@ const routeStatus = new Map([
   ['/dashboard', ['working', 'Core landing page is routed and implemented', '']],
   ['/workshop', ['working', 'Workshop status page exists', '']],
   ['/intake', ['working', 'Vehicle intake page is routed and workflow-backed', '']],
-  ['/intake/new', ['working', 'Intake modal page exists for new intake flow', '']],
   ['/repair-orders/new', ['working', 'Repair order creation page is routed and workflow-backed', '']],
   ['/repair-orders', ['working', 'Repair orders list page exists', '']],
   ['/repair-orders/:id', ['working', 'Repair order detail page exists', '']],

@@ -26,8 +26,8 @@ const validateIntake = (body) => {
     return { error: { details: errors } };
   }
 
-  if (!Number.isInteger(Number(intake.MaKH)) || Number(intake.MaKH) <= 0) errors.push({ message: '"MaKH" must be a positive integer' });
-  if (!Number.isInteger(Number(intake.MaXe)) || Number(intake.MaXe) <= 0) errors.push({ message: '"MaXe" must be a positive integer' });
+  if (intake.MaKH !== null && intake.MaKH !== undefined && (!Number.isInteger(Number(intake.MaKH)) || Number(intake.MaKH) <= 0)) errors.push({ message: '"MaKH" must be a positive integer or null' });
+  if (intake.MaXe !== null && intake.MaXe !== undefined && (!Number.isInteger(Number(intake.MaXe)) || Number(intake.MaXe) <= 0)) errors.push({ message: '"MaXe" must be a positive integer or null' });
   if (intake.MaNV !== null && intake.MaNV !== undefined && (!Number.isInteger(Number(intake.MaNV)) || Number(intake.MaNV) <= 0)) errors.push({ message: '"MaNV" must be a positive integer or null' });
   const receivedAt = toDate(intake.NgayTiepNhan);
   if (!receivedAt) errors.push({ message: '"NgayTiepNhan" must be a valid date' });

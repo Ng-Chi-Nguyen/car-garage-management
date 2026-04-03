@@ -22,6 +22,7 @@ const handleError = (res, error, messages) => {
 const messages = {
   createSuccess: "Tạo khách hàng thành công.",
   listSuccess: "Lấy danh sách khách hàng thành công.",
+  statsSuccess: "Lấy thống kê khách hàng thành công.",
   detailSuccess: "Lấy thông tin khách hàng thành công.",
   updateSuccess: "Cập nhật khách hàng thành công.",
   deleteSuccess: "Xóa khách hàng thành công.",
@@ -52,6 +53,19 @@ const createCustomerController = (service = customerService) => ({
         success: true,
         message: messages.listSuccess,
         data: result,
+      });
+    } catch (error) {
+      return handleError(res, error, messages);
+    }
+  },
+  getCustomerStats: async (req, res) => {
+    try {
+      const stats = await service.getCustomerStats(req.validatedQuery ?? req.query);
+
+      return res.json({
+        success: true,
+        message: messages.statsSuccess,
+        data: { stats },
       });
     } catch (error) {
       return handleError(res, error, messages);

@@ -22,6 +22,6 @@ export function useRevenueReportQuery(params) {
   return useQuery({
     queryKey: reportKeys.revenue(params),
     queryFn: () => fetchRevenueReport(params),
-    enabled: !!params?.from && !!params?.to && !!params?.granularity,
+    enabled: !!params?.from && !!params?.to,
   });
 }

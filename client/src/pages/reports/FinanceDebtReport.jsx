@@ -16,8 +16,18 @@ export default function FinanceDebtReport() {
 
   const { data, isLoading, isError } = useReceivablesQuery(filters);
 
+  const fallbackTotalDebt = (data?.items || []).reduce((sum, item) => {
+    const debt = Number(item?.outstandingDebt ?? item?.TienNoHienTai ?? item?.TienNo ?? 0);
+    return sum + (Number.isFinite(debt) ? debt : 0);
+  }, 0);
+
+  const totalDebtValue =
+    data?.summary?.totalOutstandingDebt
+    ?? data?.summary?.totalDebt
+    ?? fallbackTotalDebt;
+
   const formatCurrency = (val) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(val ?? 0));
   };
 
   const handleExport = async () => {
@@ -31,7 +41,7 @@ export default function FinanceDebtReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };
@@ -76,11 +86,11 @@ export default function FinanceDebtReport() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <StatCard
               title="Tổng công nợ"
-              value={formatCurrency(data?.summary?.totalDebt || 0)}
+              value={formatCurrency(totalDebtValue)}
             />
             <StatCard
               title="Số lượng nợ"
-              value={data?.summary?.debtorCount || 0}
+              value={data?.summary?.debtorCount ?? data?.pagination?.totalItems ?? data?.items?.length ?? 0}
             />
           </div>
 
@@ -99,9 +109,17 @@ export default function FinanceDebtReport() {
                 <tbody className="divide-y divide-gray-200">
                   {data?.items?.map((item, index) => (
                     <tr key={index}>
-                      <td className="px-4 py-2">{filters.groupBy === 'vehicle' ? item.BienSo : item.TenKhachHang}</td>
-                      <td className="px-4 py-2">{filters.groupBy === 'vehicle' ? item.customerName : item.DienThoai}</td>
-                      <td className="px-4 py-2 text-right">{formatCurrency(item.TienNo || item.TienNoHienTai)}</td>
+                      <td className="px-4 py-2">
+                        {filters.groupBy === 'vehicle'
+                          ? (item.licensePlate || item.BienSo)
+                          : (item.customerName || item.TenKhachHang)}
+                      </td>
+                      <td className="px-4 py-2">
+                        {filters.groupBy === 'vehicle'
+                          ? (item.customerName || item.TenKhachHang)
+                          : (item.phoneNumber || item.DienThoai)}
+                      </td>
+                      <td className="px-4 py-2 text-right">{formatCurrency(item.outstandingDebt ?? item.TienNoHienTai ?? item.TienNo ?? 0)}</td>
                       <td className="px-4 py-2 text-center">
                         <Link 
                           to={`/finance/receivables?vehicleId=${filters.groupBy === 'vehicle' ? item.vehicleId : ''}`}

@@ -1,8 +1,10 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "../../components/ui/page-header";
 import { VehicleIntakeForm } from "../../features/intake/components/VehicleIntakeForm";
 
 export default function VehicleIntake() {
+  const navigate = useNavigate();
   const today = useMemo(
     () =>
       new Intl.DateTimeFormat("vi-VN", {
@@ -43,18 +45,12 @@ export default function VehicleIntake() {
                 <span className="text-base">📅</span>
                 <span>{today}</span>
               </div>
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm">
-                <p className="font-semibold">Hạn mức tiếp nhận</p>
-                <p className="mt-1 text-amber-700">
-                  Chỉ còn 03 lượt tiếp nhận miễn phí hôm nay.
-                </p>
-              </div>
             </div>
           }
           actions={actions}
         />
         <section className="overflow-hidden rounded-[30px] border border-slate-200/80 bg-white shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)]">
-          <VehicleIntakeForm variant="page" />
+          <VehicleIntakeForm variant="page" onSuccess={() => navigate("/workshop")} />
         </section>
       </div>
     </div>

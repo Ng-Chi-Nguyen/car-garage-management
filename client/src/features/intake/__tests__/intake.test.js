@@ -63,6 +63,7 @@ test("Intake components exist", () => {
   assert.ok(content.includes("useCustomersQuery"), "Customer search must be wired in");
   assert.ok(content.includes("useCustomersMutations"), "Customer creation must be wired in");
   assert.ok(content.includes("useCarBrandsQuery"), "Car brand options must come from backend");
+  assert.ok(!content.includes("Object.keys(vehicleCatalog"), "Brand list fallback to catalog must be removed");
   assert.ok(content.includes("useVehicleCatalogQuery"), "Model options must come from local JSON");
   assert.ok(flowContent.includes("buildIntakePayload"), "Submit flow must use the payload builder");
   assert.ok(!content.includes("const carBrands = ["), "Hardcoded brand list must be removed");
@@ -70,7 +71,7 @@ test("Intake components exist", () => {
   assert.ok(!content.includes("clean("), "Undefined clean function must be removed");
   assert.ok(content.includes("?.trim()"), "Search input should be sanitized locally");
   assert.ok(catalogQueryContent.includes("fetchIntakeVehicleCatalog"), "Vehicle catalog query must exist");
-  assert.ok(catalogApiContent.includes("intakeVehicleCatalog.json"), "Model options must come from local JSON");
+  assert.ok(catalogApiContent.includes("/data/car_data.json"), "Model options must come from public JSON");
 });
 
 test("submitIntakeFlow does not create customer when vehicle resolve fails", async () => {
@@ -102,4 +103,44 @@ test("submitIntakeFlow does not create customer when vehicle resolve fails", asy
   );
 
   assert.equal(createCustomerCalls, 0);
+});
+
+test("submitIntakeFlow keeps new vehicle intake moving when resolver misses", async () => {
+  let createCustomerCalls = 0;
+  let createVehicleCalls = 0;
+  let createIntakeCalls = 0;
+
+  await assert.doesNotReject(
+    submitIntakeFlow({
+      form: { licensePlate: "51G-123.45", note: "", ownerName: "Nguyen Van A", phone: "0900000000", address: "" },
+      selectedQuickTags: ["Xước nhẹ"],
+      selectedCustomer: null,
+      resolveVehicleByPlate: async () => {
+        throw new Error("Không tìm thấy xe.");
+      },
+      createCustomer: {
+        mutateAsync: async () => {
+          createCustomerCalls += 1;
+          return { MaKH: 8, TenChuXe: "Nguyen Van A", DienThoai: "0900000000", DiaChi: "" };
+        },
+      },
+      createVehicle: async () => {
+        createVehicleCalls += 1;
+        return { MaXe: 88 };
+      },
+      resolveBrandId: () => 1,
+      createIntakeMutation: {
+        mutateAsync: async () => {
+          createIntakeCalls += 1;
+          return { MaPhieuSC: 99 };
+        },
+      },
+      setSelectedCustomer: () => {},
+      buildPayload: () => ({}),
+    }),
+  );
+
+  assert.equal(createCustomerCalls, 1);
+  assert.equal(createVehicleCalls, 1);
+  assert.equal(createIntakeCalls, 1);
 });

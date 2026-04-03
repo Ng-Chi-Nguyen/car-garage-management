@@ -45,4 +45,9 @@ test('WorkshopStatusPanel phase2 UI contracts', async (t) => {
     assert.match(gridCode, /<button[^>]*onClick=\{onResetFilters\}[^>]*>/);
     assert.match(gridCode, /Không tìm thấy xe nào phù hợp với bộ lọc/);
   });
+
+  await t.test('WorkshopQueueGrid changes card border color dynamically by status', () => {
+    assert.match(gridCode, /const BORDER_COLORS = {/);
+    assert.match(gridCode, /BORDER_COLORS\[row\.status\.badge\]/);
+  });
 });

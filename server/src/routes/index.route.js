@@ -31,24 +31,23 @@ import vehicleRoute from "./management/vehicle.route.js";
 const apiPrefixV1 = "/api/v1";
 
 const Routes = (app) => {
-  // Nhóm middleware bắt buộc phải đăng nhập và có role Admin hoặc NhanVien
   const requireManagementAccess = [
     authMiddleware.requireAuth,
     authMiddleware.requireRoles(["Admin", "NhanVien"]),
   ];
+  const requireAdminAccess = [
+    authMiddleware.requireAuth,
+    authMiddleware.requireRoles(["Admin"]),
+  ];
 
-  // =========================
-  // API dashboard nội bộ cần đăng nhập + rate limit
-  // =========================
+  // Public routes
   app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
-
-  // =========================
-  // API KHÔNG cần đăng nhập
-  // =========================
   app.use(`${apiPrefixV1}/auth`, authRoute);
+
+  // Protected routes (management)
+  app.use(`${apiPrefixV1}/reports`, ...requireManagementAccess, reportExportRoute);
   app.use(`${apiPrefixV1}/activity`, ...requireManagementAccess, activityRoute);
-  app.use(`${apiPrefixV1}/admin/users`, ...requireManagementAccess, adminUsersRoute);
-  app.use(`${apiPrefixV1}/reports`, reportExportRoute);
+  app.use(`${apiPrefixV1}/admin/users`, ...requireAdminAccess, adminUsersRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
   app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);
@@ -71,9 +70,6 @@ const Routes = (app) => {
   app.use(`${apiPrefixV1}/payment-receipts`, ...requireManagementAccess, paymentReceiptRoute);
   app.use(`${apiPrefixV1}/reports/finance`, ...requireManagementAccess, financeReportRoute);
   app.use(`${apiPrefixV1}/settings`, ...requireManagementAccess, settingsRoute);
-  // =========================
-  // API CẦN đăng nhập
-  // =========================
 };
 
 export default Routes;

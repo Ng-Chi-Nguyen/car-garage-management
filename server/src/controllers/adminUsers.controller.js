@@ -3,6 +3,14 @@ import adminUsersService from "../services/adminUsers/adminUsers.service.js";
 const handleError = (res, error) =>
   res.status(error?.status || 500).json({ success: false, message: error?.message || "Đã xảy ra lỗi trong quá trình xử lý yêu cầu." });
 
+const forbidden = (res) =>
+  res.status(403).json({
+    success: false,
+    message: "Bạn không có quyền truy cập tài nguyên này.",
+  });
+
+const assertAdmin = (req) => req.user?.ChucVu === "Admin";
+
 const adminUsersController = {
   getAdminUsers: async (req, res) => {
     try {
@@ -14,6 +22,10 @@ const adminUsersController = {
   },
   updateAdminUser: async (req, res) => {
     try {
+      if (!assertAdmin(req)) {
+        return forbidden(res);
+      }
+
       const user = await adminUsersService.updateAdminUser(req.validatedParams?.id ?? req.params.id, req.body);
       return res.json({ success: true, message: "Cập nhật tài khoản thành công.", data: { user } });
     } catch (error) {
@@ -22,6 +34,10 @@ const adminUsersController = {
   },
   createAdminUser: async (req, res) => {
     try {
+      if (!assertAdmin(req)) {
+        return forbidden(res);
+      }
+
       const user = await adminUsersService.createAdminUser(req.body);
       return res.status(201).json({ success: true, message: "Tạo tài khoản thành công.", data: { user } });
     } catch (error) {
@@ -30,6 +46,10 @@ const adminUsersController = {
   },
   resetAdminUserPassword: async (req, res) => {
     try {
+      if (!assertAdmin(req)) {
+        return forbidden(res);
+      }
+
       const user = await adminUsersService.resetAdminUserPassword(req.validatedParams?.id ?? req.params.id, req.body);
       return res.json({ success: true, message: "Đặt lại mật khẩu thành công.", data: { user } });
     } catch (error) {

@@ -1,98 +1,50 @@
-import { authStorage } from "./auth.storage.js";
+import axiosClient from "../../lib/axiosClient.js";
 
-async function readJsonSafe(response) {
-  const rawBody = await response.text();
-
-  if (!rawBody) {
-    return {};
-  }
-
-  try {
-    return JSON.parse(rawBody);
-  } catch {
-    throw new Error("Máy chủ trả về phản hồi không hợp lệ. Vui lòng thử lại.");
-  }
+function normalizeApiError(error, fallbackMessage) {
+  throw new Error(error?.response?.data?.message || fallbackMessage);
 }
 
 export async function login(credentials) {
-  const response = await fetch("/api/v1/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  try {
+    const response = await axiosClient.post("/api/v1/auth/login", {
       Email: credentials.username,
       MatKhau: credentials.password
-    }),
-  });
-
-  const data = await readJsonSafe(response);
-
-  if (!response.ok) {
-    throw new Error(data.message || "Đăng nhập thất bại");
+    });
+    return response.data;
+  } catch (error) {
+    normalizeApiError(error, "Đăng nhập thất bại");
   }
-
-  return data;
 }
 
 export async function forgotPassword(email) {
-  const response = await fetch("/api/v1/auth/forgot-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  try {
+    const response = await axiosClient.post("/api/v1/auth/forgot-password", {
       Email: email,
-    }),
-  });
-
-  const data = await readJsonSafe(response);
-
-  if (!response.ok) {
-    throw new Error(data.message || "Gửi yêu cầu thất bại");
+    });
+    return response.data;
+  } catch (error) {
+    normalizeApiError(error, "Gửi yêu cầu thất bại");
   }
-
-  return data;
 }
 
 export async function changePassword(payload) {
-  const token = authStorage.getToken();
-  const response = await fetch("/api/v1/auth/change-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await readJsonSafe(response);
-
-  if (!response.ok) {
-    throw new Error(data.message || "Đổi mật khẩu thất bại");
+  try {
+    const response = await axiosClient.post("/api/v1/auth/change-password", payload);
+    return response.data;
+  } catch (error) {
+    normalizeApiError(error, "Đổi mật khẩu thất bại");
   }
-
-  return data;
 }
 
 export async function resetPassword({ token, newPassword, confirmPassword }) {
-  const response = await fetch("/api/v1/auth/reset-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  try {
+    const response = await axiosClient.post("/api/v1/auth/reset-password", {
       Token: token,
       MatKhauMoi: newPassword,
       XacNhanMatKhauMoi: confirmPassword,
-    }),
-  });
-
-  const data = await readJsonSafe(response);
-
-  if (!response.ok) {
-    throw new Error(data.message || "Đặt lại mật khẩu thất bại");
+    });
+    return response.data;
+  } catch (error) {
+    normalizeApiError(error, "Đặt lại mật khẩu thất bại");
   }
-
-  return data;
 }

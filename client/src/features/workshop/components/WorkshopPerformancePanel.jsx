@@ -9,40 +9,44 @@ export function WorkshopPerformancePanel({ metrics }) {
 
   const completionRate = Math.round((completed / total) * 100);
   const activeRate = Math.round((inProgress / total) * 100);
+  const todayCount = metrics.total || 0;
 
   return (
-    <div className="bg-surface-container-low rounded-[24px] p-6 mt-8">
-      <h3 className="text-lg font-bold text-on-surface mb-6">
-        Hiệu suất xưởng
-      </h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="flex items-center p-4 bg-surface-container-highest rounded-xl">
-          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mr-4">
-            <span className="material-symbols-outlined">speed</span>
-          </div>
-          <div>
-            <p className="text-sm text-on-surface-variant">Tỷ lệ hoàn thành</p>
-            <p className="text-2xl font-bold text-on-surface">{completionRate}%</p>
-          </div>
-        </div>
-
-        <div className="flex items-center p-4 bg-surface-container-highest rounded-xl">
-          <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mr-4">
-            <span className="material-symbols-outlined">monitoring</span>
-          </div>
-          <div>
-            <p className="text-sm text-on-surface-variant">Xe đang xử lý</p>
-            <p className="text-2xl font-bold text-on-surface">{activeRate}%</p>
+    <div className="bg-surface-container-low p-6 rounded-2xl mt-8">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold text-on-surface">Hiệu suất xưởng</h3>
+        <span className="text-sm text-on-surface-variant">Cập nhật: Mới nhất</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">Tỷ lệ hoàn thành</p>
+          <p className="text-2xl font-bold">{completionRate}%</p>
+          <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+            <div className="h-full bg-primary" style={{ width: `${completionRate}%` }}></div>
           </div>
         </div>
 
-        <div className="flex items-center p-4 bg-surface-container-highest rounded-xl">
-          <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mr-4">
-            <span className="material-symbols-outlined">assignment_turned_in</span>
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">Xe đang xử lý</p>
+          <p className="text-2xl font-bold">{activeRate}%</p>
+          <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+            <div className="h-full bg-primary" style={{ width: `${activeRate}%` }}></div>
           </div>
-          <div>
-            <p className="text-sm text-on-surface-variant">Đã giao trong ngày</p>
-            <p className="text-2xl font-bold text-on-surface">{completed}</p>
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">Số lệnh trong ngày</p>
+          <p className="text-2xl font-bold">{todayCount}</p>
+          <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+            <div className="h-full bg-primary" style={{ width: '45%' }}></div>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-xs font-semibold text-secondary uppercase tracking-widest">Đã giao</p>
+          <p className="text-2xl font-bold">{completed}</p>
+          <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+            <div className="h-full bg-primary" style={{ width: '90%' }}></div>
           </div>
         </div>
       </div>

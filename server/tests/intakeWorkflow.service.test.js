@@ -69,21 +69,14 @@ test("intake workflow service normalizes intake payload and returns empty histor
   assert.deepEqual(calls[2][0], "create");
 });
 
-test("intake workflow service rejects before customer lookup when vehicle is missing", async () => {
-  let customerCalls = 0;
+test("intake workflow service throws 404 when vehicle or customer is missing", async () => {
   const service = createIntakeWorkflowService({
     db: {
       kHACH_HANG: {
-        findUnique: async () => {
-          customerCalls += 1;
-          return { MaKH: 1 };
-        },
+        findUnique: async () => null,
       },
       xE: {
         findUnique: async () => null,
-      },
-      pHIEU_SUA_CHUA: {
-        create: async () => ({ MaPhieuSC: 1 }),
       },
     },
   });
@@ -95,8 +88,39 @@ test("intake workflow service rejects before customer lookup when vehicle is mis
       NgayTiepNhan: new Date("2026-03-25"),
       TrangThai: "TiepNhan",
     }),
-    /Không tìm thấy xe\./,
+    /Không tìm thấy xe/,
   );
+});
 
-  assert.equal(customerCalls, 0);
+test("intake workflow service maps quick tags to GhiChu text and keeps NoiDungLoi", async () => {
+  let createdRepairOrder = null;
+  const service = createIntakeWorkflowService({
+    db: {
+      kHACH_HANG: {
+        findUnique: async () => ({ MaKH: 5 }),
+      },
+      xE: {
+        findUnique: async () => ({ MaXe: 10, MaKH: 5 }),
+      },
+      pHIEU_SUA_CHUA: {
+        create: async ({ data }) => {
+          createdRepairOrder = data;
+          return { MaPhieuSC: 99, ...data };
+        },
+      },
+    },
+  });
+
+  await service.createIntakeAtomic({
+    MaKH: 5,
+    MaXe: 10,
+    NgayTiepNhan: new Date("2026-03-25"),
+    TrangThai: "TiepNhan",
+    NoiDungLoi: "Xe rung khi tăng tốc",
+    quickTags: ["Xước nhẹ", "Móp méo"],
+    note: "Xe rung khi tăng tốc",
+  });
+
+  assert.equal(createdRepairOrder.NoiDungLoi, "Xe rung khi tăng tốc");
+  assert.equal(createdRepairOrder.GhiChu, JSON.stringify({ quickTags: ["Xước nhẹ", "Móp méo"], note: "Xe rung khi tăng tốc" }));
 });

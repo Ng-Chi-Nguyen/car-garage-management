@@ -7,7 +7,11 @@ import { AddMaterialModal } from "../../features/inventory/components/AddMateria
 
 export default function InventoryPage() {
   const [isQuickImportOpen, setIsQuickImportOpen] = useState(false);
-  const [isAddMaterialOpen, setIsAddMaterialOpen] = useState(false);
+  const [materialModal, setMaterialModal] = useState(null);
+
+  const openCreateMaterial = () => setMaterialModal({ mode: "create", item: null });
+  const openEditMaterial = (item) => setMaterialModal({ mode: "edit", item });
+  const closeMaterialModal = () => setMaterialModal(null);
 
   return (
     <div className="space-y-8">
@@ -17,7 +21,7 @@ export default function InventoryPage() {
         actions={
           <div className="flex gap-3">
             <button 
-              onClick={() => setIsAddMaterialOpen(true)}
+              onClick={openCreateMaterial}
               className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl font-semibold text-sm shadow-md hover:scale-[0.98] transition-transform duration-300"
             >
               <span className="material-symbols-outlined">add</span>
@@ -39,14 +43,18 @@ export default function InventoryPage() {
       />
 
       <InventoryStats />
-      <InventoryList />
+      <InventoryList onEdit={openEditMaterial} />
 
       {isQuickImportOpen && (
         <QuickImportModal onClose={() => setIsQuickImportOpen(false)} />
       )}
 
-      {isAddMaterialOpen && (
-        <AddMaterialModal onClose={() => setIsAddMaterialOpen(false)} />
+      {materialModal && (
+        <AddMaterialModal
+          mode={materialModal.mode}
+          initialValues={materialModal.item}
+          onClose={closeMaterialModal}
+        />
       )}
     </div>
   );

@@ -174,10 +174,9 @@ test("vehicleService getVehicleById returns MauXe", async () => {
       findUnique: async () => ({
         MaXe: 90,
         BienSo: "18L-10090",
-        MauXe: "Đen",
+        MauXe: "Bạc",
         MaHieuXe: 10,
         MaKH: 35,
-        MauXe: "Bạc",
       }),
     },
   };

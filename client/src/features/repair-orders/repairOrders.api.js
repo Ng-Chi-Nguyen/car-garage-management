@@ -28,6 +28,11 @@ export const createRepairOrder = async (payload) => {
   return response.data;
 };
 
+export const updateRepairOrder = async (id, payload) => {
+  const response = await axiosClient.put(`/api/v1/repair-orders/${id}`, payload);
+  return response.data;
+};
+
 export const fetchVehicles = async () => {
   const response = await axiosClient.get(`/api/v1/vehicles`);
   const data = response.data;

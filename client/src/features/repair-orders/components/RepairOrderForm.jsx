@@ -147,7 +147,7 @@ export function RepairOrderForm() {
            await saveRow(row);
         }
         toast.success("Hoàn tất phiếu sửa chữa thành công!");
-        navigate("/repair-orders");
+        navigate("/workshop");
         return;
       }
 
@@ -171,7 +171,7 @@ export function RepairOrderForm() {
 
       await createRepairOrder(payload);
       toast.success("Hoàn tất phiếu sửa chữa thành công!");
-      navigate("/repair-orders");
+      navigate("/workshop");
     } catch (error) {
       toast.error("Lỗi khi tạo phiếu: " + (error.response?.data?.message || error.message));
     }
@@ -363,7 +363,7 @@ export function RepairOrderForm() {
       <div className="flex justify-end gap-3">
         <button
           type="button"
-          onClick={() => navigate('/repair-orders')}
+          onClick={() => navigate('/workshop')}
           className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground font-medium hover:bg-muted"
         >
           Hủy

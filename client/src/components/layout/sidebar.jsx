@@ -1,50 +1,62 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { authStorage } from '../../features/auth/auth.storage';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { authStorage } from "../../features/auth/auth.storage";
+import { parseAccessTokenRole } from "../../features/auth/auth.session";
 
 export function Sidebar() {
+  const role = parseAccessTokenRole(authStorage.getToken());
+  
   const navItems = [
-    { name: 'Hệ thống', path: '/dashboard', icon: 'dashboard' },
-    { name: 'Nhân sự', path: '/settings/employees', icon: 'badge' },
-    { name: 'Khách hàng', path: '/customers', icon: 'people' },
-    { name: 'Lễ tân', path: '/workshop', icon: 'support_agent' },
-    { name: 'Kho', path: '/inventory', icon: 'inventory_2' },
-    { name: 'Sửa chữa', path: '/repair-orders', icon: 'build' },
-    { name: 'Tài Chính', path: '/finance/receivables', icon: 'payments' },
-    { name: 'Báo Cáo', path: '/reports', icon: 'bar_chart' },
+    { name: "Hệ thống", path: "/dashboard", icon: "dashboard" },
+    { name: "Báo Cáo", path: "/reports", icon: "bar_chart" },
+    { name: "Lễ tân", path: "/workshop", icon: "support_agent" },
+    ...(role === "Admin" ? [{ name: "Nhân sự", path: "/settings/employees", icon: "badge" }] : []),
+    { name: "Khách hàng", path: "/customers", icon: "people" },
+    { name: "Kho", path: "/inventory", icon: "inventory_2" },
+    { name: "Tài Chính", path: "/finance/receivables", icon: "payments" },
+    { name: "Cài đặt", path: "/settings", icon: "settings", end: true },
   ];
 
   const handleLogout = (e) => {
     e.preventDefault();
     authStorage.clearSession();
-    window.location.replace('/login');
+    window.location.replace("/login");
   };
 
   return (
     <div className="w-64 bg-slate-50 border-r border-slate-200 text-slate-800 flex flex-col h-screen fixed top-0 left-0">
       <div className="p-4 flex flex-col gap-1 border-b border-slate-200">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center font-bold text-white">PE</div>
-          <span className="font-bold text-lg text-slate-900 tracking-tight">Precision Engine</span>
+          <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center font-bold text-white">
+            PE
+          </div>
+          <span className="font-bold text-lg text-slate-900 tracking-tight">
+            Precision Engine
+          </span>
         </div>
-        <span className="text-xs font-medium text-slate-500 uppercase tracking-wider pl-10">Quản lý Garage</span>
+        <span className="text-xs font-medium text-slate-500 uppercase tracking-wider pl-10">
+          Quản lý Garage
+        </span>
       </div>
       <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 transition-all border-l-4 ${
                 isActive
-                  ? 'bg-blue-50 border-blue-600 text-blue-700 font-semibold'
-                  : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium'
+                  ? "bg-blue-50 border-blue-600 text-blue-700 font-semibold"
+                  : "border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium"
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <span className={`material-symbols-outlined text-[20px] ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+                <span
+                  className={`material-symbols-outlined text-[20px] ${isActive ? "text-blue-600" : "text-slate-400"}`}
+                >
                   {item.icon}
                 </span>
                 <span className="text-sm">{item.name}</span>
@@ -58,7 +70,9 @@ export function Sidebar() {
           href="#"
           className="flex items-center gap-3 px-4 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-md transition-colors cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px] text-slate-400">support_agent</span>
+          <span className="material-symbols-outlined text-[20px] text-slate-400">
+            support_agent
+          </span>
           <span className="font-medium text-sm">Hỗ trợ</span>
         </a>
         <a

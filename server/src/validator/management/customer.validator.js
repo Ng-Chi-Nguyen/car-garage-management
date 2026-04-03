@@ -10,6 +10,9 @@ const CUSTOMER_FILTER_FIELDS = {
   DiaChi: { type: "string" },
   ChucVu: { type: "enum", values: ["NhanVien", "KhachHang"] },
   TrangThai: { type: "enum", values: ["HoatDong", "BiKhoa", "DaXoa"], multi: true },
+  BienSo: { type: "string" },
+  CongNoFrom: { type: "decimal", min: 0 },
+  CongNoTo: { type: "decimal", min: 0 },
   NgayTaoFrom: { type: "dateFrom", targetField: "NgayTao" },
   NgayTaoTo: { type: "dateTo", targetField: "NgayTao" },
   NgayCapNhatFrom: { type: "dateFrom", targetField: "NgayCapNhat" },
@@ -37,5 +40,9 @@ const customerSchema = createCrudValidator({
     .unknown(false),
   filterFields: CUSTOMER_FILTER_FIELDS,
 });
+
+customerSchema.stats = {
+  query: Joi.object({}).unknown(false),
+};
 
 export default customerSchema;
