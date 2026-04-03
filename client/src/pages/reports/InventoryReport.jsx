@@ -3,7 +3,7 @@ import { PageHeader } from "../../components/ui/page-header";
 import { StatCard } from "../../components/ui/stat-card";
 import { useInventoryReportQuery } from "../../features/reports/reports.hooks";
 import { exportInventoryReport } from "../../features/reports/reports.api";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function InventoryReport() {
   const [filters, setFilters] = useState({
