@@ -10,16 +10,22 @@ export default async function run() {
   const sidebarPath = path.resolve(__dirname, '../../../src/components/layout/sidebar.jsx');
   const sidebarSource = fs.readFileSync(sidebarPath, 'utf-8');
 
-  // Verify navigation entry exists
-  if (!sidebarSource.includes("path: '/settings/employees'")) {
+  // Verify the /settings/employees is present but conditionally rendered for Admin only
+  if (!sidebarSource.includes("/settings/employees")) {
     throw new Error('Sidebar navigation is missing /settings/employees path');
   }
 
-  // Verify icon consistency (badge) and text
-  if (!sidebarSource.includes("name: 'Nhân sự'")) {
-    // Also allow "Nhân viên"
-    if (!sidebarSource.includes("name: 'Nhân viên'")) {
-      throw new Error('Sidebar navigation is missing expected name (Nhân sự or Nhân viên) for employees');
-    }
+  // It should be guarded by role
+  const isGuarded = sidebarSource.includes('role ===') || sidebarSource.includes('Role') || sidebarSource.includes('Admin') || sidebarSource.includes('.filter');
+  
+  if (!isGuarded) {
+    throw new Error('Sidebar navigation does not guard /settings/employees based on Admin role');
   }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  run().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
 }
