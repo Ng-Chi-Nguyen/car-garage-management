@@ -9,6 +9,8 @@ export default async function run() {
       MaKH: 1,
       MaXe: 2,
       NoiDungLoi: 'Test error',
+      quickTags: ['Xước nhẹ'],
+      note: 'Ghi chú',
       NgayTiepNhan: new Date().toISOString()
     }
   };
@@ -19,11 +21,11 @@ export default async function run() {
   }
 
   const invalidData = {
-    intake: { MaKH: 1 } // missing MaXe, BienSoXe, NgayTiepNhan
+    intake: { MaKH: 1 }
   };
 
   const resultInvalid = intakeWorkflowSchema.create.body.validate(invalidData);
   if (!resultInvalid.error) {
-    throw new Error('Reception contract should have rejected missing MaXe/BienSoXe/NgayTiepNhan');
+    throw new Error('Reception contract should have rejected missing MaXe/NgayTiepNhan/NoiDungLoi');
   }
 }
