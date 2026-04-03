@@ -1,3 +1,6 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import { routeManifest } from '../../../src/app/routeManifest.js';
 
 export default async function run() {
@@ -26,6 +29,11 @@ export default async function run() {
   const dupAdminPages = routeManifest.filter(r => r.componentPath === 'src/pages/admin/AdminUsersPage.jsx');
   if (dupAdminPages.length !== 1) {
     throw new Error(`Expected AdminUsersPage.jsx to be mapped exactly once, found ${dupAdminPages.length}`);
+  }
+
+  const pageSource = await fs.readFile(path.resolve(process.cwd(), 'src/pages/admin/AdminUsersPage.jsx'), 'utf-8');
+  if (pageSource.includes('search: queryParams.search')) {
+    throw new Error('AdminUsersPage must not pass search into useAdminUsersQuery');
   }
 
   console.log('System employees routing constraints passed.');

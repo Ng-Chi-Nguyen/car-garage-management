@@ -21,9 +21,11 @@ test("adminUsersService getAdminUsers returns sanitized paginated users", async 
     },
   });
 
-  const result = await service.getAdminUsers({ page: 2, limit: 5, search: "admin" });
+  const result = await service.getAdminUsers({ page: 2, limit: 5, search: "admin", role: "Admin", status: "HoatDong" });
 
-  assert.equal(calls.count.where.OR.length, 4);
+  assert.equal(calls.count.where.OR.length, 3);
+  assert.deepEqual(calls.count.where.ChucVu, "Admin");
+  assert.deepEqual(calls.count.where.TrangThai, "HoatDong");
   assert.equal(calls.findMany.skip, 5);
   assert.equal(result.pagination.page, 2);
   assert.equal(result.users[0].MatKhau, undefined);

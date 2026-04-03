@@ -18,10 +18,11 @@ export default function AdminUsersPage() {
     setSearchInput(queryParams.search || "");
   }, [searchParams]);
 
-  const query = useAdminUsersQuery({ 
-    page: queryParams.page, 
-    limit: queryParams.limit, 
-    search: queryParams.search 
+  const query = useAdminUsersQuery({
+    page: queryParams.page,
+    limit: queryParams.limit,
+    role: queryParams.role,
+    status: queryParams.status,
   });
 
   const users = useMemo(() => query.data?.users ?? [], [query.data]);
@@ -29,11 +30,14 @@ export default function AdminUsersPage() {
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
-      if (queryParams.role && user.ChucVu !== queryParams.role) return false;
-      if (queryParams.status && user.TrangThai !== queryParams.status) return false;
+      if (queryParams.search) {
+        const needle = queryParams.search.toLowerCase();
+        const haystack = `${user.TenChuXe ?? ""} ${user.Email ?? ""} ${user.DienThoai ?? ""}`.toLowerCase();
+        if (!haystack.includes(needle)) return false;
+      }
       return true;
     });
-  }, [users, queryParams.role, queryParams.status]);
+  }, [users, queryParams.search]);
 
   const updateParams = (newParams) => {
     const updated = { ...queryParams, ...newParams };
