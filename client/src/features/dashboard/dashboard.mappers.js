@@ -30,8 +30,8 @@ export function normalizeDashboardData(rawData) {
         return {
             id: ro.MaPhieuSC,
             licensePlate: vehicle?.BienSo || 'Không rõ',
-            vehicleModel: vehicle?.HieuXe?.TenHieuXe || (vehicle?.MaHieuXe ? `Hãng xe ${vehicle.MaHieuXe}` : 'Không rõ'),
-            customerName: customer?.TenChuXe || 'Không rõ',
+            vehicleModel: vehicle?.MauXe || vehicle?.HieuXe?.TenHieuXe || (vehicle?.MaHieuXe ? `Hãng xe ${vehicle.MaHieuXe}` : 'Không rõ'),
+            customerName: customer?.TenChuXe || vehicle?.KhachHang?.TenChuXe || 'Không rõ',
             createdAt: ro.NgayTao ?? null,
             status: ro.TrangThai
         };
