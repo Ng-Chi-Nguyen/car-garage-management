@@ -285,3 +285,83 @@ test("repair order update qua validator khong reset TongTien khi payload khong g
   assert.equal(updated.TongTien, 450000);
   assert.equal(Object.hasOwn(fixture.state.updateCalls[0], "TongTien"), false);
 });
+
+test("repair order list search duoc xe va khach hang", async () => {
+  const createRepairOrderService = await loadCreateRepairOrderService();
+  let receivedWhere = null;
+
+  const service = createRepairOrderService({
+    db: {
+      pHIEU_SUA_CHUA: {
+        count: async ({ where }) => {
+          receivedWhere ??= where;
+          return 1;
+        },
+        findMany: async ({ where }) => {
+          receivedWhere ??= where;
+          return [];
+        },
+      },
+    },
+  });
+
+  await service.getRepairOrderList({
+    search: "0909000001",
+  });
+
+  assert.deepEqual(receivedWhere, {
+    OR: [
+      {
+        NoiDungLoi: {
+          contains: "0909000001",
+        },
+      },
+      {
+        GhiChu: {
+          contains: "0909000001",
+        },
+      },
+      {
+        Xe: {
+          BienSo: {
+            contains: "0909000001",
+          },
+        },
+      },
+      {
+        Xe: {
+          MauXe: {
+            contains: "0909000001",
+          },
+        },
+      },
+      {
+        Xe: {
+          HieuXe: {
+            TenHieuXe: {
+              contains: "0909000001",
+            },
+          },
+        },
+      },
+      {
+        Xe: {
+          KhachHang: {
+            TenChuXe: {
+              contains: "0909000001",
+            },
+          },
+        },
+      },
+      {
+        Xe: {
+          KhachHang: {
+            DienThoai: {
+              contains: "0909000001",
+            },
+          },
+        },
+      },
+    ],
+  });
+});
