@@ -16,8 +16,6 @@ export function WorkshopStatusPanel({
   filters,
   updateFilters,
   onRetry,
-  onResetFilters,
-  hasActiveFilters,
 }) {
   const currentStatus = filters?.status || "all";
   const currentPage = Number(filters?.page) || 1;
@@ -46,6 +44,8 @@ export function WorkshopStatusPanel({
   const handleReset = () => {
     updateFilters({ status: "all", range: "7d", search: "", page: 1 });
   };
+
+  const hasActiveFilters = currentStatus !== "all" || filters?.range !== "7d" || currentSearch !== "";
 
   return (
     <div className="bg-surface-container-low rounded-[24px] p-6">
@@ -112,7 +112,7 @@ export function WorkshopStatusPanel({
         isError={isError}
         isEmpty={!data?.activeRows?.length}
         onRetry={onRetry}
-        onResetFilters={onResetFilters}
+        onResetFilters={handleReset}
         hasActiveFilters={hasActiveFilters}
       />
 

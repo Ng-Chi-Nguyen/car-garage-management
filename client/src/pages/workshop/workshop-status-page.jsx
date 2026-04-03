@@ -14,8 +14,6 @@ export default function WorkshopStatusPage() {
   const navigate = useNavigate();
 
   const onRetry = () => refetch();
-  const onResetFilters = () => updateFilters({ status: "all", range: "7d", search: "", page: 1 });
-  const hasActiveFilters = filters?.status !== "all" || filters?.range !== "7d" || (filters?.search || "") !== "";
 
   const topActions = (
     <>
@@ -49,9 +47,7 @@ export default function WorkshopStatusPage() {
       />
       <StateShell
         isLoading={isLoading}
-        isError={isError}
         loadingFallback={<LoadingState message="Đang tải dữ liệu xưởng..." />}
-        errorFallback={<ErrorState message="Lỗi tải dữ liệu xưởng" />}
       >
         <WorkshopKpiSection data={data} isLoading={isLoading} isError={isError} />
 
@@ -63,8 +59,6 @@ export default function WorkshopStatusPage() {
           filters={filters}
           updateFilters={updateFilters}
           onRetry={onRetry}
-          onResetFilters={onResetFilters}
-          hasActiveFilters={hasActiveFilters}
         />
       </StateShell>
     </div>
