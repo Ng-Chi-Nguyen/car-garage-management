@@ -1,0 +1,9 @@
+{
+  "Toyota": ["Camry", "Vios", "Corolla Cross", "Fortuner"],
+  "Honda": ["City", "Civic", "CR-V"],
+  "Mazda": ["Mazda2", "Mazda3", "CX-5"],
+  "Hyundai": ["Accent", "Elantra", "Santa Fe"],
+  "Kia": ["Morning", "Seltos", "Sorento"],
+  "Mercedes-Benz": ["C-Class", "E-Class", "GLC"],
+  "BMW": ["3 Series", "5 Series", "X5"]
+}

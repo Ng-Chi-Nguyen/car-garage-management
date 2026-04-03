@@ -8,11 +8,27 @@ const clientDir = path.resolve(__dirname, '../../../');
 
 export default async function run() {
   const formContent = fs.readFileSync(path.join(clientDir, 'src/features/intake/components/VehicleIntakeForm.jsx'), 'utf-8');
-  if (formContent.includes('vehicleType')) {
-    throw new Error('vehicleType field should not be in intake form');
+  const requiredSignals = [
+    'useCustomersQuery',
+    'useCustomersMutations',
+    'useCarBrandsQuery',
+    'useVehicleCatalogQuery',
+    'resolveVehicleByPlate(',
+    'buildIntakePayload(',
+    'mutateAsync(',
+  ];
+
+  for (const signal of requiredSignals) {
+    if (!formContent.includes(signal)) {
+      throw new Error(`intake form missing required wiring: ${signal}`);
+    }
   }
-  if (!formContent.includes('intakeVehicleResolver.api') && !formContent.includes('useVehicleResolver')) {
-    throw new Error('resolver API usage should exist in intake form');
+
+  const forbiddenSignals = ['vehicleType', 'const carBrands = [', 'const carModels = ['];
+  for (const signal of forbiddenSignals) {
+    if (formContent.includes(signal)) {
+      throw new Error(`intake form still contains forbidden scaffolding: ${signal}`);
+    }
   }
   
   const manifest = fs.readFileSync(path.join(clientDir, 'src/app/routeManifest.js'), 'utf-8');
