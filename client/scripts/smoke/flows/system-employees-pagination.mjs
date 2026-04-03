@@ -14,6 +14,12 @@ export default async function run() {
     }
   };
 
+  await assertFileIncludes("client/src/features/adminUsers/adminUsers.api.js", [
+    "return {",
+    "users: unwrap(response, \"users\"),",
+    "pagination: unwrap(response, \"pagination\")"
+  ]);
+
   await assertFileIncludes("client/src/features/adminUsers/adminUsers.query.js", [
     "page",
     "limit",

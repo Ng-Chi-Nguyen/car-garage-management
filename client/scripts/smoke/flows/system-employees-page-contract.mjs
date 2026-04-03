@@ -14,6 +14,21 @@ export default async function run() {
     }
   };
 
+  const assertFileExcludes = async (relPath, substrings) => {
+    const fullPath = path.resolve(process.cwd(), relPath);
+    const content = await fs.readFile(fullPath, "utf-8");
+    for (const str of substrings) {
+      if (content.includes(str)) {
+        throw new Error(`File ${relPath} contains forbidden string: "${str}"`);
+      }
+    }
+  };
+
+  await assertFileExcludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
+    "pagination.totalPages || 1",
+    "pagination.totalPages === 0 ? 1 : pagination.totalPages"
+  ]);
+
   await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
     "AdminUsersHeader",
     "AdminUsersStats",

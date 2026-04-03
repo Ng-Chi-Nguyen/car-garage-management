@@ -1,6 +1,8 @@
 export function parseAdminUsersQuery(searchParams) {
-  const page = parseInt(searchParams.get("page"), 10) || 1;
-  const limit = parseInt(searchParams.get("limit"), 10) || 10;
+  let page = parseInt(searchParams.get("page"), 10);
+  page = (!isNaN(page) && page > 0) ? page : 1;
+  let limit = parseInt(searchParams.get("limit"), 10);
+  limit = (!isNaN(limit) && limit > 0) ? limit : 10;
   const search = searchParams.get("search") || "";
   const role = searchParams.get("role") || "";
   const status = searchParams.get("status") || "";
