@@ -6,7 +6,6 @@ import { WorkshopKpiSection, WorkshopQueueSection } from "./workshop-sections";
 import { getWorkshopRouteTarget } from "../../features/workshop/workshop.interactions";
 import { StateShell } from "../../components/ui/state-shell";
 import { LoadingState } from "../../components/ui/loading-state";
-import { ErrorState } from "../../components/ui/error-state";
 
 export default function WorkshopStatusPage() {
   const { data, isLoading, isFetching, isError, filters, updateFilters, refetch } =
