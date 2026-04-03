@@ -69,34 +69,48 @@ test("intake workflow service normalizes intake payload and returns empty histor
   assert.deepEqual(calls[2][0], "create");
 });
 
-test("intake workflow service rejects before customer lookup when vehicle is missing", async () => {
+test("intake workflow service creates missing records for new vehicle intake", async () => {
   let customerCalls = 0;
+  let vehicleCreateCalls = 0;
+  let customerCreateCalls = 0;
   const service = createIntakeWorkflowService({
     db: {
       kHACH_HANG: {
         findUnique: async () => {
           customerCalls += 1;
-          return { MaKH: 1 };
+          return null;
+        },
+        create: async ({ data }) => {
+          customerCreateCalls += 1;
+          return { MaKH: 1, ...data };
         },
       },
       xE: {
         findUnique: async () => null,
+        create: async ({ data }) => {
+          vehicleCreateCalls += 1;
+          return { MaXe: 2, ...data };
+        },
       },
       pHIEU_SUA_CHUA: {
-        create: async () => ({ MaPhieuSC: 1 }),
+        create: async ({ data }) => ({ MaPhieuSC: 1, ...data }),
       },
     },
   });
 
-  await assert.rejects(
+  await assert.doesNotReject(
     service.createIntakeAtomic({
       MaKH: 1,
       MaXe: 2,
       NgayTiepNhan: new Date("2026-03-25"),
       TrangThai: "TiepNhan",
+      BienSo: "51G-123.45",
+      customer: { TenChuXe: "Nguyen Van A", DienThoai: "0900000000" },
+      vehicle: { BienSo: "51G-123.45" },
     }),
-    /Không tìm thấy xe\./,
   );
 
   assert.equal(customerCalls, 0);
+  assert.equal(customerCreateCalls, 1);
+  assert.equal(vehicleCreateCalls, 1);
 });
