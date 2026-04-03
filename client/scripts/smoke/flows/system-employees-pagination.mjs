@@ -16,7 +16,10 @@ export default async function run() {
 
   await assertFileIncludes("client/src/features/adminUsers/adminUsers.query.js", [
     "page",
-    "limit"
+    "limit",
+    "parseAdminUsersQuery",
+    "buildAdminUsersQuery",
+    "URLSearchParams"
   ]);
 
   await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
@@ -25,7 +28,12 @@ export default async function run() {
     "pagination",
     "totalItems",
     "totalPages",
-    "buildAdminUsersQuery"
+    "useSearchParams",
+    "setSearchParams",
+    "parseAdminUsersQuery",
+    "buildAdminUsersQuery",
+    "updateParams({ page: pagination.page + 1 })",
+    "updateParams({ page: pagination.page - 1 })"
   ]);
 
   await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
