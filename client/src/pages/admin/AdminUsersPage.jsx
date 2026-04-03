@@ -6,6 +6,7 @@ import { AdminUsersHeader } from "../../features/adminUsers/components/AdminUser
 import { AdminUsersStats } from "../../features/adminUsers/components/AdminUsersStats.jsx";
 import { AdminUsersFilters } from "../../features/adminUsers/components/AdminUsersFilters.jsx";
 import { AdminUsersTable } from "../../features/adminUsers/components/AdminUsersTable.jsx";
+import { AddAdminUserModal } from "../../features/adminUsers/components/AddAdminUserModal.jsx";
 import { parseAdminUsersQuery, buildAdminUsersQuery } from "../../features/adminUsers/adminUsers.query.js";
 
 export default function AdminUsersPage() {
@@ -13,6 +14,7 @@ export default function AdminUsersPage() {
   const queryParams = parseAdminUsersQuery(searchParams);
 
   const [searchInput, setSearchInput] = useState(queryParams.search || "");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     setSearchInput(queryParams.search || "");
@@ -66,7 +68,8 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6 p-6 md:p-8 max-w-[1600px] mx-auto">
-      <AdminUsersHeader />
+      <AdminUsersHeader onAddNew={() => setIsAddModalOpen(true)} />
+      {isAddModalOpen && <AddAdminUserModal onClose={() => setIsAddModalOpen(false)} />}
       <StateShell query={query}>
         {() => (
           <>

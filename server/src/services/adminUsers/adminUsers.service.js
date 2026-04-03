@@ -89,6 +89,51 @@ export const createAdminUsersService = ({ userDelegate, hashPassword } = {}) => 
     const updated = await delegate.update({ where: { MaKH: userId }, data });
     return sanitizeUser(updated);
   },
+  createAdminUser: async (payload) => {
+    const prisma = userDelegate ? null : await loadPrisma();
+    const delegate = userDelegate ?? prisma.kHACH_HANG;
+    const normalizedEmail = String(payload.Email ?? "").trim();
+    const normalizedPhone = String(payload.DienThoai ?? "").trim();
+
+    if (payload.XacNhanMatKhau !== payload.MatKhau) {
+      const error = new Error("Mật khẩu xác nhận không khớp.");
+      error.status = 400;
+      throw error;
+    }
+
+    const [existingEmail, existingPhone] = await Promise.all([
+      delegate.findFirst({ where: { Email: normalizedEmail } }),
+      delegate.findFirst({ where: { DienThoai: normalizedPhone } }),
+    ]);
+
+    if (existingEmail) {
+      const error = new Error("Email đã tồn tại.");
+      error.status = 409;
+      throw error;
+    }
+
+    if (existingPhone) {
+      const error = new Error("Số điện thoại đã tồn tại.");
+      error.status = 409;
+      throw error;
+    }
+
+    const hashPasswordFn = hashPassword ?? (await loadHashPassword());
+    const hashedPassword = await hashPasswordFn(payload.MatKhau);
+    const created = await delegate.create({
+      data: {
+        TenChuXe: payload.TenChuXe,
+        DienThoai: normalizedPhone,
+        Email: normalizedEmail,
+        MatKhau: hashedPassword,
+        DiaChi: payload.DiaChi ?? null,
+        ChucVu: payload.ChucVu ?? "NhanVien",
+        TrangThai: payload.TrangThai ?? "HoatDong",
+      },
+    });
+
+    return sanitizeUser(created);
+  },
   resetAdminUserPassword: async (id, payload) => {
     const prisma = userDelegate ? null : await loadPrisma();
     const delegate = userDelegate ?? prisma.kHACH_HANG;
