@@ -52,7 +52,7 @@ export function mapCustomerStats(data) {
   return {
     totalCustomers: data.totalCustomers || 0,
     vipCustomers: data.vipCustomers || 0,
-    totalDebt: formatCurrency(data.totalDebt || 0),
-    repairVisits: data.repairVisits || 0
+    totalOutstandingDebt: formatCurrency(data.totalOutstandingDebt || 0),
+    monthlyRepairOrders: data.monthlyRepairOrders || 0
   };
 }

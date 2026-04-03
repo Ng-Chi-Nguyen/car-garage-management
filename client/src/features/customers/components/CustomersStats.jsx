@@ -23,13 +23,13 @@ export function CustomersStats() {
       />
       <StatCard
         title="Tổng công nợ"
-        value={stats.totalDebt || "0 ₫"}
+        value={stats.totalOutstandingDebt || "0 ₫"}
         icon="account_balance_wallet"
         valueColor="text-error"
       />
       <StatCard
         title="Lượt sửa chữa/Tháng"
-        value={stats.repairVisits?.toLocaleString() || "0"}
+        value={stats.monthlyRepairOrders?.toLocaleString() || "0"}
         icon="speed"
       />
     </div>

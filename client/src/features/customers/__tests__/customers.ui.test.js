@@ -55,14 +55,14 @@ describe('Customers Mappers', () => {
     const raw = {
       totalCustomers: 100,
       vipCustomers: 10,
-      totalDebt: 5000000,
-      repairVisits: 50
+      totalOutstandingDebt: 5000000,
+      monthlyRepairOrders: 50
     };
     const result = mapCustomerStats(raw);
     assert.strictEqual(result.totalCustomers, 100);
     assert.strictEqual(result.vipCustomers, 10);
-    assert.strictEqual(result.totalDebt, '5.000.000\xa0₫');
-    assert.strictEqual(result.repairVisits, 50);
+    assert.strictEqual(result.totalOutstandingDebt, '5.000.000\xa0₫');
+    assert.strictEqual(result.monthlyRepairOrders, 50);
   });
 });
 
