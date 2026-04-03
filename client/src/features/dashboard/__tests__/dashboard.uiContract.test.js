@@ -41,6 +41,9 @@ test('UI Contract: RecentRepairOrdersTable', () => {
   // CTA button semantics for "Xem tất cả"
   // It should be a proper semantic action, like tonal or ghost button.
   assert.match(content, /Xem tất cả/);
+  // Column label must be Mẫu xe, not Hiệu xe to match data intent
+  assert.match(content, /Mẫu xe/);
+  assert.doesNotMatch(content, />Hiệu xe</);
   // No standard 1px borders to separate table cells
   assert.doesNotMatch(content, /border-b border-slate-100/);
   assert.doesNotMatch(content, /divide-y\b(?!-0)/); // divide-y also creates 1px borders, but divide-y-0 is okay

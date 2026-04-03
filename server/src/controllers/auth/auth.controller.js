@@ -59,7 +59,8 @@ const createAuthController = (service = authService) => ({
   },
   changePassword: async (req, res) => {
     try {
-      const result = await service.changePassword(req.user.MaKH, req.body);
+      const userId = req.user?.MaKH ?? req.user?.MaNV;
+      const result = await service.changePassword(userId, req.body);
 
       return res.status(200).json({
         success: true,

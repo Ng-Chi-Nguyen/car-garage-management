@@ -38,7 +38,6 @@ const repairOrderSchema = createCrudValidator({
     TrangThai: Joi.string().valid(...REPAIR_ORDER_TRANG_THAI_VALUES).default("TiepNhan"),
     NoiDungLoi: Joi.string().trim().max(255).allow(null, ""),
     GhiChu: Joi.string().trim().max(255).allow(null, ""),
-    TongTien: Joi.number().min(0).default(0),
   }).unknown(false),
   updateBodySchema: Joi.object({
     MaXe: Joi.number().integer().positive(),
@@ -47,7 +46,6 @@ const repairOrderSchema = createCrudValidator({
     TrangThai: Joi.string().valid(...REPAIR_ORDER_TRANG_THAI_VALUES),
     NoiDungLoi: Joi.string().trim().max(255).allow(null, ""),
     GhiChu: Joi.string().trim().max(255).allow(null, ""),
-    TongTien: Joi.number().min(0),
   })
     .min(1)
     .unknown(false),

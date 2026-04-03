@@ -168,3 +168,9 @@ model PHIEU_THU_TIEN {
     NgayCapNhat   DateTime               @updatedAt
     Xe            XE                     @relation(fields: [MaXe], references: [MaXe], onDelete: Restrict, onUpdate: Cascade)
 }
+
+model CAU_HINH_HE_THONG {
+    MaCauHinh             Int @id
+    SoXeToiDaMoiNgay      Int @default(20)
+    TyLeLoiNhuanPhuTung   Int @default(15)
+}

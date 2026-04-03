@@ -78,4 +78,51 @@ describe('dashboard.mappers', () => {
     assert.deepStrictEqual(vm.trendSeries.dates, ['2023-01-01']);
     assert.deepStrictEqual(vm.trendSeries.revenues, [1500]);
   });
+
+  test('owner uses fallback chain including vehicle.KhachHang.TenChuXe', () => {
+    const rawData = {
+      customers: [], // Empty customer map
+      vehicles: [{ MaXe: 1, KhachHang: { TenChuXe: 'Fallback Owner' } }],
+      repairOrders: [{ MaPhieuSC: 1, MaXe: 1 }]
+    };
+    const vm = normalizeDashboardData(rawData);
+    assert.strictEqual(vm.recentOrders[0].customerName, 'Fallback Owner');
+  });
+
+  test('model uses vehicle.MauXe when present', () => {
+    const rawData = {
+      vehicles: [{ MaXe: 1, MauXe: 'Red Sedan', HieuXe: { TenHieuXe: 'Toyota' }, MaHieuXe: 5 }],
+      repairOrders: [{ MaPhieuSC: 1, MaXe: 1 }]
+    };
+    const vm = normalizeDashboardData(rawData);
+    assert.strictEqual(vm.recentOrders[0].vehicleModel, 'Red Sedan');
+  });
+
+  test('model falls back to vehicle.HieuXe.TenHieuXe when MauXe is absent', () => {
+    const rawData = {
+      vehicles: [{ MaXe: 1, HieuXe: { TenHieuXe: 'Toyota' }, MaHieuXe: 5 }],
+      repairOrders: [{ MaPhieuSC: 1, MaXe: 1 }]
+    };
+    const vm = normalizeDashboardData(rawData);
+    assert.strictEqual(vm.recentOrders[0].vehicleModel, 'Toyota');
+  });
+
+  test('model falls back to MaHieuXe when both MauXe and TenHieuXe are absent', () => {
+    const rawData = {
+      vehicles: [{ MaXe: 1, MaHieuXe: 5 }],
+      repairOrders: [{ MaPhieuSC: 1, MaXe: 1 }]
+    };
+    const vm = normalizeDashboardData(rawData);
+    assert.strictEqual(vm.recentOrders[0].vehicleModel, 'Hãng xe 5');
+  });
+
+  test('fallback label is retained when all sources are absent', () => {
+    const rawData = {
+      vehicles: [{ MaXe: 1 }],
+      repairOrders: [{ MaPhieuSC: 1, MaXe: 1 }]
+    };
+    const vm = normalizeDashboardData(rawData);
+    assert.strictEqual(vm.recentOrders[0].customerName, 'Không rõ');
+    assert.strictEqual(vm.recentOrders[0].vehicleModel, 'Không rõ');
+  });
 });

@@ -24,16 +24,16 @@ const createRepairReportRoute = ({
 
   router.get(
     "/summary",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRepairSummary.query, "query"),
     mergedController.getRepairSummary,
   );
 
   router.get(
     "/summary/export",
-    // auth.requireAuth,
-    // auth.requireRoles(managementRoles),
+    auth.requireAuth,
+    auth.requireRoles(managementRoles),
     validateRequest(mergedSchema.getRepairSummary.query, "query"),
     mergedController.exportRepairSummary,
   );

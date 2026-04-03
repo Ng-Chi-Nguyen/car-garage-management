@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { inventoryApi } from './inventory.api';
 import { INVENTORY_KEYS } from './inventory.queryKeys';
 
@@ -6,6 +6,7 @@ export function useInventoryQuery(filters) {
   return useQuery({
     queryKey: INVENTORY_KEYS.list(filters),
     queryFn: () => inventoryApi.getInventory(filters),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -14,5 +15,12 @@ export function useStockDetailQuery(id) {
     queryKey: INVENTORY_KEYS.detail(id),
     queryFn: () => inventoryApi.getStockDetail(id),
     enabled: !!id,
+  });
+}
+
+export function useSuppliersQuery() {
+  return useQuery({
+    queryKey: ['suppliers'],
+    queryFn: () => inventoryApi.getSuppliers(),
   });
 }

@@ -14,6 +14,20 @@ export const routeManifest = [
     group: 'auth'
   },
   {
+    exportKey: null,
+    path: '/forgot-password',
+    layout: 'auth',
+    componentPath: 'src/pages/auth/forgot-password-page.jsx',
+    group: 'auth'
+  },
+  {
+    exportKey: null,
+    path: '/reset-password',
+    layout: 'auth',
+    componentPath: 'src/pages/auth/reset-password-page.jsx',
+    group: 'auth'
+  },
+  {
     exportKey: 'dashboard_t_ng_quan_gms',
     path: '/dashboard',
     layout: 'app',
@@ -35,13 +49,6 @@ export const routeManifest = [
     group: 'workshop'
   },
   {
-    exportKey: 'modal_l_p_phi_u_ti_p_nh_n_gms',
-    path: '/intake/new',
-    layout: 'app',
-    componentPath: 'src/pages/intake/IntakeModalPage.jsx',
-    group: 'workshop'
-  },
-  {
     exportKey: 'l_p_phi_u_s_a_ch_a_gms',
     path: '/repair-orders/new',
     layout: 'app',
@@ -53,6 +60,13 @@ export const routeManifest = [
     path: '/repair-orders',
     layout: 'app',
     componentPath: 'src/pages/repair/RepairOrdersListPage.jsx',
+    group: 'workshop'
+  },
+  {
+    exportKey: null,
+    path: '/repair-orders/:id',
+    layout: 'app',
+    componentPath: 'src/pages/repair/RepairOrderDetailPage.jsx',
     group: 'workshop'
   },
   {
@@ -105,18 +119,25 @@ export const routeManifest = [
     group: 'crm'
   },
   {
-    exportKey: 'c_i_t_h_th_ng_gms',
-    path: '/settings',
+    exportKey: null,
+    path: '/settings/employees',
     layout: 'app',
-    componentPath: 'src/pages/settings/settings-page.jsx',
+    componentPath: 'src/pages/admin/AdminUsersPage.jsx',
     group: 'system'
   },
   {
-    exportKey: 'nh_t_k_thao_t_c_gms',
-    path: '/settings/activity-log',
+    exportKey: null,
+    path: '/admin/users',
     layout: 'app',
-    componentPath: 'src/pages/activity/activity-log-page.jsx',
+    componentPath: 'src/pages/admin/AdminUsersLegacyRedirect.jsx',
     group: 'system'
+  },
+  {
+    exportKey: null,
+    path: '/reports',
+    layout: 'app',
+    componentPath: 'src/pages/reports/ReportsPage.jsx',
+    group: 'reports'
   },
   {
     exportKey: null, // Not from Stitch export

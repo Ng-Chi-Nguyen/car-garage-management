@@ -72,3 +72,78 @@ test("partService getPartById include thong tin nha cung cap", async () => {
     prisma.vAT_TU.findUnique = originalFindUnique;
   }
 });
+
+test("partService getPartList map stockStatus sang dieu kien ton kho", async () => {
+  const originalTransaction = prisma.$transaction;
+  const originalCount = prisma.vAT_TU.count;
+  const originalFindMany = prisma.vAT_TU.findMany;
+  const calls = {
+    count: null,
+    findMany: null,
+  };
+
+  prisma.vAT_TU.count = async (args) => {
+    calls.count = args;
+    return 0;
+  };
+  prisma.vAT_TU.findMany = async (args) => {
+    calls.findMany = args;
+    return [];
+  };
+  prisma.$transaction = async (operations) => Promise.all(operations);
+
+  try {
+    await partService.getPartList({ stockStatus: "low" });
+
+    assert.deepEqual(calls.count, {
+      where: {
+        SoLuongTon: { gt: 0, lte: 5 },
+      },
+    });
+    assert.deepEqual(calls.findMany.where, {
+      SoLuongTon: { gt: 0, lte: 5 },
+    });
+  } finally {
+    prisma.$transaction = originalTransaction;
+    prisma.vAT_TU.count = originalCount;
+    prisma.vAT_TU.findMany = originalFindMany;
+  }
+});
+
+test("partService getPartList ket hop search va stockStatus in_stock", async () => {
+  const originalTransaction = prisma.$transaction;
+  const originalCount = prisma.vAT_TU.count;
+  const originalFindMany = prisma.vAT_TU.findMany;
+  const calls = {
+    count: null,
+    findMany: null,
+  };
+
+  prisma.vAT_TU.count = async (args) => {
+    calls.count = args;
+    return 0;
+  };
+  prisma.vAT_TU.findMany = async (args) => {
+    calls.findMany = args;
+    return [];
+  };
+  prisma.$transaction = async (operations) => Promise.all(operations);
+
+  try {
+    await partService.getPartList({ search: "loc", stockStatus: "in_stock" });
+
+    assert.deepEqual(calls.count, {
+      where: {
+        OR: [
+          { TenVatTu: { contains: "loc" } },
+          { DonViTinh: { contains: "loc" } },
+        ],
+        SoLuongTon: { gt: 5 },
+      },
+    });
+  } finally {
+    prisma.$transaction = originalTransaction;
+    prisma.vAT_TU.count = originalCount;
+    prisma.vAT_TU.findMany = originalFindMany;
+  }
+});

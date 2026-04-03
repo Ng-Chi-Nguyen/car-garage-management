@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const toNumber = (value) => Number(value ?? 0);
-
 export function SettlementInvoice({ id }) {
   const { isLoading, isError, error, data } = useSettlementQuery(id);
   const createPayment = useCreateReceivableMutation();
@@ -51,13 +50,13 @@ export function SettlementInvoice({ id }) {
   const handleConfirm = (e) => {
     e.preventDefault();
     createPayment.mutate(
-        {
-          MaXe: Number(data.MaXe),
-          NgayThu: new Date().toISOString(),
-          SoTienThu: Number(settlementAmount),
-          PhuongThucThu: "TienMat",
-          TrangThai: "DaThu",
-        },
+      {
+        MaXe: Number(data.MaXe),
+        NgayThu: new Date().toISOString(),
+        SoTienThu: Number(settlementAmount),
+        PhuongThucThu: "TienMat",
+        TrangThai: "DaThu",
+      },
       {
         onSuccess: () => {
           toast.success("Tạo phiếu thu thành công!");
@@ -85,7 +84,7 @@ export function SettlementInvoice({ id }) {
             <h4 className="font-semibold text-[var(--color-on-surface)] uppercase tracking-wider text-[0.75rem] mb-3">
               Thông tin khách hàng
             </h4>
-            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Tên:</span> {data.Xe?.KhachHang?.TenChuXe || "Không rõ"}</p>
+            <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Tên:</span> {data.Xe?.KhachHang?.TenChuXe || data.Xe?.TenChuXe || 'Không rõ'}</p>
             <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">SĐT:</span> {data.Xe?.KhachHang?.DienThoai || "Không rõ"}</p>
             <p className="text-[var(--color-on-surface-variant)]"><span className="text-[var(--color-on-surface)] font-medium">Ngày in:</span> {invoiceDate}</p>
           </div>
@@ -165,7 +164,7 @@ export function SettlementInvoice({ id }) {
               <span>Tổng cộng:</span>
               <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
-            <div className="flex justify-between font-semibold text-[var(--color-primary)] bg-[var(--color-primary-container)] px-4 py-3 rounded-xl mt-4">
+            <div className="flex justify-between font-semibold text-blue-600 bg-blue-100 px-4 py-3 rounded-xl mt-4">
               <span>Thực thu:</span>
               <span>{settlementAmount.toLocaleString("vi-VN")} ₫</span>
             </div>
@@ -179,7 +178,7 @@ export function SettlementInvoice({ id }) {
           <button
             type="submit"
             disabled={createPayment.isPending}
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] px-8 py-3 text-[0.875rem] font-semibold text-white transition hover:opacity-90 disabled:opacity-50 shadow-[0_4px_6px_-1px_rgba(0,64,161,0.04)]"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-100 px-8 py-3 text-[0.875rem] font-semibold text-white transition hover:opacity-90 disabled:opacity-50 shadow-[0_4px_6px_-1px_rgba(0,64,161,0.04)]"
           >
             {createPayment.isPending ? "Đang xử lý..." : "Xác nhận thanh toán"}
           </button>

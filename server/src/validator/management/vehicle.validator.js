@@ -5,6 +5,7 @@ import createCrudValidator from "../../shared/crud/crud.validatorFactory.js";
 const VEHICLE_FILTER_FIELDS = {
   MaXe: { type: "number", positive: true },
   BienSo: { type: "string" },
+  MauXe: { type: "string" },
   MaHieuXe: { type: "number", positive: true },
   MaKH: { type: "number", positive: true },
   TienNoHienTai: { type: "decimal", min: 0 },

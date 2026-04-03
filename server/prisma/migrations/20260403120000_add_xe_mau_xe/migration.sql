@@ -1,0 +1,2 @@
+-- MauXe was already added by 20260402103000_add_mauxe_to_xe.
+-- Keep this migration as a no-op so `prisma migrate deploy` remains idempotent on clean databases.

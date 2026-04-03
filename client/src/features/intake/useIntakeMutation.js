@@ -9,7 +9,7 @@ export function useCreateIntakeMutation() {
   return useMutation({
     mutationFn: createIntake,
     onSuccess: () => {
-      INVALIDATES_KEYS.forEach(key => {
+      INVALIDATES_KEYS.forEach((key) => {
         queryClient.invalidateQueries({ queryKey: key });
       });
     },

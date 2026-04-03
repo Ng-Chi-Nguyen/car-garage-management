@@ -10,6 +10,7 @@ const PART_FILTER_FIELDS = {
   GiaVon: { type: "decimal", min: 0 },
   DonGiaBan: { type: "decimal", min: 0 },
   MaNCC: { type: "number", positive: true },
+  stockStatus: { type: "enum", values: ["low", "out_of_stock", "in_stock"] },
 };
 
 const partSchema = createCrudValidator({

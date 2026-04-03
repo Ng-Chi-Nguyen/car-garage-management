@@ -9,9 +9,9 @@ export function useActivityLogsQuery(filters) {
   });
 }
 
-export function useActivityStatsQuery() {
+export function useActivityStatsQuery(filters) {
   return useQuery({
-    queryKey: ACTIVITY_KEYS.stats(),
-    queryFn: fetchActivityStats,
+    queryKey: ACTIVITY_KEYS.stats(filters),
+    queryFn: () => fetchActivityStats(filters),
   });
 }

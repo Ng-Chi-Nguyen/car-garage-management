@@ -59,7 +59,7 @@ export function RecentRepairOrdersTable({ orders, isLoading, isError }) {
           <thead>
             <tr className="text-left bg-slate-50/80 rounded-lg">
               <th className="pb-3 pt-3 pl-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest rounded-l-lg">Biển số</th>
-              <th className="pb-3 pt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hiệu xe</th>
+              <th className="pb-3 pt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Mẫu xe</th>
               <th className="pb-3 pt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Chủ xe</th>
               <th className="pb-3 pt-3 pr-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right rounded-r-lg">Thời gian</th>
             </tr>

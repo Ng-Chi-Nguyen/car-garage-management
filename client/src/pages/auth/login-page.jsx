@@ -1,7 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../features/auth/auth.api";
+import { authStorage } from "../../features/auth/auth.storage";
 
 export default function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const responseData = await login({ username, password });
+      const token = responseData?.data?.accessToken;
+      const user = responseData?.data?.user;
+
+      if (token) {
+        authStorage.setToken(token);
+      }
+      if (user) {
+        authStorage.setUser(user);
+      }
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="grid grid-cols-12 grid-rows-1 lg:grid-rows-1 h-screen gap-6 p-6 bg-[#f7f9fb] overflow-hidden relative">
       {/* Left Column: Branding & Visuals (Bento Style) */}
@@ -84,14 +116,19 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-xl">
+                {error}
+              </div>
+            )}
             {/* Input Email/Username */}
             <div className="space-y-2">
               <label
                 className="text-sm font-semibold text-gray-500 block"
                 htmlFor="username"
               >
-                Email hoặc Tên đăng nhập
+                Email
               </label>
               <div className="relative group">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0040a1] transition-colors">
@@ -101,7 +138,11 @@ export default function LoginPage() {
                   className="w-full pl-12 pr-4 py-4 bg-[#f2f4f6] border-0 rounded-xl text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#0040a1]/20 focus:bg-white transition-all outline-none"
                   id="username"
                   placeholder="nguyen.van@precision.vn"
-                  type="text"
+                  type="email"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={loading}
+                  required
                 />
               </div>
             </div>
@@ -115,12 +156,12 @@ export default function LoginPage() {
                 >
                   Mật khẩu
                 </label>
-                <a
+                <Link
                   className="text-xs font-bold text-[#0040a1] hover:underline"
-                  href="#"
+                  to="/forgot-password"
                 >
                   Quên mật khẩu?
-                </a>
+                </Link>
               </div>
               <div className="relative group">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0040a1] transition-colors">
@@ -131,6 +172,10 @@ export default function LoginPage() {
                   id="password"
                   placeholder="••••••••"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
                 />
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
@@ -159,13 +204,16 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <Link
-              to="/dashboard"
-              className="w-full py-4 bg-gradient-to-br from-[#0040a1] to-[#0056d2] text-white font-bold rounded-xl shadow-lg shadow-[#0040a1]/20 hover:shadow-xl hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-4 bg-gradient-to-br from-[#0040a1] to-[#0056d2] text-white font-bold rounded-xl shadow-lg shadow-[#0040a1]/20 transition-all flex items-center justify-center gap-2 ${
+                loading ? "opacity-70 cursor-not-allowed" : "hover:shadow-xl hover:scale-[1.01]"
+              }`}
             >
-              <span>Đăng nhập hệ thống</span>
-              <span className="material-symbols-outlined">login</span>
-            </Link>
+              <span>{loading ? "Đang xử lý..." : "Đăng nhập hệ thống"}</span>
+              {!loading && <span className="material-symbols-outlined">login</span>}
+            </button>
           </form>
 
           <div className="mt-12 pt-8 border-t border-gray-200 text-center">
@@ -173,7 +221,7 @@ export default function LoginPage() {
               Bạn gặp sự cố kỹ thuật?
               <a
                 className="font-bold text-[#0040a1] hover:underline ml-1"
-                href="#"
+                href="mailto:support@precision.vn"
               >
                 Liên hệ hỗ trợ
               </a>

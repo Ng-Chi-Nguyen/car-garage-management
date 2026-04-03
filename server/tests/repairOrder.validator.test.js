@@ -11,11 +11,25 @@ test("repair order validator chap nhan TrangThai Huy", () => {
     TrangThai: "Huy",
     NoiDungLoi: "May rung",
     GhiChu: "Khach yeu cau huy",
-    TongTien: 0,
   });
 
   assert.equal(error, undefined);
   assert.equal(value.TrangThai, "Huy");
+});
+
+test("repair order validator tu choi TongTien tu payload create", () => {
+  const { error } = repairOrderSchema.create.body.validate({
+    MaXe: 1,
+    MaNV: 2,
+    NgaySC: "2026-03-29",
+    TrangThai: "TiepNhan",
+    NoiDungLoi: "May rung",
+    GhiChu: "Thu nghiem",
+    TongTien: 123456,
+  });
+
+  assert.ok(error);
+  assert.match(error.message, /TongTien/);
 });
 
 test("repair order validator tu choi NgayKetThuc tu payload public", () => {
@@ -26,7 +40,6 @@ test("repair order validator tu choi NgayKetThuc tu payload public", () => {
     TrangThai: "TiepNhan",
     NoiDungLoi: "May rung",
     GhiChu: "Thu nghiem",
-    TongTien: 0,
     NgayKetThuc: "2026-03-29T10:00:00.000Z",
   });
 
@@ -41,4 +54,13 @@ test("repair order validator update khong inject TongTien mac dinh khi client kh
 
   assert.equal(error, undefined);
   assert.equal(Object.hasOwn(value, "TongTien"), false);
+});
+
+test("repair order validator update tu choi TongTien tu client", () => {
+  const { error } = repairOrderSchema.update.body.validate({
+    TongTien: 200000,
+  });
+
+  assert.ok(error);
+  assert.match(error.message, /TongTien/);
 });

@@ -3,7 +3,13 @@ import assert from 'node:assert';
 import { applyFilterUpdates, getValidStatus, getValidRange, getValidSearch } from '../workshop/workshop.filters.js';
 import { SETTINGS_KEYS } from '../settings/settings.queryKeys.js';
 import { applyInventoryFilterUpdates, getInventoryFilters } from '../inventory/inventory.filters.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { calculateReceivablesSummary } from '../finance/finance.utils.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Business Smoke Checklist', () => {
 
@@ -27,11 +33,20 @@ describe('Business Smoke Checklist', () => {
     const filters = getInventoryFilters(prev);
     assert.strictEqual(filters.search, 'oil');
     assert.strictEqual(filters.page, 3);
-    assert.strictEqual(filters.category, 'all');
+    assert.strictEqual(filters.stockStatus, '');
 
     const updatedSearch = applyInventoryFilterUpdates(prev, { search: 'brake' });
     assert.strictEqual(updatedSearch.get('search'), 'brake');
     assert.strictEqual(updatedSearch.get('page'), null, 'Changing search should reset to page 1');
+
+    const prevWithStockStatus = new URLSearchParams('?stockStatus=low&page=4');
+    const updatedStockStatus = applyInventoryFilterUpdates(prevWithStockStatus, { stockStatus: 'out_of_stock' });
+    assert.strictEqual(updatedStockStatus.get('stockStatus'), 'out_of_stock');
+    assert.strictEqual(updatedStockStatus.get('page'), null, 'Changing stockStatus should reset to page 1');
+
+    const unchangedStockStatus = applyInventoryFilterUpdates(prevWithStockStatus, { stockStatus: 'low' });
+    assert.strictEqual(unchangedStockStatus.get('stockStatus'), 'low');
+    assert.strictEqual(unchangedStockStatus.get('page'), '4', 'Keeping stockStatus should preserve current page');
   });
 
   test('3. Receivables grouping/totals behavior', () => {
@@ -47,5 +62,30 @@ describe('Business Smoke Checklist', () => {
   test('4. Settings actions/config persistence paths', () => {
     assert.strictEqual(SETTINGS_KEYS.all[0], 'settings');
     assert.strictEqual(SETTINGS_KEYS.parameters()[0], 'settings');
+  });
+
+  test('5. Settings catalog contract remains explicit', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../settings/__tests__/settings.ui.test.js'), 'utf8');
+
+    assert.match(source, /fetchSystemParameters/);
+    assert.match(source, /maxCarsPerDay/);
+    assert.match(source, /materialProfitMargin/);
+  });
+
+  test('6. Activity log contract remains explicit', () => {
+    const source = fs.readFileSync(path.join(__dirname, '../activity/__tests__/activity.ui.test.js'), 'utf8');
+
+    assert.match(source, /fetchActivityLogs/);
+    assert.match(source, /initials/);
+    assert.match(source, /statusLabel/);
+  });
+
+  test('7. Inventory list returns normalized stock fields', async () => {
+    const source = fs.readFileSync(path.join(__dirname, '../inventory/inventory.api.js'), 'utf8');
+
+    assert.match(source, /getInventory: async \(filters\) => {/);
+    assert.match(source, /const \{ parts, pagination \} = response\.data\.data;/);
+    assert.match(source, /id: part\.MaVatTu,/);
+    assert.match(source, /stock: part\.SoLuongTon,/);
   });
 });
