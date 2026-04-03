@@ -50,6 +50,11 @@ export default async function run() {
 
   await assertFileIncludes("src/features/adminUsers/components/AdminUsersTable.jsx", [
     "useUpdateAdminUserMutation",
+    "useResetPasswordAdminUserMutation",
+    "onSubmit={handleResetPassword}",
+    "Reset mật khẩu",
+    "MatKhauMoi",
+    "XacNhanMatKhauMoi",
     "ChucVu",
     "TrangThai",
     "bg-surface-container-low",
@@ -58,7 +63,9 @@ export default async function run() {
   ]);
 
   await assertFileIncludes("src/features/adminUsers/useAdminUsersMutation.js", [
-    "invalidateQueries({ queryKey: [\"adminUsers\"] })"
+    "invalidateQueries({ queryKey: [\"adminUsers\"] })",
+    "useResetPasswordAdminUserMutation",
+    "resetPasswordAdminUser"
   ]);
 
   await assertFileIncludes("src/index.css", [
