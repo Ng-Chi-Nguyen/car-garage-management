@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useInventoryMutations } from '../useInventoryMutations';
-import { useInventoryQuery } from '../useInventoryQuery';
+import { useInventoryQuery, useSuppliersQuery } from '../useInventoryQuery';
 
 export function QuickImportModal({ onClose }) {
   const { createStockReceipt } = useInventoryMutations();
   const { data: partsData } = useInventoryQuery({ page: 1, limit: 100 });
+  const { data: suppliers } = useSuppliersQuery();
+  
   const [formData, setFormData] = useState({
     MaVatTu: '',
     SoLuong: '',
     DonGiaNhap: '',
-    MaNCC: '1', // Default mock supplier
+    MaNCC: '',
   });
+
+  const selectedPart = useMemo(() => {
+    if (!formData.MaVatTu || !partsData?.data) return null;
+    return partsData.data.find(p => p.id === Number(formData.MaVatTu));
+  }, [formData.MaVatTu, partsData]);
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -60,6 +67,26 @@ export function QuickImportModal({ onClose }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-on-surface-variant mb-1">
+              Nhà cung cấp
+            </label>
+            <select
+              name="MaNCC"
+              value={formData.MaNCC}
+              onChange={handleChange}
+              required
+              className="w-full p-2.5 rounded-lg border border-outline bg-surface-container-lowest text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+            >
+              <option value="">-- Chọn nhà cung cấp --</option>
+              {suppliers?.map(supplier => (
+                <option key={supplier.MaNCC} value={supplier.MaNCC}>
+                  {supplier.TenNCC}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-on-surface-variant mb-1">
               Vật tư / Phụ tùng
             </label>
             <select
@@ -76,6 +103,11 @@ export function QuickImportModal({ onClose }) {
                 </option>
               ))}
             </select>
+            {selectedPart && (
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Tồn kho hiện tại: <span className="font-semibold">{selectedPart.stock}</span> {selectedPart.unit}
+              </p>
+            )}
           </div>
           
           <div>

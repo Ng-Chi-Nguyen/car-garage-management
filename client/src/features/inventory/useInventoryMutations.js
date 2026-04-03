@@ -18,6 +18,7 @@ export function useInventoryMutations() {
       // Invalidate both lists and detail queries
       queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.lists() });
       queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.details() });
+      queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.stats() });
     },
   });
 

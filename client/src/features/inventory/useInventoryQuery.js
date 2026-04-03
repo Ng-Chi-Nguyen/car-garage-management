@@ -17,3 +17,10 @@ export function useStockDetailQuery(id) {
     enabled: !!id,
   });
 }
+
+export function useSuppliersQuery() {
+  return useQuery({
+    queryKey: ['suppliers'],
+    queryFn: () => inventoryApi.getSuppliers(),
+  });
+}
