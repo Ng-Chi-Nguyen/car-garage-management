@@ -15,6 +15,9 @@ export function WorkshopStatusPanel({
   isError,
   filters,
   updateFilters,
+  onRetry,
+  onResetFilters,
+  hasActiveFilters,
 }) {
   const currentStatus = filters?.status || "all";
   const currentPage = Number(filters?.page) || 1;
@@ -108,6 +111,9 @@ export function WorkshopStatusPanel({
         isFetching={isFetching}
         isError={isError}
         isEmpty={!data?.activeRows?.length}
+        onRetry={onRetry}
+        onResetFilters={onResetFilters}
+        hasActiveFilters={hasActiveFilters}
       />
 
       {!isLoading && !isError && totalPages > 1 && (

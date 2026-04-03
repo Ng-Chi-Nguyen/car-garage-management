@@ -10,14 +10,22 @@ const BADGE_COLORS = {
   warning: "bg-warning/10 text-warning",
 };
 
-export function WorkshopQueueGrid({ rows, isLoading, isFetching, isError, isEmpty }) {
+export function WorkshopQueueGrid({ rows, isLoading, isFetching, isError, isEmpty, onRetry, onResetFilters, hasActiveFilters }) {
   const navigate = useNavigate();
 
   if (isError) {
     return (
-      <div className="text-center py-12 bg-error/10 text-error rounded-xl">
+      <div className="text-center py-12 bg-error/10 text-error rounded-xl flex flex-col items-center">
         <span className="material-symbols-outlined text-4xl mb-2">error</span>
-        <p>Lỗi tải danh sách xe. Vui lòng thử lại.</p>
+        <p className="mb-4">Lỗi tải danh sách xe. Vui lòng thử lại.</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="px-4 py-2 bg-error text-white font-semibold rounded-lg hover:bg-error/90 transition-colors"
+          >
+            Thử lại
+          </button>
+        )}
       </div>
     );
   }
@@ -44,7 +52,20 @@ export function WorkshopQueueGrid({ rows, isLoading, isFetching, isError, isEmpt
         <span className="font-semibold">Tiếp nhận xe mới</span>
       </button>
 
-      {isEmpty ? null : (
+      {isEmpty ? (
+        <div className="md:col-span-1 lg:col-span-2 flex flex-col items-center justify-center text-center p-6 bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
+          <span className="material-symbols-outlined text-4xl mb-2 text-on-surface-variant">search_off</span>
+          <p className="text-on-surface-variant mb-4">Không tìm thấy xe nào phù hợp với bộ lọc.</p>
+          {hasActiveFilters && (
+            <button
+              onClick={onResetFilters}
+              className="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors"
+            >
+              Xóa bộ lọc
+            </button>
+          )}
+        </div>
+      ) : (
         rows?.map((row) => (
           <div
             key={row.id}
