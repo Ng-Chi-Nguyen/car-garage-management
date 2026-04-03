@@ -51,4 +51,11 @@ export default {
       TrangThai: { values: ["HoatDong", "BiKhoa", "DaXoa"] },
     }),
   },
+  resetPassword: {
+    params: makeValidator({ id: { type: "number", required: true } }),
+    body: makeValidator({
+      MatKhauMoi: { required: true },
+      XacNhanMatKhauMoi: { required: true },
+    }),
+  },
 };
