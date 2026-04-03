@@ -1,4 +1,9 @@
-import React, { useMemo } from "react";
+const fs = require('fs');
+
+const path = 'client/src/features/inventory/components/InventoryStats.jsx';
+let content = fs.readFileSync(path, 'utf8');
+
+content = `import React, { useMemo } from "react";
 import { StatCard } from "../../../components/ui/stat-card";
 import { useInventoryReportQuery } from "../../reports/reports.hooks";
 
@@ -48,3 +53,7 @@ export function InventoryStats() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(path, content);
+console.log("Updated InventoryStats.jsx");

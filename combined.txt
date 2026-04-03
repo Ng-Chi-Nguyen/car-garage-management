@@ -1,0 +1,364 @@
+import React from "react";
+import { StatCard } from "../../../components/ui/stat-card";
+
+export function InventoryStats() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="col-span-12 md:col-span-3">
+        <StatCard
+          title="Tổng mặt hàng"
+          value="1,284"
+          icon="inventory"
+          trend="+12% tháng này"
+          trendUp={true}
+        />
+      </div>
+      <div className="col-span-12 md:col-span-3">
+        <StatCard
+          title="Vật tư sắp hết"
+          value="24"
+          icon="warning"
+          description="Cần nhập thêm ngay"
+          valueColor="text-error"
+        />
+      </div>
+      <div className="col-span-12 md:col-span-6 bg-surface-container-lowest p-6 rounded-3xl shadow-sm flex items-center justify-between gap-6 border border-border">
+        <div className="flex-1">
+          <p className="text-on-surface-variant text-xs font-semibold mb-1 uppercase tracking-tight">
+            Giá trị kho hiện tại
+          </p>
+          <h3 className="text-3xl font-bold text-on-surface">
+            4.820.500.000{" "}
+            <span className="text-sm font-medium text-on-surface-variant">VNĐ</span>
+          </h3>
+          <div className="mt-4 flex gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-primary"></span>
+              <span className="text-[10px] font-bold text-on-surface-variant">
+                Phụ tùng: 70%
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-warning"></span>
+              <span className="text-[10px] font-bold text-on-surface-variant">
+                Dầu nhớt: 20%
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-surface-variant"></span>
+              <span className="text-[10px] font-bold text-on-surface-variant">
+                Khác: 10%
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="w-32 h-20 bg-surface-container rounded-xl flex items-end p-2 gap-1">
+          <div className="w-1/4 bg-primary-container h-[40%] rounded-sm"></div>
+          <div className="w-1/4 bg-primary-fixed h-[60%] rounded-sm"></div>
+          <div className="w-1/4 bg-primary/70 h-[90%] rounded-sm"></div>
+          <div className="w-1/4 bg-primary h-[75%] rounded-sm"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+import React from "react";
+import { SearchInput } from "../../../components/ui/search-input";
+import { DataTable } from "../../../components/ui/data-table";
+import { SectionCard } from "../../../components/ui/section-card";
+import { StatusBadge } from "../../../components/ui/status-badge";
+import { StateShell } from "../../../components/ui/state-shell";
+import { useInventoryFilters } from "../useInventoryFilters";
+import { useInventoryQuery } from "../useInventoryQuery";
+import { Link } from "react-router-dom";
+
+export function InventoryList() {
+  const { filters, setFilters } = useInventoryFilters();
+  const { data, isLoading, error } = useInventoryQuery(filters);
+
+  const tableHeaders = [
+    "Mã vật tư",
+    "Tên vật tư / Nhóm",
+    "Đơn vị",
+    "Tồn kho",
+    "Giá vốn",
+    "Giá bán",
+    "Trạng thái",
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex-1 min-w-[300px]">
+          <SearchInput 
+            placeholder="Tìm kiếm vật tư, mã phụ tùng..." 
+            value={filters.search}
+            onChange={(val) => setFilters({ search: val })}
+          />
+        </div>
+        <div className="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl">
+          {['all', 'oil', 'spark_plug', 'tires', 'engine_parts'].map((cat) => {
+            const labels = {
+              all: 'Tất cả',
+              oil: 'Dầu nhớt',
+              spark_plug: 'Bugi',
+              tires: 'Lốp xe',
+              engine_parts: 'Phụ tùng máy'
+            };
+            const isActive = filters.category === cat;
+            return (
+              <button 
+                key={cat}
+                onClick={() => setFilters({ category: cat })}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  isActive 
+                    ? 'bg-surface-container-lowest shadow-sm text-primary' 
+                    : 'hover:bg-surface-container-high text-on-surface-variant'
+                }`}
+              >
+                {labels[cat]}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <SectionCard
+        title="Danh sách vật tư tồn kho"
+        noPadding
+        action={
+          <div className="flex gap-2">
+            <button className="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors">
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
+            <button className="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors">
+              <span className="material-symbols-outlined">download</span>
+            </button>
+          </div>
+        }
+      >
+        <StateShell
+          isLoading={isLoading}
+          error={error}
+          isEmpty={!isLoading && (!data?.data || data.data.length === 0)}
+          emptyMessage="Không tìm thấy vật tư nào"
+        >
+          <DataTable headers={tableHeaders}>
+            {data?.data?.map((item) => (
+              <tr key={item.id} className="hover:bg-surface-container-low transition-colors group">
+                <td className="px-6 py-4 font-bold text-primary text-sm">
+                  <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.id}</Link>
+                </td>
+                <td className="px-6 py-4">
+                  <p className="text-sm font-semibold text-on-surface">
+                    <Link to={`/inventory/stock-card?id=${item.id}`} className="hover:underline">{item.name}</Link>
+                  </p>
+                  <p className="text-[10px] text-on-surface-variant font-medium">
+                    Nhóm: {item.group}
+                  </p>
+                </td>
+                <td className="px-6 py-4 text-center text-sm font-medium">
+                  {item.unit}
+                </td>
+                <td className={`px-6 py-4 text-right font-bold text-sm ${item.stock < 10 ? 'text-error' : 'text-on-surface'}`}>
+                  {item.stock}
+                </td>
+                <td className="px-6 py-4 text-right text-sm text-on-surface-variant">
+                  {item.cost}
+                </td>
+                <td className="px-6 py-4 text-right text-sm font-bold text-on-surface">
+                  {item.price}
+                </td>
+                <td className="px-6 py-4">
+                  <StatusBadge status={item.statusCode} label={item.status} />
+                </td>
+              </tr>
+            ))}
+          </DataTable>
+        </StateShell>
+      </SectionCard>
+    </div>
+  );
+}
+export function getInventoryFilters(searchParams) {
+  return {
+    search: searchParams.get('search') || '',
+    category: searchParams.get('category') || 'all',
+    page: parseInt(searchParams.get('page') || '1', 10),
+  };
+}
+
+export function applyInventoryFilterUpdates(searchParams, newFilters) {
+  const params = new URLSearchParams(searchParams);
+  const currentFilters = getInventoryFilters(searchParams);
+
+  Object.entries(newFilters).forEach(([key, value]) => {
+    if (value === '' || value === 'all' || (key === 'page' && value === 1)) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  });
+
+  if (newFilters.search !== undefined && newFilters.search !== currentFilters.search && newFilters.page === undefined) {
+      params.delete('page');
+  }
+  if (newFilters.category !== undefined && newFilters.category !== currentFilters.category && newFilters.page === undefined) {
+      params.delete('page');
+  }
+
+  return params;
+}
+import { useSearchParams } from 'react-router-dom';
+import { getInventoryFilters, applyInventoryFilterUpdates } from './inventory.filters.js';
+
+export function useInventoryFilters() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filters = getInventoryFilters(searchParams);
+
+  const setFilters = (newFilters) => {
+    const params = applyInventoryFilterUpdates(searchParams, newFilters);
+    setSearchParams(params);
+  };
+
+  return { filters, setFilters };
+}
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { inventoryApi } from './inventory.api';
+import { INVENTORY_KEYS } from './inventory.queryKeys';
+
+export function useInventoryQuery(filters) {
+  return useQuery({
+    queryKey: INVENTORY_KEYS.list(filters),
+    queryFn: () => inventoryApi.getInventory(filters),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useStockDetailQuery(id) {
+  return useQuery({
+    queryKey: INVENTORY_KEYS.detail(id),
+    queryFn: () => inventoryApi.getStockDetail(id),
+    enabled: !!id,
+  });
+}
+import axiosClient from '../../lib/axiosClient';
+
+export const inventoryApi = {
+  getInventory: async (filters) => {
+    // Exclude frontend-only params like category that cause 400 errors from backend validator
+    const { category, ...backendFilters } = filters || {};
+    const response = await axiosClient.get('/api/v1/parts', { params: backendFilters });
+    const { parts, pagination } = response.data.data;
+    return {
+      data: parts.map(part => ({
+        id: part.MaVatTu,
+        name: part.TenVatTu,
+        group: 'Vật tư', // Mock group as parts doesn't have it natively
+        unit: part.DonViTinh,
+        stock: part.SoLuongTon,
+        cost: new Intl.NumberFormat('vi-VN').format(part.GiaVon) + ' đ',
+        price: new Intl.NumberFormat('vi-VN').format(part.DonGiaBan) + ' đ',
+        status: part.SoLuongTon > 10 ? 'Đủ hàng' : 'Sắp hết',
+        statusCode: part.SoLuongTon > 10 ? 'success' : 'error'
+      })),
+      pagination
+    };
+  },
+  getStockDetail: async (id) => {
+    const response = await axiosClient.get(`/api/v1/parts/${id}`);
+    const part = response.data.data.part;
+
+    const historyResponse = await axiosClient.get('/api/v1/stock-receipt-details', { params: { MaVatTu: id } });
+
+    return {
+      id: part.MaVatTu,
+      name: part.TenVatTu,
+      unit: part.DonViTinh,
+      stock: part.SoLuongTon,
+      cost: part.GiaVon,
+      price: part.DonGiaBan,
+      history: historyResponse.data.data.stockReceiptDetails || []
+    };
+  },
+  createStockReceipt: async (payload) => {
+    const response = await axiosClient.post('/api/v1/workflows/stock-receipts', payload);
+    return response.data;
+  }
+};
+import axiosClient from '../../lib/axiosClient.js';
+
+export async function fetchInventoryReport(params) {
+  const { data } = await axiosClient.get('/api/v1/reports/inventory/summary', { params });
+  return data.data;
+}
+
+export async function exportInventoryReport(params) {
+  const response = await axiosClient.get('/api/v1/reports/inventory/summary/export', {
+    params,
+    responseType: 'blob'
+  });
+  return response.data;
+}
+
+export async function fetchRepairReport(params) {
+  const { data } = await axiosClient.get('/api/v1/reports/repair/summary', { params });
+  return data.data;
+}
+
+export async function exportRepairReport(params) {
+  const response = await axiosClient.get('/api/v1/reports/repair/summary/export', {
+    params,
+    responseType: 'blob'
+  });
+  return response.data;
+}
+
+export async function fetchRevenueReport(params) {
+  const { data } = await axiosClient.get('/api/v1/reports/revenue/composition', { params });
+  return data.data;
+}
+
+export async function exportRevenueReport(params) {
+  const response = await axiosClient.get('/api/v1/reports/revenue/composition/export', {
+    params,
+    responseType: 'blob'
+  });
+  return response.data;
+}
+import React from 'react';
+
+export function SearchInput({ placeholder = 'Tìm kiếm...', value, onChange }) {
+  const isControlled = typeof value !== 'undefined';
+
+  return (
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+        placeholder={placeholder}
+        value={isControlled ? value : undefined}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { INVENTORY_KEYS } from '../inventory.queryKeys.js';
+
+describe('Inventory Feature Contract', () => {
+  it('should define correct query keys', () => {
+    assert.deepStrictEqual(INVENTORY_KEYS.all, ['inventory']);
+    assert.deepStrictEqual(INVENTORY_KEYS.lists(), ['inventory', 'list']);
+    assert.deepStrictEqual(INVENTORY_KEYS.list({ page: 1 }), ['inventory', 'list', { page: 1 }]);
+    assert.deepStrictEqual(INVENTORY_KEYS.details(), ['inventory', 'detail']);
+    assert.deepStrictEqual(INVENTORY_KEYS.detail('123'), ['inventory', 'detail', '123']);
+  });
+});
