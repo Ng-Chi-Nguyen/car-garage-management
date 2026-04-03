@@ -1,41 +1,57 @@
 import React, { useMemo, useState } from "react";
-import { PageHeader } from "../../components/ui/page-header";
 import { StateShell } from "../../components/ui/state-shell";
 import { useAdminUsersQuery } from "../../features/adminUsers/useAdminUsersQuery.js";
-import { useUpdateAdminUserMutation } from "../../features/adminUsers/useAdminUsersMutation.js";
+import { AdminUsersHeader } from "../../features/adminUsers/components/AdminUsersHeader.jsx";
+import { AdminUsersStats } from "../../features/adminUsers/components/AdminUsersStats.jsx";
+import { AdminUsersFilters } from "../../features/adminUsers/components/AdminUsersFilters.jsx";
+import { AdminUsersTable } from "../../features/adminUsers/components/AdminUsersTable.jsx";
 
 export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
-  const query = useAdminUsersQuery({ page: 1, limit: 20, search });
-  const mutation = useUpdateAdminUserMutation();
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const query = useAdminUsersQuery({ page: 1, limit: 100, search });
 
   const users = useMemo(() => query.data ?? [], [query.data]);
 
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      if (roleFilter && user.ChucVu !== roleFilter) return false;
+      if (statusFilter && user.TrangThai !== statusFilter) return false;
+      return true;
+    });
+  }, [users, roleFilter, statusFilter]);
+
   return (
-    <div className="space-y-6">
-      <PageHeader title="Quản lý nhân sự" description="Quản lý vai trò và trạng thái tài khoản nội bộ" />
+    <div className="space-y-8 p-8">
+      <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border mb-4">
+        <h2 className="text-primary font-bold text-lg">Quản lý Nhân viên</h2>
+        <div className="relative w-full max-w-md">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+          <input
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm kiếm nhân viên..."
+          />
+        </div>
+      </div>
 
-      <input className="border rounded px-3 py-2 w-full max-w-md" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, email, số điện thoại" />
-
+      <AdminUsersHeader />
       <StateShell query={query}>
         {() => (
-          <div className="grid gap-4">
-            {users.map((user) => (
-              <div key={user.MaKH} className="border rounded-xl p-4 flex items-center justify-between gap-4">
-                <div>
-                  <div className="font-semibold">{user.TenChuXe}</div>
-                  <div className="text-sm text-slate-500">{user.Email || user.DienThoai}</div>
-                  <div className="text-xs mt-1">{user.roleLabel} · {user.TrangThai}</div>
-                </div>
-                <button
-                  className="px-4 py-2 rounded bg-primary text-white"
-                  onClick={() => mutation.mutate({ id: user.MaKH, data: { ChucVu: user.ChucVu === "Admin" ? "NhanVien" : "Admin" } })}
-                >
-                  Đổi vai trò
-                </button>
-              </div>
-            ))}
-          </div>
+          <>
+            <AdminUsersStats users={users} />
+            <div className="bg-slate-50 rounded-xl p-1 overflow-hidden border">
+              <AdminUsersFilters
+                roleFilter={roleFilter}
+                setRoleFilter={setRoleFilter}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+              />
+              <AdminUsersTable users={filteredUsers} />
+            </div>
+          </>
         )}
       </StateShell>
     </div>
