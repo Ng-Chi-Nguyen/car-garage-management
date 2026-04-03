@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { INVENTORY_KEYS } from '../inventory.queryKeys.js';
-import { sanitizeInventoryFilters } from '../inventory.filters.js';
+import { getInventoryFilters, sanitizeInventoryFilters } from '../inventory.filters.js';
 
 describe('Inventory Feature Contract', () => {
   it('should define correct query keys', () => {
@@ -17,6 +17,7 @@ describe('Inventory Feature Contract', () => {
       sanitizeInventoryFilters({
         search: '  bugi  ',
         stockStatus: '',
+        note: '   ',
         page: 1,
         includeArchived: false,
         minQty: 0,
@@ -27,6 +28,26 @@ describe('Inventory Feature Contract', () => {
         page: 1,
         includeArchived: false,
         minQty: 0,
+      }
+    );
+  });
+
+  it('should parse inventory filters safely from URL params', () => {
+    assert.deepStrictEqual(
+      getInventoryFilters(new URLSearchParams('search=loc&stockStatus=invalid&page=0')),
+      {
+        search: 'loc',
+        stockStatus: undefined,
+        page: 1,
+      }
+    );
+
+    assert.deepStrictEqual(
+      getInventoryFilters(new URLSearchParams('search=loc&stockStatus=low&page=3')),
+      {
+        search: 'loc',
+        stockStatus: 'low',
+        page: 3,
       }
     );
   });

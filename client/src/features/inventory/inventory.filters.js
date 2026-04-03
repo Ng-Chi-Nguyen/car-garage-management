@@ -1,8 +1,11 @@
 export function getInventoryFilters(searchParams) {
+  const stockStatus = searchParams.get('stockStatus');
+  const page = Number.parseInt(searchParams.get('page') || '1', 10);
+
   return {
     search: searchParams.get('search') || '',
-    stockStatus: searchParams.get('stockStatus') || undefined,
-    page: parseInt(searchParams.get('page') || '1', 10),
+    stockStatus: ['low', 'out_of_stock', 'in_stock'].includes(stockStatus) ? stockStatus : undefined,
+    page: Number.isInteger(page) && page > 0 ? page : 1,
   };
 }
 

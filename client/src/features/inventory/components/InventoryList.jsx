@@ -29,7 +29,7 @@ export function InventoryList() {
           <form onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            setFilters({ search: formData.get('search'), page: 1, stockStatus: undefined });
+            setFilters({ search: formData.get('search'), page: 1 });
           }}>
           <SearchInput 
             name="search"
