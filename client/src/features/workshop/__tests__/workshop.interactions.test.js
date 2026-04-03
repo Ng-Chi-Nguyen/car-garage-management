@@ -12,22 +12,22 @@ describe('Workshop Interactions', () => {
             assert.equal(getWorkshopRouteTarget('create_repair_order'), '/repair-orders/new');
         });
 
-        it('should return /repair-orders?page=1 for view_repair_orders', () => {
-            assert.equal(getWorkshopRouteTarget('view_repair_orders'), '/repair-orders?page=1');
+        it('should return /workshop for view_repair_orders', () => {
+            assert.equal(getWorkshopRouteTarget('view_repair_orders'), '/workshop');
         });
 
-        it('should return /repair-orders?page=1 for view_vehicle with context.id', () => {
-            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/repair-orders?page=1');
+        it('should return /workshop for view_vehicle with context.id', () => {
+            assert.equal(getWorkshopRouteTarget('view_vehicle', { id: 'RO-123' }), '/workshop');
         });
 
-        it('should fallback to /repair-orders?page=1 for view_vehicle without context or id', () => {
-            assert.equal(getWorkshopRouteTarget('view_vehicle', null), '/repair-orders?page=1');
-            assert.equal(getWorkshopRouteTarget('view_vehicle', {}), '/repair-orders?page=1');
-            assert.equal(getWorkshopRouteTarget('view_vehicle', { someOtherProp: 'abc' }), '/repair-orders?page=1');
+        it('should fallback to /workshop for view_vehicle without context or id', () => {
+            assert.equal(getWorkshopRouteTarget('view_vehicle', null), '/workshop');
+            assert.equal(getWorkshopRouteTarget('view_vehicle', {}), '/workshop');
+            assert.equal(getWorkshopRouteTarget('view_vehicle', { someOtherProp: 'abc' }), '/workshop');
         });
 
-        it('should fallback to /repair-orders?page=1 for unknown action', () => {
-            assert.equal(getWorkshopRouteTarget('unknown_action'), '/repair-orders?page=1');
+        it('should fallback to /workshop for unknown action', () => {
+            assert.equal(getWorkshopRouteTarget('unknown_action'), '/workshop');
         });
     });
 
@@ -42,10 +42,10 @@ describe('Workshop Interactions', () => {
             assert.equal(navigatedTo, '/intake');
 
             handleWorkshopAction(mockNavigate, 'view_vehicle', { id: '123' });
-            assert.equal(navigatedTo, '/repair-orders?page=1');
+            assert.equal(navigatedTo, '/workshop');
 
             handleWorkshopAction(mockNavigate, 'unknown');
-            assert.equal(navigatedTo, '/repair-orders?page=1');
+            assert.equal(navigatedTo, '/workshop');
         });
     });
 });
