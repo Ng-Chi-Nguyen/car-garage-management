@@ -1,7 +1,15 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CUSTOMERS_KEYS } from '../customers.queryKeys.js';
 import { mapCustomerSummary, mapCustomerStats } from '../customers.mappers.js';
+import { serializeFilters, deserializeFilters } from '../customers.filters.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const customersListPath = path.join(__dirname, '../components/CustomersList.jsx');
 
 describe('Customers Feature Contract', () => {
   it('should define correct query keys', () => {
@@ -55,5 +63,53 @@ describe('Customers Mappers', () => {
     assert.strictEqual(result.vipCustomers, 10);
     assert.strictEqual(result.totalDebt, '5.000.000\xa0₫');
     assert.strictEqual(result.repairVisits, 50);
+  });
+});
+
+describe('Customers Filters and UI Contracts', () => {
+  describe('customers.filters.js helpers', () => {
+    it('serializes advanced filters', () => {
+      const filters = { search: 'A', page: 2, minDebt: 1000000, licensePlate: '51A' };
+      const searchParams = serializeFilters(filters);
+      assert.strictEqual(searchParams.get('search'), 'A');
+      assert.strictEqual(searchParams.get('page'), '2');
+      assert.strictEqual(searchParams.get('minDebt'), '1000000');
+      assert.strictEqual(searchParams.get('licensePlate'), '51A');
+    });
+
+    it('resets page on filter change', () => {
+      const currentFilters = { search: 'A', page: 2 };
+      const newFilters = { search: 'B' }; // search changed, should reset page
+      const searchParams = serializeFilters(newFilters, currentFilters);
+      assert.strictEqual(searchParams.get('search'), 'B');
+      assert.strictEqual(searchParams.has('page'), false); // or '1'
+    });
+
+    it('converts debt filters to number', () => {
+      const searchParams = new URLSearchParams('minDebt=1000000&maxDebt=2000000');
+      const filters = deserializeFilters(searchParams);
+      assert.strictEqual(filters.minDebt, 1000000);
+      assert.strictEqual(filters.maxDebt, 2000000);
+    });
+  });
+
+  describe('CustomersList UI Contracts', () => {
+    const content = fs.readFileSync(customersListPath, 'utf-8');
+
+    it('CustomersList uses form onSubmit for advanced filter', () => {
+      assert.ok(content.includes('<form'), 'Must use form element');
+      assert.ok(content.includes('onSubmit='), 'Must use onSubmit handler');
+      // "Nối nút “Bộ lọc nâng cao” với <form onSubmit> thật." - wait, the task implies a form for search and advanced filters
+    });
+
+    it('CustomersList has no rank/sort controls', () => {
+      assert.ok(!content.includes('value={filters.rank}'), 'Should not have rank control');
+      assert.ok(!content.includes('value={filters.sort}'), 'Should not have sort control');
+    });
+
+    it('Xe quan ly column renders count only', () => {
+      assert.ok(content.includes('{customer.carsCount} xe'), 'Should render carsCount xe');
+      assert.ok(!content.includes('customer.carsSummary'), 'Should not render carsSummary');
+    });
   });
 });
