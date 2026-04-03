@@ -8,26 +8,29 @@ const clientDir = path.resolve(__dirname, '../../../');
 
 export default async function run() {
   const formContent = fs.readFileSync(path.join(clientDir, 'src/features/intake/components/VehicleIntakeForm.jsx'), 'utf-8');
+  const flowContent = fs.readFileSync(path.join(clientDir, 'src/features/intake/intakeSubmissionFlow.js'), 'utf-8');
+  const combinedContent = formContent + '\n' + flowContent;
+  
   const requiredSignals = [
     'useCustomersQuery',
     'useCustomersMutations',
     'useCarBrandsQuery',
     'useVehicleCatalogQuery',
-    'resolveVehicleByPlate(',
-    'buildIntakePayload(',
+    'resolveVehicleByPlate',
+    'buildIntakePayload',
     'mutateAsync(',
   ];
 
   for (const signal of requiredSignals) {
-    if (!formContent.includes(signal)) {
-      throw new Error(`intake form missing required wiring: ${signal}`);
+    if (!combinedContent.includes(signal)) {
+      throw new Error(`intake form/flow missing required wiring: ${signal}`);
     }
   }
 
   const forbiddenSignals = ['vehicleType', 'const carBrands = [', 'const carModels = ['];
   for (const signal of forbiddenSignals) {
-    if (formContent.includes(signal)) {
-      throw new Error(`intake form still contains forbidden scaffolding: ${signal}`);
+    if (combinedContent.includes(signal)) {
+      throw new Error(`intake form/flow still contains forbidden scaffolding: ${signal}`);
     }
   }
   
