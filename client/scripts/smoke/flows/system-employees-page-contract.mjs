@@ -62,8 +62,25 @@ export default async function run() {
     "border-outline-variant"
   ]);
 
+  await assertFileIncludes("client/src/features/adminUsers/components/AddAdminUserModal.jsx", [
+    "useCreateAdminUserMutation",
+    "onSubmit={handleSubmit}",
+    "Email",
+    "MatKhau",
+    "XacNhanMatKhau",
+    "ChucVu",
+    "TrangThai"
+  ]);
+
+  await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
+    "AddAdminUserModal",
+    "setIsAddModalOpen(true)",
+    "setIsAddModalOpen(false)"
+  ]);
+
   await assertFileIncludes("client/src/features/adminUsers/useAdminUsersMutation.js", [
     "invalidateQueries({ queryKey: [\"adminUsers\"] })",
+    "useCreateAdminUserMutation",
     "useResetPasswordAdminUserMutation",
     "resetPasswordAdminUser"
   ]);

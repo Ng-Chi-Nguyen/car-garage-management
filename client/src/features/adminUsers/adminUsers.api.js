@@ -15,6 +15,11 @@ export async function updateAdminUser(id, data) {
   return unwrap(response, "user");
 }
 
+export async function createAdminUser(data) {
+  const response = await axiosClient.post("/api/v1/admin/users", data);
+  return unwrap(response, "user");
+}
+
 export async function resetPasswordAdminUser(id, data) {
   const response = await axiosClient.post(`/api/v1/admin/users/${Number(id)}/reset-password`, data);
   return unwrap(response, "message");

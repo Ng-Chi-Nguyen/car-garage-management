@@ -134,3 +134,114 @@ test("adminUsersService resetAdminUserPassword throws 404 when user is missing",
     (error) => error.status === 404 && error.message === "Không tìm thấy tài khoản.",
   );
 });
+
+test("adminUsersService createAdminUser validates uniqueness, hashes password, and sanitizes response", async () => {
+  const calls = { findFirst: [], create: null, hashPassword: null };
+  const service = createAdminUsersService({
+    userDelegate: {
+      findFirst: async (args) => {
+        calls.findFirst.push(args);
+        return null;
+      },
+      create: async (args) => {
+        calls.create = args;
+        return {
+          MaKH: 9,
+          TenChuXe: "New User",
+          DienThoai: "0900000000",
+          Email: "new@example.com",
+          MatKhau: "hashed-password",
+          ChucVu: "NhanVien",
+          TrangThai: "HoatDong",
+          TokenDatLaiMatKhau: "secret",
+        };
+      },
+    },
+    hashPassword: async (password) => {
+      calls.hashPassword = password;
+      return "hashed-password";
+    },
+  });
+
+  const result = await service.createAdminUser({
+    TenChuXe: "New User",
+    DienThoai: "0900000000",
+    Email: "new@example.com",
+    MatKhau: "Password123!",
+    XacNhanMatKhau: "Password123!",
+    DiaChi: "Hà Nội",
+    ChucVu: "NhanVien",
+  });
+
+  assert.equal(calls.findFirst.length, 2);
+  assert.deepEqual(calls.findFirst[0], { where: { Email: "new@example.com" } });
+  assert.deepEqual(calls.findFirst[1], { where: { DienThoai: "0900000000" } });
+  assert.equal(calls.hashPassword, "Password123!");
+  assert.deepEqual(calls.create.data, {
+    TenChuXe: "New User",
+    DienThoai: "0900000000",
+    Email: "new@example.com",
+    MatKhau: "hashed-password",
+    DiaChi: "Hà Nội",
+    ChucVu: "NhanVien",
+    TrangThai: "HoatDong",
+  });
+  assert.equal(result.MatKhau, undefined);
+  assert.equal(result.TokenDatLaiMatKhau, undefined);
+});
+
+test("adminUsersService createAdminUser rejects duplicate email, duplicate phone, and password mismatch", async () => {
+  const duplicateEmailService = createAdminUsersService({
+    userDelegate: {
+      findFirst: async (args) => (args.where.Email ? { MaKH: 1 } : null),
+    },
+  });
+
+  await assert.rejects(
+    duplicateEmailService.createAdminUser({
+      TenChuXe: "New User",
+      DienThoai: "0900000000",
+      Email: "dup@example.com",
+      MatKhau: "Password123!",
+      XacNhanMatKhau: "Password123!",
+      ChucVu: "NhanVien",
+    }),
+    (error) => error.status === 409 && error.message === "Email đã tồn tại.",
+  );
+
+  const duplicatePhoneService = createAdminUsersService({
+    userDelegate: {
+      findFirst: async (args) => (args.where.DienThoai ? { MaKH: 2 } : null),
+    },
+  });
+
+  await assert.rejects(
+    duplicatePhoneService.createAdminUser({
+      TenChuXe: "New User",
+      DienThoai: "0900000000",
+      Email: "new@example.com",
+      MatKhau: "Password123!",
+      XacNhanMatKhau: "Password123!",
+      ChucVu: "NhanVien",
+    }),
+    (error) => error.status === 409 && error.message === "Số điện thoại đã tồn tại.",
+  );
+
+  const mismatchService = createAdminUsersService({
+    userDelegate: {
+      findFirst: async () => null,
+    },
+  });
+
+  await assert.rejects(
+    mismatchService.createAdminUser({
+      TenChuXe: "New User",
+      DienThoai: "0900000000",
+      Email: "new@example.com",
+      MatKhau: "Password123!",
+      XacNhanMatKhau: "Password456!",
+      ChucVu: "NhanVien",
+    }),
+    (error) => error.status === 400 && error.message === "Mật khẩu xác nhận không khớp.",
+  );
+});

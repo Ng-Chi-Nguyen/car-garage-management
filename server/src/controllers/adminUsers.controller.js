@@ -20,6 +20,14 @@ const adminUsersController = {
       return handleError(res, error);
     }
   },
+  createAdminUser: async (req, res) => {
+    try {
+      const user = await adminUsersService.createAdminUser(req.body);
+      return res.status(201).json({ success: true, message: "Tạo tài khoản thành công.", data: { user } });
+    } catch (error) {
+      return handleError(res, error);
+    }
+  },
   resetAdminUserPassword: async (req, res) => {
     try {
       const user = await adminUsersService.resetAdminUserPassword(req.validatedParams?.id ?? req.params.id, req.body);

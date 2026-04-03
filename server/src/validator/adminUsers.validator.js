@@ -51,6 +51,18 @@ export default {
       TrangThai: { values: ["HoatDong", "BiKhoa", "DaXoa"] },
     }),
   },
+  create: {
+    body: makeValidator({
+      TenChuXe: { required: true },
+      DienThoai: { required: true },
+      Email: { required: true },
+      MatKhau: { required: true },
+      XacNhanMatKhau: { required: true },
+      DiaChi: {},
+      ChucVu: { values: ["Admin", "NhanVien"] },
+      TrangThai: { values: ["HoatDong", "BiKhoa"] },
+    }),
+  },
   resetPassword: {
     params: makeValidator({ id: { type: "number", required: true } }),
     body: makeValidator({
