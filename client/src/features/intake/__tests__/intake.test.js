@@ -107,6 +107,7 @@ test("submitIntakeFlow does not create customer when vehicle resolve fails", asy
 
 test("submitIntakeFlow keeps new vehicle intake moving when resolver misses", async () => {
   let createCustomerCalls = 0;
+  let createVehicleCalls = 0;
   let createIntakeCalls = 0;
 
   await assert.doesNotReject(
@@ -123,6 +124,11 @@ test("submitIntakeFlow keeps new vehicle intake moving when resolver misses", as
           return { MaKH: 8, TenChuXe: "Nguyen Van A", DienThoai: "0900000000", DiaChi: "" };
         },
       },
+      createVehicle: async () => {
+        createVehicleCalls += 1;
+        return { MaXe: 88 };
+      },
+      resolveBrandId: () => 1,
       createIntakeMutation: {
         mutateAsync: async () => {
           createIntakeCalls += 1;
@@ -135,5 +141,6 @@ test("submitIntakeFlow keeps new vehicle intake moving when resolver misses", as
   );
 
   assert.equal(createCustomerCalls, 1);
+  assert.equal(createVehicleCalls, 1);
   assert.equal(createIntakeCalls, 1);
 });

@@ -5,6 +5,7 @@ import { useCustomersQuery } from "../../customers/useCustomersQuery.js";
 import { resolveVehicleByPlate } from "../intakeVehicleResolver.api.js";
 import { useCreateIntakeMutation } from "../useIntakeMutation.js";
 import { submitIntakeFlow } from "../intakeSubmissionFlow.js";
+import { createVehicle as createVehicleApi } from "../intake.api.js";
 import { useVehicleCatalogQuery } from "../useVehicleCatalogQuery.js";
 import { resolveModelsForBrand } from "../intakeVehicleCatalog.resolve.js";
 import fallbackCatalog from "../intakeVehicleCatalog.json" with { type: "json" };
@@ -58,6 +59,12 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
   const brandOptions = useMemo(() => {
     return Array.isArray(carBrands) ? carBrands.map((brand) => brand.name).filter(Boolean) : [];
   }, [carBrands]);
+
+  const resolveBrandId = (brandName) => {
+    if (!Array.isArray(carBrands)) return null;
+    const match = carBrands.find((brand) => brand?.name === brandName);
+    return match?.id ?? null;
+  };
 
   const modelOptions = useMemo(() => {
     if (!form.brand) return [];
@@ -134,6 +141,8 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
         selectedCustomer,
         selectedVehicle,
         resolveVehicleByPlate,
+        createVehicle: createVehicleApi,
+        resolveBrandId,
         createCustomer,
         createIntakeMutation,
         setSelectedCustomer,
