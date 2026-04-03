@@ -36,7 +36,8 @@ export default async function run() {
     "AdminUsersTable",
     "useAdminUsersQuery",
     "onSubmit={handleSearchSubmit}",
-    "e.preventDefault()"
+    "e.preventDefault()",
+    "}, [searchParams]);"
   ]);
 
   await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [

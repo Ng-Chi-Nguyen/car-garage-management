@@ -16,7 +16,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     setSearchInput(queryParams.search || "");
-  }, [queryParams.search]);
+  }, [searchParams]);
 
   const query = useAdminUsersQuery({ 
     page: queryParams.page, 
