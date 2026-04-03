@@ -4,8 +4,8 @@ import { getWorkshopRouteTarget, handleWorkshopAction } from '../workshop.intera
 
 describe('Workshop Interactions', () => {
     describe('getWorkshopRouteTarget', () => {
-        it('should return /intake/new for create_intake', () => {
-            assert.equal(getWorkshopRouteTarget('create_intake'), '/intake/new');
+        it('should return /intake for create_intake', () => {
+            assert.equal(getWorkshopRouteTarget('create_intake'), '/intake');
         });
 
         it('should return /repair-orders/new for create_repair_order', () => {
@@ -39,7 +39,7 @@ describe('Workshop Interactions', () => {
             };
 
             handleWorkshopAction(mockNavigate, 'create_intake');
-            assert.equal(navigatedTo, '/intake/new');
+            assert.equal(navigatedTo, '/intake');
 
             handleWorkshopAction(mockNavigate, 'view_vehicle', { id: '123' });
             assert.equal(navigatedTo, '/repair-orders?page=1');
