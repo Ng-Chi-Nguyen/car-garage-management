@@ -20,8 +20,20 @@ const createRepairOrderDbStub = (initialRepairOrders = []) => {
     repairOrders: cloneValue(initialRepairOrders),
     createCalls: [],
     updateCalls: [],
+    findUniqueCalls: [],
+    findUniqueArgs: [],
     syncCalls: [],
     transactionOptions: [],
+  };
+
+  const findRepairOrderById = async (args) => {
+    state.findUniqueArgs.push(cloneValue(args));
+    state.findUniqueCalls.push(cloneValue(args.where));
+    const found = state.repairOrders.find(
+      (item) => Number(item.MaPhieuSC) === Number(args.where.MaPhieuSC),
+    );
+
+    return cloneValue(found ?? null);
   };
 
   const tx = {
@@ -41,13 +53,7 @@ const createRepairOrderDbStub = (initialRepairOrders = []) => {
         state.repairOrders.push(created);
         return cloneValue(created);
       },
-      findUnique: async ({ where }) => {
-        const found = state.repairOrders.find(
-          (item) => Number(item.MaPhieuSC) === Number(where.MaPhieuSC),
-        );
-
-        return cloneValue(found ?? null);
-      },
+      findUnique: findRepairOrderById,
       update: async ({ where, data }) => {
         state.updateCalls.push(cloneValue(data));
         const index = state.repairOrders.findIndex(
@@ -84,6 +90,9 @@ const createRepairOrderDbStub = (initialRepairOrders = []) => {
   return {
     state,
     db: {
+      pHIEU_SUA_CHUA: {
+        findUnique: findRepairOrderById,
+      },
       $transaction: async (callback, options) => {
         state.transactionOptions.push(options);
         return callback(tx);
@@ -284,6 +293,38 @@ test("repair order update qua validator khong reset TongTien khi payload khong g
   assert.equal(updated.GhiChu, "Moi");
   assert.equal(updated.TongTien, 450000);
   assert.equal(Object.hasOwn(fixture.state.updateCalls[0], "TongTien"), false);
+});
+
+test("repair order detail retrieval uses explicit select and omits NgayKetThuc", async () => {
+  const createRepairOrderService = await loadCreateRepairOrderService();
+  const fixture = createRepairOrderDbStub([
+    {
+      MaPhieuSC: 9,
+      MaXe: 40,
+      MaNV: 12,
+      NgaySC: new Date("2026-03-20"),
+      TrangThai: "DangSua",
+      NoiDungLoi: "May rung",
+      GhiChu: "Dang xu ly",
+      TongTien: 125000,
+      NgayKetThuc: null,
+    },
+  ]);
+
+  const service = createRepairOrderService({
+    db: fixture.db,
+    businessHelpers: {
+      syncVehicleDebt: async () => {},
+    },
+  });
+
+  const order = await service.getRepairOrderById(9);
+
+  assert.equal(order.MaPhieuSC, 9);
+  assert.equal(fixture.state.findUniqueArgs.length, 1);
+  assert.deepEqual(fixture.state.findUniqueArgs[0].where, { MaPhieuSC: 9 });
+  assert.ok(fixture.state.findUniqueArgs[0].select);
+  assert.equal(Object.hasOwn(fixture.state.findUniqueArgs[0].select, "NgayKetThuc"), false);
 });
 
 test("repair order list search duoc xe va khach hang", async () => {
