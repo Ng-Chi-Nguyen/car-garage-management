@@ -14,12 +14,12 @@ export async function exportInventoryReport(params) {
 }
 
 export async function fetchRepairReport(params) {
-  const { data } = await axiosClient.get('/api/v1/reports/repair/summary', { params });
+  const { data } = await axiosClient.get('/api/v1/reports/repair-report/summary', { params });
   return data.data;
 }
 
 export async function exportRepairReport(params) {
-  const response = await axiosClient.get('/api/v1/reports/repair/summary/export', {
+  const response = await axiosClient.get('/api/v1/reports/repair-report/summary/export', {
     params,
     responseType: 'blob'
   });
@@ -27,13 +27,17 @@ export async function exportRepairReport(params) {
 }
 
 export async function fetchRevenueReport(params) {
-  const { data } = await axiosClient.get('/api/v1/reports/revenue/composition', { params });
+  const queryParams = { ...(params ?? {}) };
+  delete queryParams.granularity;
+  const { data } = await axiosClient.get('/api/v1/reports/revenue/composition', { params: queryParams });
   return data.data;
 }
 
 export async function exportRevenueReport(params) {
+  const queryParams = { ...(params ?? {}) };
+  delete queryParams.granularity;
   const response = await axiosClient.get('/api/v1/reports/revenue/composition/export', {
-    params,
+    params: queryParams,
     responseType: 'blob'
   });
   return response.data;

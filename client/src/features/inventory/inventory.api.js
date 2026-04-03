@@ -1,9 +1,9 @@
 import axiosClient from '../../lib/axiosClient';
+import { sanitizeInventoryFilters } from './inventory.filters.js';
 
 export const inventoryApi = {
   getInventory: async (filters) => {
-    // Exclude frontend-only params like category that cause 400 errors from backend validator
-    const { ...backendFilters } = filters || {};
+    const backendFilters = sanitizeInventoryFilters(filters);
     const response = await axiosClient.get('/api/v1/parts', { params: backendFilters });
     const { parts, pagination } = response.data.data;
     return {

@@ -29,7 +29,7 @@ export function InventoryList() {
           <form onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            setFilters({ search: formData.get('search'), page: 1 });
+            setFilters({ search: formData.get('search'), page: 1, stockStatus: undefined });
           }}>
           <SearchInput 
             name="search"
@@ -39,11 +39,11 @@ export function InventoryList() {
           </form>
         </div>
         <div className="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl">
-                    {['all', 'in_stock', 'low_stock', 'out_of_stock'].map((status) => {
+                    {['all', 'in_stock', 'low', 'out_of_stock'].map((status) => {
             const labels = {
               all: 'Tất cả',
               in_stock: 'Còn hàng',
-              low_stock: 'Sắp hết',
+              low: 'Sắp hết',
               out_of_stock: 'Hết hàng'
             };
             const isActive = filters.stockStatus === status || (!filters.stockStatus && status === 'all');

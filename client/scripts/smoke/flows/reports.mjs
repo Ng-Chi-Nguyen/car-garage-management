@@ -76,8 +76,8 @@ export default async function run() {
     assertCall(0, '/api/v1/reports/inventory/summary', invParams);
     assertCall(1, '/api/v1/reports/inventory/summary/export', invParams);
     
-    assertCall(2, '/api/v1/reports/repair/summary', repParams);
-    assertCall(3, '/api/v1/reports/repair/summary/export', repParams);
+    assertCall(2, '/api/v1/reports/repair-report/summary', repParams);
+    assertCall(3, '/api/v1/reports/repair-report/summary/export', repParams);
 
     assertCall(4, '/api/v1/reports/revenue/composition', revParams);
     assertCall(5, '/api/v1/reports/revenue/composition/export', revParams);
