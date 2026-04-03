@@ -21,7 +21,7 @@ export function applyInventoryFilterUpdates(searchParams, newFilters) {
   if (newFilters.search !== undefined && newFilters.search !== currentFilters.search && newFilters.page === undefined) {
       params.delete('page');
   }
-  if (newFilters.stockStatus !== undefined && newFilters.category !== currentFilters.stockStatus && newFilters.page === undefined) {
+  if (newFilters.stockStatus !== undefined && newFilters.stockStatus !== currentFilters.stockStatus && newFilters.page === undefined) {
       params.delete('page');
   }
 
