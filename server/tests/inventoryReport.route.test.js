@@ -221,3 +221,51 @@ test("index route mount inventory summary tren duong dan that khong bi 404", asy
     await stopTestServer(server);
   }
 });
+
+test("route inventory export ap dung rate limit", async () => {
+  const createInventoryReportRoute = await loadCreateInventoryReportRoute();
+  const originalMax = process.env.DASHBOARD_RATE_LIMIT_MAX;
+  process.env.DASHBOARD_RATE_LIMIT_MAX = "1";
+
+  const auth = {
+    requireAuth(req, res, next) {
+      req.user = { ChucVu: "Admin" };
+      next();
+    },
+    requireRoles() {
+      return (req, res, next) => next();
+    },
+  };
+
+  const router = createInventoryReportRoute({
+    auth,
+    schema: {
+      getInventorySummary: {
+        query: {
+          validate(query) {
+            return { error: undefined, value: query };
+          },
+        },
+      },
+    },
+    controller: {
+      getInventorySummary: async (req, res) => res.status(200).json({ success: true, data: {} }),
+      exportInventorySummary: async (req, res) => res.status(200).json({ success: true, data: {} }),
+    },
+  });
+
+  const { server, baseUrl } = await startTestServer(router);
+
+  try {
+    const firstResponse = await fetch(`${baseUrl}/api/v1/reports/inventory/summary/export?from=2026-03-01&to=2026-03-31`);
+    const secondResponse = await fetch(`${baseUrl}/api/v1/reports/inventory/summary/export?from=2026-03-01&to=2026-03-31`);
+    const secondPayload = await secondResponse.json();
+
+    assert.equal(firstResponse.status, 200);
+    assert.equal(secondResponse.status, 429);
+    assert.equal(secondPayload.success, false);
+  } finally {
+    process.env.DASHBOARD_RATE_LIMIT_MAX = originalMax;
+    await stopTestServer(server);
+  }
+});
