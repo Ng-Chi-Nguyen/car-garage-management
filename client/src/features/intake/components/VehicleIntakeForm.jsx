@@ -39,9 +39,10 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
   const [errorMessage, setErrorMessage] = useState("");
   const createIntakeMutation = useCreateIntakeMutation();
   const { createCustomer } = useCustomersMutations();
+  const cleanSearch = customerSearch?.trim() || "";
   const { data: customersResult } = useCustomersQuery(
-    { search: customerSearch, limit: 5 },
-    { enabled: Boolean(clean(customerSearch)) },
+    { search: cleanSearch, limit: 5 },
+    { enabled: Boolean(cleanSearch) },
   );
   const { data: carBrands } = useCarBrandsQuery();
   const { data: vehicleCatalog } = useVehicleCatalogQuery();
