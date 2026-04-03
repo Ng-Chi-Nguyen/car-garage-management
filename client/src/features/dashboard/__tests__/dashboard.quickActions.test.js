@@ -4,7 +4,7 @@ import { DASHBOARD_QUICK_ACTIONS } from '../dashboard.quickActions.js';
 
 test('dashboard quick actions routes exactly match expected paths', () => {
   const expectedPaths = [
-    '/intake/new',
+    '/intake',
     '/repair-orders/new',
     '/repair-orders?page=1',
     '/customers',
