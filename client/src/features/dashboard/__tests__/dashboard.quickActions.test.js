@@ -6,7 +6,7 @@ test('dashboard quick actions routes exactly match expected paths', () => {
   const expectedPaths = [
     '/intake',
     '/repair-orders/new',
-    '/repair-orders?page=1',
+    '/workshop',
     '/customers',
     '/inventory',
     '/finance/receivables'
