@@ -19,7 +19,7 @@ export default function AdminUsersPage() {
   });
 
   const users = useMemo(() => query.data?.users ?? [], [query.data]);
-  const pagination = useMemo(() => query.data?.pagination ?? { page: 1, limit: 10, total: 0 }, [query.data]);
+  const pagination = useMemo(() => query.data?.pagination ?? { page: 1, limit: 10, totalItems: 0, totalPages: 0 }, [query.data]);
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
   const handleStatusChange = (status) => updateParams({ status, page: 1 });
 
   const goNext = () => {
-    if (pagination.page * pagination.limit < pagination.total) {
+    if (pagination.page < pagination.totalPages) {
       updateParams({ page: pagination.page + 1 });
     }
   };
@@ -48,10 +48,6 @@ export default function AdminUsersPage() {
     if (pagination.page > 1) {
       updateParams({ page: pagination.page - 1 });
     }
-  };
-
-  const goToPage = (page) => {
-    updateParams({ page });
   };
 
   return (
@@ -84,7 +80,6 @@ export default function AdminUsersPage() {
                 pagination={pagination}
                 goNext={goNext}
                 goPrev={goPrev}
-                goToPage={goToPage}
               />
             </div>
           </>

@@ -22,15 +22,17 @@ export default async function run() {
   await assertFileIncludes("client/src/pages/admin/AdminUsersPage.jsx", [
     "goNext",
     "goPrev",
-    "goToPage",
     "pagination",
+    "totalItems",
+    "totalPages",
     "buildAdminUsersQuery"
   ]);
 
   await assertFileIncludes("client/src/features/adminUsers/components/AdminUsersTable.jsx", [
     "goNext",
     "goPrev",
-    "goToPage"
+    "totalItems",
+    "totalPages"
   ]);
 
   console.log("All pagination invariant markers found.");
