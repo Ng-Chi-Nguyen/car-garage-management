@@ -60,7 +60,7 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
               <td className="px-6 py-4 text-xs text-on-surface-variant font-medium">—</td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${user.TrangThai === "HoatDong" ? "bg-green-500" : "bg-error"}`}></span>
+                  <span className={`w-2 h-2 rounded-full ${user.TrangThai === "HoatDong" ? "bg-primary" : "bg-error"}`}></span>
                   <span className="text-xs text-on-surface font-medium">
                     {user.TrangThai === "HoatDong" ? "Hoạt động" : user.TrangThai === "BiKhoa" ? "Bị khóa" : "Đã xóa"}
                   </span>
@@ -77,7 +77,7 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
                   </button>
                   <button
                     onClick={() => handleToggleStatus(user)}
-                    className={`p-1.5 rounded-lg transition-colors ${user.TrangThai === "HoatDong" ? "hover:bg-error-container text-error" : "hover:bg-green-100 text-green-700"}`}
+                    className={`p-1.5 rounded-lg transition-colors ${user.TrangThai === "HoatDong" ? "hover:bg-error-container text-error" : "hover:bg-primary-container text-primary"}`}
                     title={user.TrangThai === "HoatDong" ? "Khóa" : "Mở khóa"}
                   >
                     <span className="material-symbols-outlined text-[18px]">{user.TrangThai === "HoatDong" ? "lock" : "lock_open"}</span>
@@ -106,7 +106,7 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
       {pagination && (
         <div className="px-6 py-4 border-t border-outline-variant flex items-center justify-between bg-surface mt-auto">
           <div className="text-sm text-on-surface-variant">
-            Trang <span className="font-medium text-on-surface">{pagination.page}</span> / <span className="font-medium text-on-surface">{pagination.totalPages || 1}</span> 
+            Trang <span className="font-medium text-on-surface">{pagination.page}</span> / <span className="font-medium text-on-surface">{pagination.totalPages}</span> 
             <span className="mx-2">•</span>
             Tổng <span className="font-medium text-on-surface">{pagination.totalItems}</span> nhân viên
           </div>

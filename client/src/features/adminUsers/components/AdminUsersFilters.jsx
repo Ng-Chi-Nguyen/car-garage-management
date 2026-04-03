@@ -9,7 +9,7 @@ export function AdminUsersFilters({ roleFilter, setRoleFilter, statusFilter, set
       </div>
       <div className="flex gap-2">
         <select
-          className="bg-surface-container-low border border-outline-variant text-sm text-on-surface rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all cursor-pointer appearance-none pr-8 relative bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2344474E%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[position:right_10px_center] bg-no-repeat"
+          className="bg-surface-container-low border border-outline-variant text-sm text-on-surface rounded-xl py-2 px-3 pr-8 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all cursor-pointer"
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
         >
@@ -19,7 +19,7 @@ export function AdminUsersFilters({ roleFilter, setRoleFilter, statusFilter, set
           <option value="KhachHang">Khách hàng</option>
         </select>
         <select
-          className="bg-surface-container-low border border-outline-variant text-sm text-on-surface rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all cursor-pointer appearance-none pr-8 relative bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2344474E%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[position:right_10px_center] bg-no-repeat"
+          className="bg-surface-container-low border border-outline-variant text-sm text-on-surface rounded-xl py-2 px-3 pr-8 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all cursor-pointer"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
