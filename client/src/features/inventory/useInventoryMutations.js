@@ -5,6 +5,13 @@ import { INVENTORY_KEYS } from './inventory.queryKeys';
 export function useInventoryMutations() {
   const queryClient = useQueryClient();
 
+  const createPartMutation = useMutation({
+    mutationFn: inventoryApi.createPart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: INVENTORY_KEYS.lists() });
+    },
+  });
+
   const createStockReceiptMutation = useMutation({
     mutationFn: inventoryApi.createStockReceipt,
     onSuccess: () => {
@@ -15,6 +22,7 @@ export function useInventoryMutations() {
   });
 
   return {
+    createPart: createPartMutation,
     createStockReceipt: createStockReceiptMutation,
   };
 }
