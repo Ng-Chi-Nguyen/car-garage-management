@@ -104,3 +104,36 @@ test("submitIntakeFlow does not create customer when vehicle resolve fails", asy
 
   assert.equal(createCustomerCalls, 0);
 });
+
+test("submitIntakeFlow keeps new vehicle intake moving when resolver misses", async () => {
+  let createCustomerCalls = 0;
+  let createIntakeCalls = 0;
+
+  await assert.doesNotReject(
+    submitIntakeFlow({
+      form: { licensePlate: "51G-123.45", note: "", ownerName: "Nguyen Van A", phone: "0900000000", address: "" },
+      selectedQuickTags: ["Xước nhẹ"],
+      selectedCustomer: null,
+      resolveVehicleByPlate: async () => {
+        throw new Error("Không tìm thấy xe.");
+      },
+      createCustomer: {
+        mutateAsync: async () => {
+          createCustomerCalls += 1;
+          return { MaKH: 8, TenChuXe: "Nguyen Van A", DienThoai: "0900000000", DiaChi: "" };
+        },
+      },
+      createIntakeMutation: {
+        mutateAsync: async () => {
+          createIntakeCalls += 1;
+          return { MaPhieuSC: 99 };
+        },
+      },
+      setSelectedCustomer: () => {},
+      buildPayload: () => ({}),
+    }),
+  );
+
+  assert.equal(createCustomerCalls, 1);
+  assert.equal(createIntakeCalls, 1);
+});
