@@ -70,7 +70,7 @@ test("Intake components exist", () => {
   assert.ok(!content.includes("clean("), "Undefined clean function must be removed");
   assert.ok(content.includes("?.trim()"), "Search input should be sanitized locally");
   assert.ok(catalogQueryContent.includes("fetchIntakeVehicleCatalog"), "Vehicle catalog query must exist");
-  assert.ok(catalogApiContent.includes("intakeVehicleCatalog.json"), "Model options must come from local JSON");
+  assert.ok(catalogApiContent.includes("/data/car_data.json"), "Model options must come from public JSON");
 });
 
 test("submitIntakeFlow does not create customer when vehicle resolve fails", async () => {
