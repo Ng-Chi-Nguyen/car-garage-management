@@ -72,6 +72,7 @@ test("Intake components exist", () => {
   assert.ok(content.includes("?.trim()"), "Search input should be sanitized locally");
   assert.ok(catalogQueryContent.includes("fetchIntakeVehicleCatalog"), "Vehicle catalog query must exist");
   assert.ok(catalogApiContent.includes("/data/car_data.json"), "Model options must come from public JSON");
+  assert.ok(content.includes("AddCustomerModal"), "AddCustomerModal should be used in the form");
 });
 
 test("submitIntakeFlow does not create customer when vehicle resolve fails", async () => {
