@@ -5,6 +5,18 @@ const toDate = (value) => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+const toQuickTags = (value) => {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  return value.map((item) => String(item).trim()).filter(Boolean);
+};
+
 const validateIntake = (body) => {
   const errors = [];
   const intake = body?.intake ?? body;
@@ -20,9 +32,18 @@ const validateIntake = (body) => {
   const receivedAt = toDate(intake.NgayTiepNhan);
   if (!receivedAt) errors.push({ message: '"NgayTiepNhan" must be a valid date' });
   if (intake.TrangThai && !INTAKE_TRANG_THAI_VALUES.includes(intake.TrangThai)) errors.push({ message: '"TrangThai" contains an invalid value' });
-  if (!String(intake.BienSoXe ?? "").trim()) errors.push({ message: '"BienSoXe" is required' });
+  if (!String(intake.NoiDungLoi ?? "").trim()) errors.push({ message: '"NoiDungLoi" is required' });
+  const quickTags = toQuickTags(intake.quickTags);
+
+  if (quickTags === null) {
+    errors.push({ message: '"quickTags" must be an array' });
+  }
+
+  if (intake.note !== undefined && intake.note !== null && typeof intake.note !== "string") {
+    errors.push({ message: '"note" must be a string or null' });
+  }
   for (const key of Object.keys(intake)) {
-    if (!["MaKH", "MaXe", "MaNV", "NgayTiepNhan", "TrangThai", "GhiChu", "BienSoXe"].includes(key)) {
+    if (!["MaKH", "MaXe", "MaNV", "NgayTiepNhan", "TrangThai", "NoiDungLoi", "quickTags", "note"].includes(key)) {
       errors.push({ message: `"${key}" is not allowed` });
     }
   }
@@ -39,8 +60,9 @@ const validateIntake = (body) => {
         MaNV: intake.MaNV === null || intake.MaNV === undefined ? null : Number(intake.MaNV),
         NgayTiepNhan: receivedAt,
         TrangThai: intake.TrangThai ?? "TiepNhan",
-        GhiChu: intake.GhiChu ?? null,
-        BienSoXe: String(intake.BienSoXe).trim(),
+        NoiDungLoi: String(intake.NoiDungLoi).trim(),
+        quickTags: quickTags ?? [],
+        note: intake.note ?? null,
       },
     },
   };
