@@ -6,12 +6,7 @@ import {
   buildServiceError,
   buildWriteData,
 } from "../../shared/crud/crud.helpers.js";
-import { processAvatarImage as processAvatarImageUtil } from "../../utils/image.util.js";
-import {
-  removeObject as removeObjectUtil,
-  resolveStorageObjectFromPublicUrl,
-  uploadPublicImage as uploadPublicImageUtil,
-} from "../../utils/supabase.storage.js";
+import { buildCurrentVietnamMonthRange } from "../report/financeReport.service.js";
 
 const CUSTOMER_FILTER_FIELDS = {
   MaKH: { type: "number" },
@@ -107,14 +102,26 @@ const mergeCustomerSummaries = (customer) => ({
 
 const buildCustomerAvatarPath = (customerId) => `customers/${customerId}/avatar.webp`;
 
+const loadAvatarHelpers = async () => {
+  const [{ processAvatarImage }, { removeObject, resolveStorageObjectFromPublicUrl, uploadPublicImage }] = await Promise.all([
+    import("../../utils/image.util.js"),
+    import("../../utils/supabase.storage.js"),
+  ]);
+
+  return {
+    processAvatarImage,
+    removeObject,
+    resolveStorageObjectFromPublicUrl,
+    uploadPublicImage,
+  };
+};
+
 const createCustomerService = ({
   prismaClient = prisma,
   customerDelegate = prisma.kHACH_HANG,
   vehicleDelegate = prisma.xE,
-  uploadPublicImage = uploadPublicImageUtil,
-  removeObject = removeObjectUtil,
-  processAvatarImage = processAvatarImageUtil,
   avatarBucket = process.env.SUPABASE_AVATAR_BUCKET || "avatars",
+  nowProvider = () => new Date(),
 } = {}) => {
   const getCustomerOrThrow = async (id) => {
     const customer = await customerDelegate.findUnique({
@@ -243,6 +250,78 @@ const createCustomerService = ({
     });
   };
 
+  const getCustomerStats = async () => {
+    const currentMonthRange = buildCurrentVietnamMonthRange(nowProvider());
+
+    const [totalCustomers, customers, debtAggregate, monthlyRepairOrders] = await Promise.all([
+      customerDelegate.count({
+        where: {
+          ChucVu: "KhachHang",
+          TrangThai: {
+            not: "DaXoa",
+          },
+        },
+      }),
+      customerDelegate.findMany({
+        where: {
+          ChucVu: "KhachHang",
+          TrangThai: {
+            not: "DaXoa",
+          },
+        },
+        select: {
+          Xe: {
+            select: {
+              TienNoHienTai: true,
+              PhieuSuaChua: {
+                select: {
+                  TongTien: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      prismaClient.xE.aggregate({
+        where: {
+          TienNoHienTai: {
+            gt: 0,
+          },
+        },
+        _sum: {
+          TienNoHienTai: true,
+        },
+      }),
+      prismaClient.pHIEU_SUA_CHUA.count({
+        where: {
+          NgaySC: {
+            gte: currentMonthRange.start,
+            lt: currentMonthRange.endExclusive,
+          },
+        },
+      }),
+    ]);
+
+    const vipCustomers = customers.reduce((count, customer) => {
+      const totalSpent = (customer.Xe ?? []).reduce(
+        (vehicleSum, vehicle) => vehicleSum + (vehicle.PhieuSuaChua ?? []).reduce(
+          (repairSum, repairOrder) => repairSum + Number(repairOrder.TongTien ?? 0),
+          0,
+        ),
+        0,
+      );
+
+      return count + (totalSpent > 50000000 ? 1 : 0);
+    }, 0);
+
+    return {
+      totalCustomers,
+      vipCustomers,
+      totalOutstandingDebt: Number(debtAggregate?._sum?.TienNoHienTai ?? 0),
+      monthlyRepairOrders,
+    };
+  };
+
   const getCustomerById = async (id) => sanitizeCustomer(await getCustomerOrThrow(id));
 
   const createCustomer = async (payload, avatarFile) => {
@@ -257,6 +336,7 @@ const createCustomerService = ({
     const avatarPath = buildCustomerAvatarPath(createdCustomer.MaKH);
 
     try {
+      const { processAvatarImage, uploadPublicImage } = await loadAvatarHelpers();
       const processedAvatar = await processAvatarImage(avatarFile);
       const avatarUrl = await uploadPublicImage({
         bucket: avatarBucket,
@@ -266,6 +346,7 @@ const createCustomerService = ({
       });
 
       try {
+        const { removeObject } = await loadAvatarHelpers();
         const updatedCustomer = await customerDelegate.update({
           where: { MaKH: createdCustomer.MaKH },
           data: { Avatar: avatarUrl },
@@ -291,6 +372,7 @@ const createCustomerService = ({
 
     if (avatarFile) {
       const avatarPath = buildCustomerAvatarPath(customerId);
+      const { processAvatarImage, uploadPublicImage } = await loadAvatarHelpers();
       const processedAvatar = await processAvatarImage(avatarFile);
       const avatarUrl = await uploadPublicImage({
         bucket: avatarBucket,
@@ -323,6 +405,7 @@ const createCustomerService = ({
     }
 
     if (customer.Avatar) {
+      const { removeObject, resolveStorageObjectFromPublicUrl } = await loadAvatarHelpers();
       const storageObject = resolveStorageObjectFromPublicUrl(customer.Avatar);
 
       await removeObject({
@@ -344,6 +427,7 @@ const createCustomerService = ({
     getCustomerById,
     updateCustomer,
     deleteCustomer,
+    getCustomerStats,
   };
 };
 
