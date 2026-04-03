@@ -3,7 +3,7 @@ export const handleQuickActionClick = (navigate, path) => {
 };
 
 export const handleViewAllRecentOrders = (navigate) => {
-  navigate('/repair-orders');
+  navigate('/workshop');
 };
 
 export const computeTrendChartHeights = (revenues) => {
