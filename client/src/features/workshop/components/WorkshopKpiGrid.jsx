@@ -24,14 +24,16 @@ export function WorkshopKpiGrid({ metrics, isLoading, isError }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
       {/* CHỜ */}
-      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between border-l-4 border-secondary">
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-secondary uppercase tracking-wider">
             CHỜ
           </span>
-          <span className="material-symbols-outlined text-secondary opacity-50 text-xl">
-            schedule
-          </span>
+          <div className="bg-secondary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-secondary opacity-50 text-xl">
+              schedule
+            </span>
+          </div>
         </div>
         <h3 className="text-3xl text-on-surface font-bold">
           {metrics.waiting || 0}
@@ -39,27 +41,31 @@ export function WorkshopKpiGrid({ metrics, isLoading, isError }) {
       </div>
 
       {/* CHẨN ĐOÁN */}
-      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between border-l-4 border-tertiary">
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-tertiary uppercase tracking-wider">
             CHẨN ĐOÁN
           </span>
-          <span className="material-symbols-outlined text-tertiary opacity-50 text-xl">
-            troubleshoot
-          </span>
+          <div className="bg-tertiary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-tertiary opacity-50 text-xl">
+              troubleshoot
+            </span>
+          </div>
         </div>
         <h3 className="text-3xl text-on-surface font-bold">0</h3>
       </div>
 
       {/* ĐANG SỬA */}
-      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between border-l-4 border-primary">
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
             ĐANG SỬA
           </span>
-          <span className="material-symbols-outlined text-primary opacity-50 text-xl">
-            handyman
-          </span>
+          <div className="bg-primary/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-primary opacity-50 text-xl">
+              handyman
+            </span>
+          </div>
         </div>
         <h3 className="text-3xl text-on-surface font-bold">
           {metrics.in_progress || 0}
@@ -67,27 +73,31 @@ export function WorkshopKpiGrid({ metrics, isLoading, isError }) {
       </div>
 
       {/* CHỜ T.TOÁN */}
-      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between border-l-4 border-warning">
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-warning uppercase tracking-wider">
             CHỜ T.TOÁN
           </span>
-          <span className="material-symbols-outlined text-warning opacity-50 text-xl">
-            payments
-          </span>
+          <div className="bg-warning/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-warning opacity-50 text-xl">
+              payments
+            </span>
+          </div>
         </div>
         <h3 className="text-3xl text-on-surface font-bold">0</h3>
       </div>
 
       {/* ĐÃ BÀN GIAO */}
-      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between border-l-4 border-success">
+      <div className="bg-surface-container-low p-4 rounded-xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-success uppercase tracking-wider">
             ĐÃ BÀN GIAO
           </span>
-          <span className="material-symbols-outlined text-success opacity-50 text-xl">
-            task_alt
-          </span>
+          <div className="bg-success/10 w-8 h-8 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-success opacity-50 text-xl">
+              task_alt
+            </span>
+          </div>
         </div>
         <h3 className="text-3xl text-on-surface font-bold">
           {metrics.completed || 0}
