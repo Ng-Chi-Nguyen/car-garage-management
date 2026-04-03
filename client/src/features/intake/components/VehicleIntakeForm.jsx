@@ -50,9 +50,8 @@ export function VehicleIntakeForm({ onSuccess, onCancel, variant = "page" }) {
   const { data: vehicleCatalog } = useVehicleCatalogQuery();
 
   const brandOptions = useMemo(() => {
-    const backendBrands = Array.isArray(carBrands) ? carBrands.map((brand) => brand.name).filter(Boolean) : [];
-    return backendBrands.length ? backendBrands : Object.keys(vehicleCatalog ?? {});
-  }, [carBrands, vehicleCatalog]);
+    return Array.isArray(carBrands) ? carBrands.map((brand) => brand.name).filter(Boolean) : [];
+  }, [carBrands]);
 
   const modelOptions = useMemo(() => {
     if (!form.brand) return [];
