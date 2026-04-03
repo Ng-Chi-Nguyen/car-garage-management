@@ -19,12 +19,13 @@ test("activityService builds real logs from domain records", async () => {
     },
   });
 
-  const logs = await service.getActivityLogs();
+  const { activityLogs, pagination } = await service.getActivityLogs({ period: "all" });
 
-  assert.equal(logs[0].id, "repair-7");
-  assert.equal(logs[0].status, "success");
-  assert.match(logs[0].actionType, /Phiếu sửa chữa/);
-  assert.ok(logs[0].initials);
+  assert.equal(activityLogs[0].id, "repair-7");
+  assert.equal(activityLogs[0].status, "success");
+  assert.match(activityLogs[0].actionType, /Phiếu sửa chữa/);
+  assert.ok(activityLogs[0].initials);
+  assert.equal(pagination.totalItems, 1);
 });
 
 test("activityService derives stats from generated logs", async () => {
@@ -59,7 +60,7 @@ test("activityService trả lỗi rõ ràng khi delegate Prisma bị timeout", a
   });
 
   await assert.rejects(
-    service.getActivityLogs(),
+    service.getActivityLogs({ period: "all" }),
     (error) => error.status === 503 && error.message === "Hệ thống đang quá tải hoặc không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.",
   );
 });
