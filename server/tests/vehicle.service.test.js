@@ -91,3 +91,95 @@ test("vehicleService getVehicleById include hieu xe va khach hang", async () => 
   assert.equal(result.HieuXe.TenHieuXe, "Toyota");
   assert.equal(result.KhachHang.TenChuXe, "Le Van Tet");
 });
+
+test("vehicleService createVehicle writes MauXe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  let receivedData = null;
+  const db = {
+    xE: {
+      create: async (args) => {
+        receivedData = args.data;
+        return args.data;
+      },
+    },
+  };
+
+  const vehicleService = createVehicleService({ db });
+
+  await vehicleService.createVehicle({
+    BienSo: "51A-12345",
+    MaHieuXe: 10,
+    MaKH: 35,
+    MauXe: "Trắng",
+  });
+
+  assert.equal(receivedData.MauXe, "Trắng");
+});
+
+test("vehicleService updateVehicle writes MauXe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  let receivedData = null;
+  const db = {
+    xE: {
+      findUnique: async () => ({ MaXe: 90 }),
+      update: async (args) => {
+        receivedData = args.data;
+        return args.data;
+      },
+    },
+  };
+
+  const vehicleService = createVehicleService({ db });
+
+  await vehicleService.updateVehicle(90, {
+    MauXe: "Đen",
+  });
+
+  assert.equal(receivedData.MauXe, "Đen");
+});
+
+test("vehicleService getVehicleList returns MauXe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const db = {
+    xE: {
+      count: async () => 1,
+      findMany: async () => [
+        {
+          MaXe: 90,
+          BienSo: "18L-10090",
+          MaHieuXe: 10,
+          MaKH: 35,
+          MauXe: "Xanh",
+        },
+      ],
+    },
+    $transaction: async (operations) => Promise.all(operations),
+  };
+
+  const vehicleService = createVehicleService({ db });
+
+  const result = await vehicleService.getVehicleList({});
+
+  assert.equal(result.vehicles[0].MauXe, "Xanh");
+});
+
+test("vehicleService getVehicleById returns MauXe", async () => {
+  const { createVehicleService } = await loadVehicleService();
+  const db = {
+    xE: {
+      findUnique: async () => ({
+        MaXe: 90,
+        BienSo: "18L-10090",
+        MaHieuXe: 10,
+        MaKH: 35,
+        MauXe: "Bạc",
+      }),
+    },
+  };
+
+  const vehicleService = createVehicleService({ db });
+
+  const result = await vehicleService.getVehicleById(90);
+
+  assert.equal(result.MauXe, "Bạc");
+});

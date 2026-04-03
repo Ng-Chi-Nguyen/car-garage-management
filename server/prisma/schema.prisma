@@ -46,6 +46,7 @@ model KHACH_HANG {
 model XE {
     MaXe          Int              @id @default(autoincrement())
     BienSo        String           @unique @db.VarChar(20)
+    MauXe         String?          @db.VarChar(50)
     MaHieuXe      Int
     MaKH          Int
     TienNoHienTai Decimal          @db.Decimal(15, 2)
