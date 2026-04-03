@@ -1,17 +1,20 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { authStorage } from "../../features/auth/auth.storage";
+import { parseAccessTokenRole } from "../../features/auth/auth.session";
 
 export function Sidebar() {
+  const role = parseAccessTokenRole(authStorage.getToken());
+  
   const navItems = [
     { name: "Hệ thống", path: "/dashboard", icon: "dashboard" },
     { name: "Báo Cáo", path: "/reports", icon: "bar_chart" },
     { name: "Lễ tân", path: "/workshop", icon: "support_agent" },
-    { name: "Nhân sự", path: "/settings/employees", icon: "badge" },
+    ...(role === "Admin" ? [{ name: "Nhân sự", path: "/settings/employees", icon: "badge" }] : []),
     { name: "Khách hàng", path: "/customers", icon: "people" },
     { name: "Kho", path: "/inventory", icon: "inventory_2" },
     { name: "Tài Chính", path: "/finance/receivables", icon: "payments" },
-    { name: "Cài đặt", path: "/settings", icon: "settings" },
+    { name: "Cài đặt", path: "/settings", icon: "settings", end: true },
   ];
 
   const handleLogout = (e) => {
@@ -40,6 +43,7 @@ export function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 transition-all border-l-4 ${
                 isActive

@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { routeManifest } from './routeManifest';
 import AppShell from '../layouts/AppShell';
 import AuthLayout from '../layouts/AuthLayout';
+import { AdminOnlyRoute } from '../components/auth/AdminOnlyRoute';
 
 // Eagerly import all page components
 const pages = import.meta.glob('../pages/**/*.jsx', { eager: true });
@@ -40,9 +41,17 @@ const appRoutes = routeManifest
   .filter(route => route.layout === 'app')
   .map(route => {
     const Component = resolveComponent(route.componentPath);
+    let element = <Component />;
+    if (route.path === '/settings/employees') {
+      element = (
+        <AdminOnlyRoute>
+          {element}
+        </AdminOnlyRoute>
+      );
+    }
     return {
       path: route.path,
-      element: <Component />
+      element
     };
   });
 
