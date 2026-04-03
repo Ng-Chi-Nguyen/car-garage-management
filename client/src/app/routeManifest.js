@@ -119,20 +119,6 @@ export const routeManifest = [
     group: 'crm'
   },
   {
-    exportKey: 'c_i_t_h_th_ng_gms',
-    path: '/settings',
-    layout: 'app',
-    componentPath: 'src/pages/settings/settings-page.jsx',
-    group: 'system'
-  },
-  {
-    exportKey: 'nh_t_k_thao_t_c_gms',
-    path: '/settings/activity-log',
-    layout: 'app',
-    componentPath: 'src/pages/activity/activity-log-page.jsx',
-    group: 'system'
-  },
-  {
     exportKey: null,
     path: '/settings/employees',
     layout: 'app',
