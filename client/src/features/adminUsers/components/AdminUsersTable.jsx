@@ -1,14 +1,16 @@
-import React from "react";
-import { useUpdateAdminUserMutation } from "../useAdminUsersMutation.js";
+import React, { useState } from "react";
+import { useUpdateAdminUserMutation, useResetPasswordAdminUserMutation } from "../useAdminUsersMutation.js";
 import { toast } from "react-toastify";
 
 export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
   const mutation = useUpdateAdminUserMutation();
+  const resetPasswordMutation = useResetPasswordAdminUserMutation();
+  const [resetModalUser, setResetModalUser] = useState(null);
 
   const handleToggleRole = (user) => {
     const nextRole = user.ChucVu === "Admin" ? "NhanVien" : "Admin";
     mutation.mutate(
-      { id: user.MaKH, data: { ChucVu: nextRole } },
+      { id: Number(user.MaKH), data: { ChucVu: nextRole } },
       {
         onSuccess: () => toast.success(`Đã đổi vai trò thành ${nextRole === "Admin" ? "Admin" : "Nhân viên"}`),
         onError: () => toast.error("Đổi vai trò thất bại")
@@ -19,7 +21,7 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
   const handleToggleStatus = (user) => {
     const nextStatus = user.TrangThai === "HoatDong" ? "BiKhoa" : "HoatDong";
     mutation.mutate(
-      { id: user.MaKH, data: { TrangThai: nextStatus } },
+      { id: Number(user.MaKH), data: { TrangThai: nextStatus } },
       {
         onSuccess: () => toast.success(`Đã ${nextStatus === "HoatDong" ? "mở khóa" : "khóa"} tài khoản`),
         onError: () => toast.error("Đổi trạng thái thất bại")
@@ -27,8 +29,85 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
     );
   };
 
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const MatKhauMoi = formData.get("MatKhauMoi");
+    const XacNhanMatKhauMoi = formData.get("XacNhanMatKhauMoi");
+
+    if (MatKhauMoi !== XacNhanMatKhauMoi) {
+      toast.error("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    if (!MatKhauMoi) {
+      toast.error("Vui lòng nhập mật khẩu mới");
+      return;
+    }
+
+    resetPasswordMutation.mutate(
+      { id: Number(resetModalUser.MaKH), data: { MatKhauMoi, XacNhanMatKhauMoi } },
+      {
+        onSuccess: () => {
+          toast.success("Reset mật khẩu thành công");
+          setResetModalUser(null);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Reset mật khẩu thất bại");
+        }
+      }
+    );
+  };
+
   return (
-    <div className="bg-surface overflow-x-auto flex flex-col">
+    <div className="bg-surface overflow-x-auto flex flex-col relative">
+      {resetModalUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-surface p-6 rounded-xl shadow-lg w-full max-w-md border border-outline-variant">
+            <h3 className="text-xl font-bold text-on-surface mb-4">Reset mật khẩu</h3>
+            <p className="text-sm text-on-surface-variant mb-4">
+              Bạn đang reset mật khẩu cho nhân viên: <span className="font-semibold text-on-surface">{resetModalUser.TenChuXe}</span>
+            </p>
+            <form onSubmit={handleResetPassword} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1">Mật khẩu mới</label>
+                <input
+                  type="password"
+                  name="MatKhauMoi"
+                  className="w-full p-2 border border-outline-variant rounded bg-surface text-on-surface focus:outline-primary"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1">Xác nhận mật khẩu</label>
+                <input
+                  type="password"
+                  name="XacNhanMatKhauMoi"
+                  className="w-full p-2 border border-outline-variant rounded bg-surface text-on-surface focus:outline-primary"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setResetModalUser(null)}
+                  className="px-4 py-2 rounded text-on-surface bg-surface-container-high hover:bg-surface-container-highest transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={resetPasswordMutation.isPending}
+                  className="px-4 py-2 rounded text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors disabled:opacity-50"
+                >
+                  {resetPasswordMutation.isPending ? "Đang xử lý..." : "Xác nhận"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-surface-container-low border-b border-outline-variant">
@@ -83,9 +162,9 @@ export function AdminUsersTable({ users, pagination, goNext, goPrev }) {
                     <span className="material-symbols-outlined text-[18px]">{user.TrangThai === "HoatDong" ? "lock" : "lock_open"}</span>
                   </button>
                   <button
-                    className="p-1.5 rounded-lg text-outline cursor-not-allowed"
-                    title="Reset mật khẩu (Chưa hỗ trợ)"
-                    disabled
+                    onClick={() => setResetModalUser(user)}
+                    className="p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant transition-colors"
+                    title="Reset mật khẩu"
                   >
                     <span className="material-symbols-outlined text-[18px]">key</span>
                   </button>

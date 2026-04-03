@@ -14,3 +14,8 @@ export async function updateAdminUser(id, data) {
   const response = await axiosClient.put(`/api/v1/admin/users/${id}`, data);
   return unwrap(response, "user");
 }
+
+export async function resetPasswordAdminUser(id, data) {
+  const response = await axiosClient.post(`/api/v1/admin/users/${Number(id)}/reset-password`, data);
+  return unwrap(response, "message");
+}
