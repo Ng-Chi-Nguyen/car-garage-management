@@ -1,5 +1,6 @@
 import React from "react";
 import { DataTable } from "../../../components/ui/data-table";
+import { PaginationControls } from "../../../components/ui/pagination-controls";
 import { SectionCard } from "../../../components/ui/section-card";
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { StateShell } from "../../../components/ui/state-shell";
@@ -10,6 +11,7 @@ import { Link } from "react-router-dom";
 export function CustomersList() {
   const { filters, setFilters } = useCustomersFilters();
   const { data, isLoading, error } = useCustomersQuery(filters);
+  const pagination = data?.pagination ?? { page: 1, totalPages: 1, totalItems: 0 };
 
   const tableHeaders = [
     "Mã KH",
@@ -29,6 +31,13 @@ export function CustomersList() {
       search: formData.get("search") || "",
     };
     setFilters(newFilters);
+  };
+
+  const handlePageChange = (nextPage) => {
+    if (nextPage === filters.page) {
+      return;
+    }
+    setFilters({ page: nextPage });
   };
 
   return (
@@ -98,6 +107,13 @@ export function CustomersList() {
               </tr>
             ))}
           </DataTable>
+          <PaginationControls
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            onPageChange={handlePageChange}
+            isLoading={isLoading}
+          />
         </StateShell>
       </SectionCard>
     </div>
