@@ -1,7 +1,7 @@
 export function getInventoryFilters(searchParams) {
   return {
     search: searchParams.get('search') || '',
-    category: searchParams.get('category') || 'all',
+    stockStatus: searchParams.get('stockStatus') || '',
     page: parseInt(searchParams.get('page') || '1', 10),
   };
 }
@@ -21,7 +21,7 @@ export function applyInventoryFilterUpdates(searchParams, newFilters) {
   if (newFilters.search !== undefined && newFilters.search !== currentFilters.search && newFilters.page === undefined) {
       params.delete('page');
   }
-  if (newFilters.category !== undefined && newFilters.category !== currentFilters.category && newFilters.page === undefined) {
+  if (newFilters.stockStatus !== undefined && newFilters.category !== currentFilters.stockStatus && newFilters.page === undefined) {
       params.delete('page');
   }
 

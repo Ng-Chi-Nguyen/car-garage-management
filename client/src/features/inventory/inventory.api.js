@@ -3,14 +3,15 @@ import axiosClient from '../../lib/axiosClient';
 export const inventoryApi = {
   getInventory: async (filters) => {
     // Exclude frontend-only params like category that cause 400 errors from backend validator
-    const { category, ...backendFilters } = filters || {};
+    const { ...backendFilters } = filters || {};
     const response = await axiosClient.get('/api/v1/parts', { params: backendFilters });
     const { parts, pagination } = response.data.data;
     return {
       data: parts.map(part => ({
         id: part.MaVatTu,
         name: part.TenVatTu,
-        group: 'Vật tư', // Mock group as parts doesn't have it natively
+        supplier: part.NhaCungCap?.TenNCC || 'Chưa xác định',
+        
         unit: part.DonViTinh,
         stock: part.SoLuongTon,
         cost: new Intl.NumberFormat('vi-VN').format(part.GiaVon) + ' đ',
