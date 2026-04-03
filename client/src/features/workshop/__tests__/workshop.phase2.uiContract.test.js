@@ -31,4 +31,18 @@ test('WorkshopStatusPanel phase2 UI contracts', async (t) => {
   await t.test('active tab has aria-pressed="true" cue', () => {
     assert.match(panelCode, /aria-pressed=\{isActive\}/);
   });
+
+  const gridPath = path.join(__dirname, '../components/WorkshopQueueGrid.jsx');
+  const gridCode = fs.readFileSync(gridPath, 'utf-8');
+
+  await t.test('WorkshopQueueGrid has actionable retry button instead of passive error', () => {
+    assert.match(gridCode, /<button[^>]*onClick=\{onRetry\}[^>]*>/);
+    assert.match(gridCode, /Lỗi tải danh sách xe/);
+  });
+
+  await t.test('WorkshopQueueGrid empty state shows reset filters when active', () => {
+    assert.match(gridCode, /hasActiveFilters/);
+    assert.match(gridCode, /<button[^>]*onClick=\{onResetFilters\}[^>]*>/);
+    assert.match(gridCode, /Không tìm thấy xe nào phù hợp với bộ lọc/);
+  });
 });

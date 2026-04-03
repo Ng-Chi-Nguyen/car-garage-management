@@ -18,6 +18,9 @@ export function WorkshopQueueSection({
   isError,
   filters,
   updateFilters,
+  onRetry,
+  onResetFilters,
+  hasActiveFilters,
 }) {
   return (
     <section>
@@ -28,6 +31,9 @@ export function WorkshopQueueSection({
         isError={isError}
         filters={filters}
         updateFilters={updateFilters}
+        onRetry={onRetry}
+        onResetFilters={onResetFilters}
+        hasActiveFilters={hasActiveFilters}
       />
       {!isLoading && !isError && <WorkshopPerformancePanel metrics={data?.metrics} />}
     </section>

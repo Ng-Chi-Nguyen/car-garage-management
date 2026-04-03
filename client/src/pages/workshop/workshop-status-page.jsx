@@ -9,9 +9,13 @@ import { LoadingState } from "../../components/ui/loading-state";
 import { ErrorState } from "../../components/ui/error-state";
 
 export default function WorkshopStatusPage() {
-  const { data, isLoading, isFetching, isError, filters, updateFilters } =
+  const { data, isLoading, isFetching, isError, filters, updateFilters, refetch } =
     useWorkshopQuery();
   const navigate = useNavigate();
+
+  const onRetry = () => refetch();
+  const onResetFilters = () => updateFilters({ status: "all", range: "7d", search: "", page: 1 });
+  const hasActiveFilters = filters?.status !== "all" || filters?.range !== "7d" || (filters?.search || "") !== "";
 
   const topActions = (
     <>
@@ -58,6 +62,9 @@ export default function WorkshopStatusPage() {
           isError={isError}
           filters={filters}
           updateFilters={updateFilters}
+          onRetry={onRetry}
+          onResetFilters={onResetFilters}
+          hasActiveFilters={hasActiveFilters}
         />
       </StateShell>
     </div>
