@@ -2,6 +2,7 @@ const STATUS_MAP = {
   TiepNhan: { id: "waiting", badge: "secondary", label: "CHỜ" },
   DangSua: { id: "in_progress", badge: "primary", label: "ĐANG SỬA" },
   HoanTat: { id: "completed", badge: "success", label: "HOÀN TẤT" },
+  Huy: { id: "cancelled", badge: "danger", label: "ĐÃ HỦY" },
 };
 
 const DEFAULT_STATUS = { id: "waiting", badge: "secondary", label: "Chưa rõ" };

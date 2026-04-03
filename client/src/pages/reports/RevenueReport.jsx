@@ -3,7 +3,7 @@ import { PageHeader } from "../../components/ui/page-header";
 import { StatCard } from "../../components/ui/stat-card";
 import { useRevenueReportQuery } from "../../features/reports/reports.hooks";
 import { exportRevenueReport } from "../../features/reports/reports.api";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function RevenueReport() {
   const [filters, setFilters] = useState({
@@ -29,7 +29,7 @@ export default function RevenueReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };

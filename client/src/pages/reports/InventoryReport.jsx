@@ -3,7 +3,7 @@ import { PageHeader } from "../../components/ui/page-header";
 import { StatCard } from "../../components/ui/stat-card";
 import { useInventoryReportQuery } from "../../features/reports/reports.hooks";
 import { exportInventoryReport } from "../../features/reports/reports.api";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function InventoryReport() {
   const [filters, setFilters] = useState({
@@ -28,7 +28,7 @@ export default function InventoryReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };

@@ -40,11 +40,14 @@ const Routes = (app) => {
     authMiddleware.requireRoles(["Admin"]),
   ];
 
+  // Public routes
   app.use(`${apiPrefixV1}/dashboard`, ...dashboardAccessMiddlewares, dashboardRoute);
   app.use(`${apiPrefixV1}/auth`, authRoute);
+
+  // Protected routes (management)
+  app.use(`${apiPrefixV1}/reports`, ...requireManagementAccess, reportExportRoute);
   app.use(`${apiPrefixV1}/activity`, ...requireManagementAccess, activityRoute);
   app.use(`${apiPrefixV1}/admin/users`, ...requireAdminAccess, adminUsersRoute);
-  app.use(`${apiPrefixV1}/reports`, reportExportRoute);
   app.use(`${apiPrefixV1}/reports/customer-report`, customerReportRoute);
   app.use(`${apiPrefixV1}/reports/revenue`, revenueReportRoute);
   app.use(`${apiPrefixV1}/reports/inventory`, inventoryReportRoute);

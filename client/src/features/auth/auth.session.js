@@ -6,8 +6,9 @@ export function parseAccessTokenRole(token) {
 
     // Decode base64url
     const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+    const paddedBase64 = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
     const jsonPayload = decodeURIComponent(
-      atob(base64)
+      atob(paddedBase64)
         .split('')
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')

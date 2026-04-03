@@ -22,5 +22,5 @@ export async function createAdminUser(data) {
 
 export async function resetPasswordAdminUser(id, data) {
   const response = await axiosClient.post(`/api/v1/admin/users/${Number(id)}/reset-password`, data);
-  return unwrap(response, "message");
+  return response.data?.message || response.data?.data?.message || "Đổi mật khẩu thành công";
 }

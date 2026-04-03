@@ -3,7 +3,7 @@ import { PageHeader } from "../../components/ui/page-header";
 import { StatCard } from "../../components/ui/stat-card";
 import { useRepairReportQuery } from "../../features/reports/reports.hooks";
 import { exportRepairReport } from "../../features/reports/reports.api";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function RepairReport() {
   const [filters, setFilters] = useState({
@@ -25,7 +25,7 @@ export default function RepairReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };

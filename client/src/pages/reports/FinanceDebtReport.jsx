@@ -4,7 +4,7 @@ import { PageHeader } from "../../components/ui/page-header";
 import { StatCard } from "../../components/ui/stat-card";
 import { useReceivablesQuery } from "../../features/finance/useFinanceQuery";
 import { exportFinanceDebtors } from "../../features/finance/finance.api";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function FinanceDebtReport() {
   const [filters, setFilters] = useState({
@@ -41,7 +41,7 @@ export default function FinanceDebtReport() {
       link.click();
       link.parentNode.removeChild(link);
       toast.success("Xuất báo cáo thành công");
-    } catch (error) {
+    } catch {
       toast.error("Lỗi khi xuất báo cáo");
     }
   };

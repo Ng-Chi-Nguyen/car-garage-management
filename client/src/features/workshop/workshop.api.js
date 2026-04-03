@@ -1,4 +1,5 @@
 import axiosClient from "../../lib/axiosClient.js";
+import { authStorage } from "../auth/auth.storage.js";
 import { normalizeWorkshopData } from "./workshop.mappers.js";
 import {
   getValidRange,
@@ -140,18 +141,21 @@ export async function fetchWorkshopData(filters = {}) {
     }
   }
 
-  try {
-    const usersRes = await axiosClient.get(
-      `/api/v1/admin/users?${buildQueryString({ role: "NhanVien", limit: 200 })}`,
-    );
-    const users = usersRes?.data?.data?.users || [];
-    staffById = Object.fromEntries(
-      users
-        .filter((user) => user?.MaKH)
-        .map((user) => [Number(user.MaKH), user.TenChuXe || `NV #${user.MaKH}`]),
-    );
-  } catch {
-    staffById = {};
+  const currentUserRole = authStorage.getUser()?.ChucVu;
+  if (currentUserRole === "Admin") {
+    try {
+      const usersRes = await axiosClient.get(
+        `/api/v1/admin/users?${buildQueryString({ role: "NhanVien", limit: 200 })}`,
+      );
+      const users = usersRes?.data?.data?.users || [];
+      staffById = Object.fromEntries(
+        users
+          .filter((user) => user?.MaKH)
+          .map((user) => [Number(user.MaKH), user.TenChuXe || `NV #${user.MaKH}`]),
+      );
+    } catch {
+      staffById = {};
+    }
   }
 
   const rawData = {

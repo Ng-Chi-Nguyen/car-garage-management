@@ -6,7 +6,7 @@ const forbidden = (res) =>
     message: "Bạn không có quyền truy cập tài nguyên này.",
   });
 
-const assertAdmin = (req) => req.user?.ChucVu === "Admin";
+const assertAdmin = (req, res) => req.user?.ChucVu === "Admin";
 
 const settingsController = {
   getSystemParameters: async (_req, res) => {
@@ -14,7 +14,7 @@ const settingsController = {
     return res.json({ success: true, data: { parameters } });
   },
   updateSystemParameters: async (req, res) => {
-    if (!assertAdmin(req)) {
+    if (!assertAdmin(req, res)) {
       return forbidden(res);
     }
 
@@ -26,7 +26,7 @@ const settingsController = {
     return res.json({ success: true, data: { servicePrices } });
   },
   createServicePrice: async (req, res) => {
-    if (!assertAdmin(req)) {
+    if (!assertAdmin(req, res)) {
       return forbidden(res);
     }
 
@@ -34,7 +34,7 @@ const settingsController = {
     return res.status(201).json({ success: true, data: { servicePrice } });
   },
   updateServicePrice: async (req, res) => {
-    if (!assertAdmin(req)) {
+    if (!assertAdmin(req, res)) {
       return forbidden(res);
     }
 
@@ -43,7 +43,7 @@ const settingsController = {
     return res.json({ success: true, data: { servicePrice } });
   },
   deleteServicePrice: async (req, res) => {
-    if (!assertAdmin(req)) {
+    if (!assertAdmin(req, res)) {
       return forbidden(res);
     }
 
