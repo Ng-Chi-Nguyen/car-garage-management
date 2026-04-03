@@ -38,6 +38,10 @@ export const inventoryApi = {
       history: historyResponse.data.data.stockReceiptDetails || []
     };
   },
+  createPart: async (payload) => {
+    const response = await axiosClient.post('/api/v1/parts', payload);
+    return response.data;
+  },
   createStockReceipt: async (payload) => {
     const response = await axiosClient.post('/api/v1/workflows/stock-receipts', payload);
     return response.data;
